@@ -238,7 +238,7 @@ function getBaseSiteUrl() {
       // fallback
     }
   }
-  return "https://TU-DOMINIO.com";
+  return "https://matespasoapaso.vercel.app";
 }
 
 function updateDocumentSEO(title, description, routePath, calcObj = null) {

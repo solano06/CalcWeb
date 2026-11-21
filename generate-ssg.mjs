@@ -17,7 +17,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { CALCULATOR_CATALOG, LEGAL_PAGES } from "./js/catalog.js";
 
-export const SITE_URL = (process.env.SITE_URL || "https://TU-DOMINIO.com").replace(/\/+$/, "");
+export const SITE_URL = (process.env.SITE_URL || "https://matespasoapaso.vercel.app").replace(/\/+$/, "");
 const TODAY_ISO = new Date().toISOString().split("T")[0];
 const ROOT_DIR = process.cwd();
 
@@ -293,6 +293,7 @@ function buildFullHtmlDocument({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>${escapeHtml(fullTitle)}</title>
   <meta name="description" content="${escapeHtml(description)}">
   <meta name="keywords" content="${escapeHtml(keywords)}">
@@ -432,6 +433,14 @@ ${jsonLd}
 </body>
 </html>
 `;
+}
+
+// 0. Remove any legacy google*.html verification files in root
+for (const entry of fs.readdirSync(ROOT_DIR)) {
+  if (/^google[a-z0-9]+\.html$/i.test(entry)) {
+    fs.unlinkSync(path.join(ROOT_DIR, entry));
+    console.log(`[SSG] Eliminado archivo de verificación antiguo: ${entry}`);
+  }
 }
 
 // 1. Generate Home /index.html and /404.html
