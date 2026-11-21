@@ -867,16 +867,22 @@ def solve_integrals(expr_str, direction="direct"):
     if direction == "direct" and len(parts) == 1:
         steps.append({
             "titulo_paso": "Planteamiento de la Integral Indefinida",
-            "explicacion": "Analizamos la estructura del integrando f(x) mediante el árbol simbólico manualintegrate de SymPy.",
+            "explicacion": "Analizamos la estructura del integrando f(x) mediante el motor simbólico de integración de SymPy.",
             "latex": rf"I = \\int \\left({sp.latex(fn_expr)}\\right)\\,dx"
         })
-        rule_tree = integral_steps(fn_expr, x)
-        translate_manualintegrate_rule(rule_tree, steps)
-        prim = sp.simplify(manualintegrate(fn_expr, x))
+        try:
+            rule_tree = integral_steps(fn_expr, x)
+            translate_manualintegrate_rule(rule_tree, steps)
+        except Exception:
+            pass
+        prim = manualintegrate(fn_expr, x)
+        if prim.has(sp.Integral):
+            prim = sp.integrate(fn_expr, x)
+        prim = sp.simplify(prim)
         final_tex = rf"\\int {sp.latex(fn_expr)}\\,dx = {sp.latex(prim)} + C"
         steps.append({
             "titulo_paso": "Primitiva general simplificada con constante de integración C",
-            "explicacion": "Simplificamos la expresión obtenida y añadimos la constante de integración arbitraria C \\in \\mathbb{R}.",
+            "explicacion": "Simplificamos la expresión obtenida (incluyendo funciones especiales como Fresnel o erf si no admite primitiva elemental) y añadimos la constante C \\in \\mathbb{R}.",
             "latex": final_tex
         })
         return {"ok": True, "steps": steps, "final_latex": final_tex}
@@ -895,13 +901,21 @@ def solve_integrals(expr_str, direction="direct"):
             "latex": rf"I = \\int_{{{sp.latex(lim_a)}}}^{{{sp.latex(lim_b)}}} \\left({sp.latex(fn_expr)}\\right)\\,dx"
         })
 
-        rule_tree = integral_steps(fn_expr, x)
-        translate_manualintegrate_rule(rule_tree, steps)
-        prim = sp.simplify(manualintegrate(fn_expr, x))
+        try:
+            rule_tree = integral_steps(fn_expr, x)
+            translate_manualintegrate_rule(rule_tree, steps)
+        except Exception:
+            pass
+        prim = manualintegrate(fn_expr, x)
+        if prim.has(sp.Integral):
+            prim = sp.integrate(fn_expr, x)
+        prim = sp.simplify(prim)
 
         val_b = prim.subs(x, lim_b)
         val_a = prim.subs(x, lim_a)
         def_res = sp.simplify(val_b - val_a)
+        if def_res.has(sp.Integral) or def_res.has(sp.nan) or def_res.has(sp.zoo):
+            def_res = sp.simplify(sp.integrate(fn_expr, (x, lim_a, lim_b)))
 
         steps.append({
             "titulo_paso": "Aplicación de la Regla de Barrow: F(b) - F(a)",

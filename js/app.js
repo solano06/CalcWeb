@@ -62,7 +62,7 @@ function updateThemeIcons(isDark) {
    ========================================================================== */
 function initPyodideWorker() {
   try {
-    const worker = new Worker("/js/pyodide-worker.js?v=2");
+    const worker = new Worker("/js/pyodide-worker.js?v=3");
     state.worker = worker;
 
     worker.addEventListener("message", (event) => {
@@ -128,17 +128,22 @@ function updateEngineBadgeUI(status, text) {
   }
 }
 
-function runWorkerCalculation(tool, expr, direction, timeoutMs = 4000) {
+function runWorkerCalculation(tool, expr, direction, timeoutMs = 15000) {
   return new Promise((resolve) => {
-    if (!state.worker || !state.workerReady) {
-      resolve({ result: { ok: false, error: "Motor Pyodide aún cargando o no disponible" } });
+    if (!state.worker) {
+      resolve({ result: { ok: false, error: "Web Worker de Pyodide no disponible en este navegador." } });
       return;
     }
     const id = ++state.reqCounter;
     const timer = setTimeout(() => {
       if (state.pendingRequests.has(id)) {
         state.pendingRequests.delete(id);
-        resolve({ result: { ok: false, error: "Tiempo de espera agotado (4s) en Web Worker" } });
+        resolve({
+          result: {
+            ok: false,
+            error: "Tiempo de espera agotado (15s) mientras SymPy compilaba o calculaba la expresión."
+          }
+        });
       }
     }, timeoutMs);
 
@@ -147,6 +152,7 @@ function runWorkerCalculation(tool, expr, direction, timeoutMs = 4000) {
       resolve(data);
     });
 
+    // The worker queues messages automatically while initPyodideEngine() is in progress
     state.worker.postMessage({
       id,
       action: "SOLVE",
@@ -1035,44 +1041,38 @@ async function executeCalculation(calc, expr, direction) {
     return;
   }
 
-  // 2. If Worker is still loading or errored, do not block UI: report clear feedback or hybrid error
-  if (!state.workerReady) {
-    const reason =
-      hybridRes?.error ||
-      (state.pyodideStatus === "loading"
-        ? "El motor simbólico avanzado (Pyodide + SymPy) aún se está inicializando en segundo plano. Mientras termina la carga inicial, utiliza cualquiera de los 4 Ejemplos de Examen o expresiones estándar soportadas al instante (0 ms)."
-        : "Expresión fuera del formato estándar del motor rápido.");
-    renderCalculationError(container, calc, reason);
-    return;
-  }
+  // 2. Not matched by Hybrid Engine -> Always delegate to Pyodide + SymPy Web Worker
+  // If worker is still loading, show clear loading/queuing state and await resolution
+  const loadingHeading = state.workerReady
+    ? "Resolviendo con motor simbólico SymPy..."
+    : "Inicializando Pyodide + SymPy y resolviendo expresión simbólica...";
+  const loadingSub = state.workerReady
+    ? "Calculando derivación algebraica y generando pasos en formato LaTeX..."
+    : "Tu expresión está encolada y se resolverá automáticamente en cuanto termine de cargar el motor WASM (puede tardar unos segundos la primera vez).";
 
-  // 3. Worker is ready (workerReady === true): run with a strict 4-second timeout and automatic fallback
   container.innerHTML = `
     <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 text-center shadow-sm">
       <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 mb-3 animate-pulse">
         <span class="font-serif font-bold text-xl">&Sigma;</span>
       </div>
       <h3 class="font-semibold text-base text-slate-900 dark:text-white mb-1">
-        Ejecutando resolución simbólica en Web Worker (Pyodide + SymPy)...
+        ${loadingHeading}
       </h3>
-      <p class="text-xs text-slate-500 dark:text-slate-400">
-        Calculando derivación algebraica y generando pasos en formato LaTeX (timeout máx. 4s).
+      <p class="text-xs text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
+        ${loadingSub}
       </p>
     </div>
   `;
 
-  const workerResp = await runWorkerCalculation(calc.id, expr, direction, 4000);
+  // Wait up to 35s if Pyodide is still downloading for the first time, or 15s if already ready
+  const timeoutMs = state.workerReady ? 15000 : 35000;
+  const workerResp = await runWorkerCalculation(calc.id, expr, direction, timeoutMs);
   if (workerResp?.result?.ok) {
     renderSolutionSteps(calc, expr, workerResp.result, workerResp.engine || "Pyodide + SymPy (WASM)");
     return;
   }
 
-  // 4. Fallback to hybrid engine if worker timed out or failed
-  if (hybridRes && hybridRes.ok) {
-    renderSolutionSteps(calc, expr, hybridRes, "Motor Simbólico Híbrido (Fallback Instantáneo)");
-    return;
-  }
-
+  // 3. Only display red error message if SymPy also failed to parse or compute the expression
   const errMsg =
     workerResp?.result?.error ||
     hybridRes?.error ||
