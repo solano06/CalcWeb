@@ -1,5 +1,11 @@
 /* CalcWeb Custom Academic Styles */
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -12,13 +18,16 @@
 .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.5rem 0.25rem;
+  max-width: 100%;
+  padding: 0.5rem 0.25rem 4px;
   margin: 0.4rem 0 !important;
   min-height: 2.25rem;
 }
 
 #solution-container {
   min-height: 320px;
+  max-width: 100%;
+  min-width: 0;
   contain: layout style;
 }
 

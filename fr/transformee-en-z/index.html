@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwprypea">
+  <meta name="build-version" content="mwpsd335">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Calculatrice de Transformée en Z Directe et Inverse Étape par Étape | CalcWeb</title>
   <meta name="description" content="Calculatrice en ligne de Transformée en Z directe et inverse étape par étape. Affiche la division X(z)/z, la décomposition en éléments simples et l'inversion par tables.">
@@ -35,7 +35,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwprypea">
+  <link rel="modulepreload" href="/js/app.js?v=mwpsd335">
   <link rel="modulepreload" href="/js/i18n.js">
   <link rel="modulepreload" href="/js/catalog.js">
   <link rel="modulepreload" href="/js/hybrid-engine.js">
@@ -149,25 +149,25 @@
       }
     }
   </script>
-  <link rel="stylesheet" href="/css/styles.css?v=mwprypea">
+  <link rel="stylesheet" href="/css/styles.css?v=mwpsd335">
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
 
   <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-1.5 sm:gap-3">
       <!-- Left: Logo + Home Link -->
-      <div class="flex items-center gap-4">
-        <a href="/fr" data-route="/fr" class="flex items-center gap-2.5 group focus:outline-none">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">&Sigma;</div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="font-serif font-bold text-xl tracking-tight text-slate-900 dark:text-white">CalcWeb</span>
-              <span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+      <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+        <a href="/fr" data-route="/fr" class="flex items-center gap-2 sm:gap-2.5 group focus:outline-none min-w-0">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-lg sm:text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all shrink-0">&Sigma;</div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white truncate">CalcWeb</span>
+              <span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 hidden lg:block">Moteur Symbolique Universitaire &bull; 100% Client-Side</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block lg:block truncate">Moteur Symbolique Universitaire &bull; 100% Client-Side</p>
           </div>
         </a>
-        <a id="nav-home-link" href="/fr" data-route="/fr" class="nav-link hidden md:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Accueil</a>
+        <a id="nav-home-link" href="/fr" data-route="/fr" class="nav-link hidden md:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0">Accueil</a>
       </div>
 
       <!-- Center: 3-Category Dropdowns -->
@@ -329,23 +329,23 @@
       </nav>
 
       <!-- Right: Language Switcher + Compact Engine Status + Dark Mode + Mobile Hamburger -->
-      <div class="flex items-center gap-2">
-        <div id="lang-switcher" class="flex items-center gap-0.5 p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[11px] font-mono font-semibold">
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <div id="lang-switcher" class="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[10px] sm:text-[11px] font-mono font-semibold">
           <a href="/transformada-z" data-lang-switch="es" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">ES</a><a href="/en/z-transform" data-lang-switch="en" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">EN</a><a href="/fr/transformee-en-z" data-lang-switch="fr" class="px-2 py-0.5 rounded transition-colors bg-blue-700 text-white shadow-2xs">FR</a>
         </div>
 
-        <button id="engine-status-btn" type="button" title="Chargement du moteur symbolique..." aria-label="Chargement du moteur symbolique..." class="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
-          <span id="engine-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+        <button id="engine-status-btn" type="button" title="Chargement du moteur symbolique..." aria-label="Chargement du moteur symbolique..." class="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-500 animate-ping"></span>
           <span id="engine-status-text" class="sr-only">Chargement du moteur symbolique...</span>
         </button>
 
-        <button id="theme-toggle" type="button" aria-label="Basculer le thème clair/sombre" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-          <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        <button id="theme-toggle" type="button" aria-label="Basculer le thème clair/sombre" class="p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
         </button>
 
-        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Ouvrir le menu de navigation" class="lg:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Ouvrir le menu de navigation" class="lg:hidden p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
@@ -452,7 +452,7 @@
     </div>
   </header>
 
-  <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <main id="app-main" class="flex-1 max-w-7xl w-full min-w-0 max-w-full overflow-x-clip mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
     
     <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
       <a href="/fr" data-route="/fr">Accueil</a>
@@ -580,6 +580,6 @@
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwprypea"></script>
+  <script type="module" src="/js/app.js?v=mwpsd335"></script>
 </body>
 </html>

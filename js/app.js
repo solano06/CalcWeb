@@ -136,16 +136,16 @@ function updateEngineBadgeUI(status, text) {
 
   if (status === "ready") {
     btn.className =
-      "flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium border transition-all bg-emerald-50/90 border-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:border-emerald-800/80 dark:text-emerald-300";
-    dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
+      "flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-emerald-50/90 border-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:border-emerald-800/80 dark:text-emerald-300";
+    dot.className = "w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-500";
   } else if (status === "loading") {
     btn.className =
-      "flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300";
-    dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping";
+      "flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300";
+    dot.className = "w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-500 animate-ping";
   } else {
     btn.className =
-      "flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium border transition-all bg-blue-50/90 border-blue-200 text-blue-800 dark:bg-blue-950/60 dark:border-blue-800/80 dark:text-blue-300";
-    dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500";
+      "flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-blue-50/90 border-blue-200 text-blue-800 dark:bg-blue-950/60 dark:border-blue-800/80 dark:text-blue-300";
+    dot.className = "w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-blue-500";
   }
 }
 
@@ -928,7 +928,7 @@ function renderCalculatorView(calc) {
     </header>
 
     <!-- Main Workbench Card -->
-    <section class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-7 shadow-sm mb-8">
+    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
       
       ${
         calc.hasDirectionToggle
@@ -973,13 +973,13 @@ function renderCalculatorView(calc) {
             <button
               type="button"
               data-exam-idx="${idx}"
-              class="exam-preset-btn group text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 hover:bg-blue-50/60 dark:bg-slate-950/60 dark:hover:bg-blue-950/30 hover:border-blue-400 dark:hover:border-blue-600 transition-all flex flex-col justify-between"
+              class="exam-preset-btn min-w-0 max-w-full group text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 hover:bg-blue-50/60 dark:bg-slate-950/60 dark:hover:bg-blue-950/30 hover:border-blue-400 dark:hover:border-blue-600 transition-all flex flex-col justify-between"
             >
-              <div class="flex items-center justify-between w-full mb-1.5">
-                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400">${escapeHtml(ex.badge)}</span>
-                <span class="text-[10px] font-mono text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">${escapeHtml(ex.label)} &rarr;</span>
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">${escapeHtml(ex.badge)}</span>
+                <span class="text-[10px] font-mono text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 shrink-0">${escapeHtml(ex.label)} &rarr;</span>
               </div>
-              <div class="text-xs overflow-x-auto py-0.5 text-slate-800 dark:text-slate-200">
+              <div class="text-xs max-w-full overflow-x-auto py-0.5 text-slate-800 dark:text-slate-200">
                 ${renderLatexToHtml(ex.latexLabel, false)}
               </div>
             </button>
@@ -990,9 +990,9 @@ function renderCalculatorView(calc) {
       </div>
 
       <!-- Expression Input Form & Collapsible Virtual Math Keyboard Toggle -->
-      <form id="calc-form" class="space-y-3">
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-          <div class="relative flex-1">
+      <form id="calc-form" class="space-y-3 min-w-0 max-w-full">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 min-w-0 max-w-full">
+          <div class="relative flex-1 min-w-0">
             <input
               id="calc-input"
               type="text"
@@ -1002,11 +1002,11 @@ function renderCalculatorView(calc) {
                   ? calc.placeholderInverse
                   : calc.placeholderDirect
               )}"
-              class="w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-slate-900 transition-all"
+              class="w-full min-w-0 px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-slate-900 transition-all"
             />
           </div>
 
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 min-w-0">
             <!-- Toggle Collapsible Virtual Math Keyboard -->
             <button
               type="button"
@@ -1397,11 +1397,11 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
   };
 
   container.innerHTML = `
-    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
       
       <!-- Top Result Summary Banner & Action Toolbar -->
-      <div class="p-5 sm:p-6 bg-slate-50/90 dark:bg-slate-950/60 border-b border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
+      <div class="p-4 sm:p-6 bg-slate-50/90 dark:bg-slate-950/60 border-b border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 min-w-0">
+        <div class="min-w-0 max-w-full">
           <div class="flex flex-wrap items-center gap-2 mb-1.5">
             <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
               ${escapeHtml(ui.solutionCompleted)} (${solution.steps.length} ${escapeHtml(ui.stepsWord)})
@@ -1410,7 +1410,7 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
               &bull; ${escapeHtml(engineTag)}
             </span>
           </div>
-          <div class="text-sm sm:text-base font-medium text-slate-900 dark:text-white overflow-x-auto">
+          <div class="text-sm sm:text-base font-medium text-slate-900 dark:text-white max-w-full overflow-x-auto">
             ${renderLatexToHtml(solution.final_latex, true)}
           </div>
         </div>
@@ -1455,24 +1455,24 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
         ${solution.steps
           .map(
             (step, index) => `
-          <article class="step-item py-5 first:pt-0 last:pb-0 animate-step" style="animation-delay: ${index * 45}ms">
-            <div class="flex items-start gap-3.5">
+          <article class="step-item py-5 first:pt-0 last:pb-0 animate-step min-w-0 max-w-full" style="animation-delay: ${index * 45}ms">
+            <div class="flex items-start gap-3 sm:gap-3.5 min-w-0 max-w-full">
               <!-- Step Number Badge -->
               <div class="w-7 h-7 rounded-lg bg-blue-600/10 dark:bg-blue-500/20 border border-blue-500/30 text-blue-700 dark:text-blue-300 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                 ${index + 1}
               </div>
 
-              <div class="flex-1 min-w-0">
+              <div class="flex-1 min-w-0 max-w-full">
                 <!-- 1. titulo_paso -->
-                <div class="flex items-center justify-between gap-2 mb-1">
-                  <h3 class="font-serif font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+                <div class="flex items-center justify-between gap-2 mb-1 min-w-0">
+                  <h3 class="font-serif font-bold text-base sm:text-lg text-slate-900 dark:text-white min-w-0">
                     ${escapeHtml(step.titulo_paso)}
                   </h3>
                   <button
                     type="button"
                     data-copy-step="${index}"
                     title="${escapeHtml(ui.copyStepLatex)}"
-                    class="copy-step-btn text-[11px] font-mono text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 px-2 py-0.5 rounded border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-colors"
+                    class="copy-step-btn shrink-0 text-[11px] font-mono text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 px-2 py-0.5 rounded border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-colors"
                   >
                     ${escapeHtml(ui.copyStepLatex)}
                   </button>
@@ -1484,7 +1484,7 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
                 </p>
 
                 <!-- 3. latex rendered with KaTeX -->
-                <div class="rounded-xl bg-slate-50/90 dark:bg-slate-950/80 border border-slate-200/80 dark:border-slate-800/90 px-4 py-3 overflow-x-auto">
+                <div class="max-w-full rounded-xl bg-slate-50/90 dark:bg-slate-950/80 border border-slate-200/80 dark:border-slate-800/90 px-3 sm:px-4 py-3 overflow-x-auto">
                   ${renderLatexToHtml(step.latex, true)}
                 </div>
               </div>
