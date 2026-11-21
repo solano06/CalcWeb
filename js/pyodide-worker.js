@@ -627,7 +627,7 @@ def solve_convolution(expr_str, direction="direct"):
         })
 
         conv_res = sp.simplify(sp.integrate(integrand, (tau, 0, t)))
-        final_tex = rf"\left({sp.latex(conv_res)}\right)u(t)"
+        final_tex = rf"\\left({sp.latex(conv_res)}\\right)u(t)"
         steps.append({
             "titulo_paso": "Integración definida en [0, t] y resultado simplificado",
             "explicacion": "Evaluamos la primitiva en \\tau = t y \\tau = 0 y multiplicamos por el escalón de causalidad u(t).",
@@ -659,7 +659,7 @@ def solve_convolution(expr_str, direction="direct"):
 
         summand = sp.simplify(x_clean * h_clean)
         sum_res = sp.simplify(sp.summation(summand, (k, 0, n)))
-        final_tex = rf"\left({sp.latex(sum_res)}\right)u[n]"
+        final_tex = rf"\\left({sp.latex(sum_res)}\\right)u[n]"
         steps.append({
             "titulo_paso": "Evaluación cerrada de la suma finita en [0, n]",
             "explicacion": "Calculamos simbólicamente la suma desde k = 0 hasta k = n y expresamos la secuencia resultante para n \\ge 0.",
@@ -873,7 +873,7 @@ def solve_integrals(expr_str, direction="direct"):
         rule_tree = integral_steps(fn_expr, x)
         translate_manualintegrate_rule(rule_tree, steps)
         prim = sp.simplify(manualintegrate(fn_expr, x))
-        final_tex = rf"\int {sp.latex(fn_expr)}\,dx = {sp.latex(prim)} + C"
+        final_tex = rf"\\int {sp.latex(fn_expr)}\\,dx = {sp.latex(prim)} + C"
         steps.append({
             "titulo_paso": "Primitiva general simplificada con constante de integración C",
             "explicacion": "Simplificamos la expresión obtenida y añadimos la constante de integración arbitraria C \\in \\mathbb{R}.",
@@ -909,7 +909,7 @@ def solve_integrals(expr_str, direction="direct"):
             "latex": rf"\\Big[ {sp.latex(prim)} \\Big]_{{{sp.latex(lim_a)}}}^{{{sp.latex(lim_b)}}} = \\left({sp.latex(val_b)}\\right) - \\left({sp.latex(val_a)}\\right) = {sp.latex(def_res)}"
         })
 
-        final_tex = rf"\int_{{{sp.latex(lim_a)}}}^{{{sp.latex(lim_b)}}} {sp.latex(fn_expr)}\,dx = {sp.latex(def_res)}"
+        final_tex = rf"\\int_{{{sp.latex(lim_a)}}}^{{{sp.latex(lim_b)}}} {sp.latex(fn_expr)}\\,dx = {sp.latex(def_res)}"
         return {"ok": True, "steps": steps, "final_latex": final_tex}
 
 
@@ -939,13 +939,13 @@ def solve_taylor(expr_str):
         coeff_k = sp.simplify(val_at_x0 / sp.factorial(k_idx))
         poly_expr += coeff_k * (x - x0_val)**k_idx
         deriv_lines.append(
-            rf"f^{{({k_idx})}}(x) = {sp.latex(curr_deriv)} \implies f^{{({k_idx})}}({sp.latex(x0_val)}) = {sp.latex(val_at_x0)} \implies c_{{{k_idx}}} = \frac{{{sp.latex(val_at_x0)}}}{{{k_idx}!}} = {sp.latex(coeff_k)}"
+            rf"f^{{({k_idx})}}(x) = {sp.latex(curr_deriv)} \\implies f^{{({k_idx})}}({sp.latex(x0_val)}) = {sp.latex(val_at_x0)} \\implies c_{{{k_idx}}} = \\frac{{{sp.latex(val_at_x0)}}}{{{k_idx}!}} = {sp.latex(coeff_k)}"
         )
 
     steps.append({
         "titulo_paso": f"Tabla de derivadas sucesivas f^{{(k)}}(x) y evaluación en x_0 = {sp.latex(x0_val)}",
         "explicacion": f"Derivamos sucesivamente f(x) desde k = 0 hasta k = {n_ord} y calculamos cada coeficiente de Taylor c_k = f^{{(k)}}(x_0)/k!.",
-        "latex": r" \\ ".join(deriv_lines)
+        "latex": r" \\\\ ".join(deriv_lines)
     })
 
     final_tex = rf"P_{{{n_ord}}}(x) = {sp.latex(poly_expr)}"
@@ -964,8 +964,8 @@ def aug_matrix_latex(M, n_vars):
     for r in range(M.rows):
         row_cells = [sp.latex(M[r, c]) for c in range(M.cols)]
         rows_str.append(" & ".join(row_cells))
-    body = r" \\ ".join(rows_str)
-    return rf"\left(\begin{{array}}{{{col_spec}}} {body} \end{{array}}\right)"
+    body = r" \\\\ ".join(rows_str)
+    return rf"\\left(\\begin{{array}}{{{col_spec}}} {body} \\end{{array}}\\right)"
 
 
 def solve_gauss(expr_str):
@@ -979,7 +979,7 @@ def solve_gauss(expr_str):
     steps.append({
         "titulo_paso": f"Planteamiento de la matriz ampliada (A\\,|\\,b) de dimensión {m_rows}\\times {total_cols}",
         "explicacion": "Construimos la matriz aumentada del sistema lineal para aplicar eliminación de Gauss-Jordan.",
-        "latex": rf"(A\,|\,b) = {aug_matrix_latex(M, n_vars)}"
+        "latex": rf"(A\\,|\\,b) = {aug_matrix_latex(M, n_vars)}"
     })
 
     A = M.as_mutable()
@@ -1002,7 +1002,7 @@ def solve_gauss(expr_str):
             steps.append({
                 "titulo_paso": f"Intercambio de filas: F_{{{pivot_row+1}}} \\leftrightarrow F_{{{sel+1}}}",
                 "explicacion": "Permutamos las filas para situar un pivote no nulo en la diagonal.",
-                "latex": rf"\xrightarrow{{F_{{{pivot_row+1}}} \leftrightarrow F_{{{sel+1}}}}} {aug_matrix_latex(A, n_vars)}"
+                "latex": rf"\\xrightarrow{{F_{{{pivot_row+1}}} \\leftrightarrow F_{{{sel+1}}}}} {aug_matrix_latex(A, n_vars)}"
             })
 
         p_val = A[pivot_row, col]
@@ -1011,7 +1011,7 @@ def solve_gauss(expr_str):
             steps.append({
                 "titulo_paso": f"Normalización de fila pivote: F_{{{pivot_row+1}}} \\leftarrow ({sp.latex(1/p_val)})F_{{{pivot_row+1}}}",
                 "explicacion": "Dividimos la fila pivote para obtener un 1 principal.",
-                "latex": rf"\xrightarrow{{F_{{{pivot_row+1}}} \leftarrow ({sp.latex(1/p_val)})F_{{{pivot_row+1}}}}} {aug_matrix_latex(A, n_vars)}"
+                "latex": rf"\\xrightarrow{{F_{{{pivot_row+1}}} \\leftarrow ({sp.latex(1/p_val)})F_{{{pivot_row+1}}}}} {aug_matrix_latex(A, n_vars)}"
             })
 
         ops_desc = []
@@ -1021,13 +1021,13 @@ def solve_gauss(expr_str):
             fac = A[r, col]
             if fac != 0:
                 A.row_op(r, lambda v, j: sp.simplify(v - fac * A[pivot_row, j]))
-                ops_desc.append(rf"F_{{{r+1}}} \leftarrow F_{{{r+1}}} - ({sp.latex(fac)})F_{{{pivot_row+1}}}")
+                ops_desc.append(rf"F_{{{r+1}}} \\leftarrow F_{{{r+1}}} - ({sp.latex(fac)})F_{{{pivot_row+1}}}")
 
         if ops_desc:
             steps.append({
                 "titulo_paso": f"Eliminación de Gauss-Jordan en columna {col+1}",
                 "explicacion": "Anulamos todos los elementos situados por encima y por debajo del pivote actual.",
-                "latex": rf"\xrightarrow{{{', \; '.join(ops_desc)}}} {aug_matrix_latex(A, n_vars)}"
+                "latex": rf"\\xrightarrow{{{', \\; '.join(ops_desc)}}} {aug_matrix_latex(A, n_vars)}"
             })
 
         pivot_cols.append(col)
@@ -1038,7 +1038,7 @@ def solve_gauss(expr_str):
     rk_Ab = A.rank()
 
     if rk_A < rk_Ab:
-        final_tex = rf"\operatorname{{rg}}(A) = {rk_A} < \operatorname{{rg}}(A^*) = {rk_Ab} \implies \text{{Sistema Incompatible (SI)}}"
+        final_tex = rf"\\operatorname{{rg}}(A) = {rk_A} < \\operatorname{{rg}}(A^*) = {rk_Ab} \\implies \\text{{Sistema Incompatible (SI)}}"
         steps.append({
             "titulo_paso": "Teorema de Rouché-Frobenius: Sistema Incompatible (SI)",
             "explicacion": "El rango de la matriz de coeficientes es estrictamente menor que el de la matriz ampliada; el sistema no tiene solución.",
@@ -1046,14 +1046,14 @@ def solve_gauss(expr_str):
         })
     elif rk_A == n_vars:
         sols = [rf"{var_names[i]} = {sp.latex(A[i, n_vars])}" for i in range(n_vars)]
-        final_tex = rf"\text{{SCD }} (\operatorname{{rg}}={n_vars}): \quad " + r", \quad ".join(sols)
+        final_tex = rf"\\text{{SCD }} (\\operatorname{{rg}}={n_vars}): \\quad " + r", \\quad ".join(sols)
         steps.append({
             "titulo_paso": "Teorema de Rouché-Frobenius: Sistema Compatible Determinado (SCD)",
             "explicacion": "Los rangos coinciden con el número de incógnitas, obteniendo solución única de la forma escalonada reducida (RREF).",
             "latex": final_tex
         })
     else:
-        final_tex = rf"\text{{SCI }} (\operatorname{{rg}}(A) = \operatorname{{rg}}(A^*) = {rk_A} < {n_vars})"
+        final_tex = rf"\\text{{SCI }} (\\operatorname{{rg}}(A) = \\operatorname{{rg}}(A^*) = {rk_A} < {n_vars})"
         steps.append({
             "titulo_paso": "Teorema de Rouché-Frobenius: Sistema Compatible Indeterminado (SCI)",
             "explicacion": f"El sistema posee infinitas soluciones dependientes de {n_vars - rk_A} parámetro(s) libre(s).",
@@ -1066,8 +1066,8 @@ def solve_gauss(expr_str):
 def replace_polar_tokens_in_str(s_in):
     s_out = s_in.replace('∠', '<').replace('@_', '<')
     # Convert M<deg to (M*(cos(deg*pi/180) + I*sin(deg*pi/180)))
-    pattern = r'([+-]?\d+(?:\.\d+)?)\s*<\s*([+-]?\d+(?:\.\d+)?)'
-    return re.sub(pattern, r'(\1*(cos((\2)*pi/180) + I*sin((\2)*pi/180)))', s_out)
+    pattern = r'([+-]?\\d+(?:\\.\\d+)?)\\s*<\\s*([+-]?\\d+(?:\\.\\d+)?)'
+    return re.sub(pattern, r'(\\1*(cos((\\2)*pi/180) + I*sin((\\2)*pi/180)))', s_out)
 
 
 def solve_phasors(expr_str, direction="direct"):
@@ -1085,16 +1085,16 @@ def solve_phasors(expr_str, direction="direct"):
         steps.append({
             "titulo_paso": "Conversión de fasores a forma binómica cartesiana (a + jb)",
             "explicacion": "Reescribimos todos los términos polares M\\angle\\theta^\\circ mediante la identidad de Euler M(\\cos\\theta + j\\sin\\theta) y agrupamos parte real e imaginaria.",
-            "latex": rf"\mathbb{{Z}} = {sp.latex(re_val)} + j({sp.latex(im_val)})"
+            "latex": rf"\\mathbb{{Z}} = {sp.latex(re_val)} + j({sp.latex(im_val)})"
         })
 
         steps.append({
             "titulo_paso": "Cálculo del módulo y del argumento con ajuste de cuadrante",
             "explicacion": "Evaluamos el módulo |\\mathbb{Z}| = \\sqrt{a^2 + b^2} y la fase \\theta = \\operatorname{atan2}(b, a) en grados sexagesimales.",
-            "latex": rf"|\mathbb{{Z}}| = \sqrt{{({sp.latex(re_val)})^2 + ({sp.latex(im_val)})^2}} = {sp.latex(mag_val)}, \qquad \theta = {sp.latex(ang_deg)}^\circ"
+            "latex": rf"|\\mathbb{{Z}}| = \\sqrt{{({sp.latex(re_val)})^2 + ({sp.latex(im_val)})^2}} = {sp.latex(mag_val)}, \\qquad \\theta = {sp.latex(ang_deg)}^\\circ"
         })
 
-        final_tex = rf"\mathbb{{Z}} = {sp.latex(re_val)} + j({sp.latex(im_val)}) = {sp.latex(mag_val)}\angle {sp.latex(ang_deg)}^\circ"
+        final_tex = rf"\\mathbb{{Z}} = {sp.latex(re_val)} + j({sp.latex(im_val)}) = {sp.latex(mag_val)}\\angle {sp.latex(ang_deg)}^\\circ"
         steps.append({
             "titulo_paso": "Resultado fasorial en forma binómica y polar",
             "explicacion": "Presentamos la equivalencia fasorial completa.",
@@ -1117,7 +1117,7 @@ def solve_phasors(expr_str, direction="direct"):
         steps.append({
             "titulo_paso": f"Matriz de impedancias compleja \\mathbb{{Z}} ({n_v}\\times {n_v}) y vector de excitación \\vec{{\\mathbb{{V}}}}",
             "explicacion": "Expresamos el sistema de mallas/nudos en corriente alterna en forma matricial \\mathbb{Z}\\vec{\\mathbb{I}} = \\vec{\\mathbb{V}}.",
-            "latex": rf"\mathbb{{Z}} = {sp.latex(Z_mat)}, \qquad \vec{{\mathbb{{V}}}} = {sp.latex(V_vec)}"
+            "latex": rf"\\mathbb{{Z}} = {sp.latex(Z_mat)}, \\qquad \\vec{{\\mathbb{{V}}}} = {sp.latex(V_vec)}"
         })
 
         sol_vec = Z_mat.LUsolve(V_vec)
@@ -1128,13 +1128,13 @@ def solve_phasors(expr_str, direction="direct"):
             im_c = sp.N(sp.im(val_c), 4)
             mag_c = sp.N(sp.sqrt(re_c**2 + im_c**2), 4)
             ang_c = sp.N(sp.atan2(im_c, re_c) * 180 / sp.pi, 4)
-            sol_lines.append(rf"\mathbb{{I}}_{{{idx+1}}} = {sp.latex(re_c)} + j({sp.latex(im_c)}) = {sp.latex(mag_c)}\angle {sp.latex(ang_c)}^\circ")
+            sol_lines.append(rf"\\mathbb{{I}}_{{{idx+1}}} = {sp.latex(re_c)} + j({sp.latex(im_c)}) = {sp.latex(mag_c)}\\angle {sp.latex(ang_c)}^\\circ")
 
-        final_tex = r", \quad ".join(sol_lines)
+        final_tex = r", \\quad ".join(sol_lines)
         steps.append({
             "titulo_paso": "Resolución simbólica de los fasores de corriente/tensión en forma binómica y polar",
             "explicacion": "Calculamos cada incógnita fasorial indicando su amplitud y ángulo de fase en grados.",
-            "latex": r" \\ ".join(sol_lines)
+            "latex": r" \\\\ ".join(sol_lines)
         })
         return {"ok": True, "steps": steps, "final_latex": final_tex}
 

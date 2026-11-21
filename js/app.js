@@ -20,6 +20,7 @@ import {
 const state = {
   currentRoute: "/",
   pyodideStatus: "loading", // 'loading' | 'ready' | 'error'
+  workerReady: false,
   pyodideMessage: "Cargando motor simbólico...",
   worker: null,
   reqCounter: 0,
@@ -68,6 +69,7 @@ function initPyodideWorker() {
       const data = event.data;
       if (data.type === "STATUS") {
         state.pyodideStatus = data.status;
+        state.workerReady = data.status === "ready";
         state.pyodideMessage = data.message;
         updateEngineBadgeUI(data.status, data.message);
         if (data.status === "ready") {
@@ -80,6 +82,13 @@ function initPyodideWorker() {
           resolver(data);
         }
       }
+    });
+
+    worker.addEventListener("error", (err) => {
+      console.error("[CalcWeb Worker Error]", err);
+      state.pyodideStatus = "error";
+      state.workerReady = false;
+      updateEngineBadgeUI("error", "Motor Híbrido Local Activo");
     });
 
     // Check if previously cached in browser storage
@@ -119,14 +128,25 @@ function updateEngineBadgeUI(status, text) {
   }
 }
 
-function runWorkerCalculation(tool, expr, direction) {
+function runWorkerCalculation(tool, expr, direction, timeoutMs = 4000) {
   return new Promise((resolve) => {
-    if (!state.worker) {
-      resolve({ result: { ok: false, error: "Worker no disponible" } });
+    if (!state.worker || !state.workerReady) {
+      resolve({ result: { ok: false, error: "Motor Pyodide aún cargando o no disponible" } });
       return;
     }
     const id = ++state.reqCounter;
-    state.pendingRequests.set(id, resolve);
+    const timer = setTimeout(() => {
+      if (state.pendingRequests.has(id)) {
+        state.pendingRequests.delete(id);
+        resolve({ result: { ok: false, error: "Tiempo de espera agotado (4s) en Web Worker" } });
+      }
+    }, timeoutMs);
+
+    state.pendingRequests.set(id, (data) => {
+      clearTimeout(timer);
+      resolve(data);
+    });
+
     state.worker.postMessage({
       id,
       action: "SOLVE",
@@ -948,8 +968,7 @@ function renderCalculatorView(calc) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const inputEl = document.getElementById("calc-input");
-      if (!inputEl || !inputEl.value.trim()) return;
-      executeCalculation(calc, inputEl.value.trim(), state.activeDirection);
+      executeCalculation(calc, inputEl ? inputEl.value.trim() : "", state.activeDirection);
     });
   }
 
@@ -960,44 +979,74 @@ function renderCalculatorView(calc) {
 /* ==========================================================================
    7. STEP-BY-STEP CALCULATION EXECUTOR & RENDERER
    ========================================================================== */
+function runHybridEngine(calcId, expr, direction) {
+  try {
+    if (calcId === "fourier") return solveFourierHybrid(expr, direction);
+    if (calcId === "laplace") return solveLaplaceHybrid(expr, direction);
+    if (calcId === "matrix") return solveMatrixHybrid(expr);
+    if (calcId === "ztransform") return solveZTransformHybrid(expr, direction);
+    if (calcId === "convolution") return solveConvolutionHybrid(expr, direction);
+    if (calcId === "ode") return solveOdeHybrid(expr);
+    if (calcId === "integrals") return solveIntegralsHybrid(expr, direction);
+    if (calcId === "taylor") return solveTaylorHybrid(expr);
+    if (calcId === "gauss") return solveGaussHybrid(expr);
+    if (calcId === "phasors") return solvePhasorsHybrid(expr, direction);
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+  return null;
+}
+
+function renderCalculationError(container, calc, errMsg) {
+  container.innerHTML = `
+    <div class="rounded-2xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-6 text-rose-900 dark:text-rose-200">
+      <div class="flex items-center gap-2 font-semibold text-sm mb-1">
+        <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>No se pudo resolver la expresión introducida</span>
+      </div>
+      <p class="text-xs font-mono mb-3">${escapeHtml(errMsg)}</p>
+      <p class="text-xs text-rose-700 dark:text-rose-300">
+        Formato esperado en <strong>${escapeHtml(calc.shortTitle)}</strong>: <code>${escapeHtml(
+    calc.placeholderDirect
+  )}</code>. Pulsa cualquiera de los <strong>4 Ejemplos de Examen</strong> superiores para ver una entrada válida.
+      </p>
+    </div>
+  `;
+}
+
 async function executeCalculation(calc, expr, direction) {
   const container = document.getElementById("solution-container");
   if (!container) return;
 
-  // 1. Try Instant Hybrid Engine first (0ms latency)
-  let hybridRes = null;
-  if (calc.id === "fourier") {
-    hybridRes = solveFourierHybrid(expr, direction);
-  } else if (calc.id === "laplace") {
-    hybridRes = solveLaplaceHybrid(expr, direction);
-  } else if (calc.id === "matrix") {
-    hybridRes = solveMatrixHybrid(expr);
-  } else if (calc.id === "ztransform") {
-    hybridRes = solveZTransformHybrid(expr, direction);
-  } else if (calc.id === "convolution") {
-    hybridRes = solveConvolutionHybrid(expr, direction);
-  } else if (calc.id === "ode") {
-    hybridRes = solveOdeHybrid(expr);
-  } else if (calc.id === "integrals") {
-    hybridRes = solveIntegralsHybrid(expr, direction);
-  } else if (calc.id === "taylor") {
-    hybridRes = solveTaylorHybrid(expr);
-  } else if (calc.id === "gauss") {
-    hybridRes = solveGaussHybrid(expr);
-  } else if (calc.id === "phasors") {
-    hybridRes = solvePhasorsHybrid(expr, direction);
+  if (!expr || !expr.trim()) {
+    renderCalculationError(container, calc, "El campo de entrada está vacío. Introduce una expresión matemática.");
+    return;
   }
 
+  // 1. Instant 0ms evaluation via Hybrid Symbolic Engine
+  const hybridRes = runHybridEngine(calc.id, expr, direction);
   if (hybridRes && hybridRes.ok) {
-    const engineTag =
-      state.pyodideStatus === "ready"
-        ? "SymPy CAS + Motor Híbrido Verificado (0 ms)"
-        : "Motor Simbólico Híbrido Instantáneo (Client-Side)";
+    const engineTag = state.workerReady
+      ? "SymPy CAS + Motor Híbrido Verificado (0 ms)"
+      : "Motor Simbólico Híbrido Instantáneo (0 ms Client-Side)";
     renderSolutionSteps(calc, expr, hybridRes, engineTag);
     return;
   }
 
-  // 2. Delegate arbitrary symbolic expression to Pyodide + SymPy Web Worker
+  // 2. If Worker is still loading or errored, do not block UI: report clear feedback or hybrid error
+  if (!state.workerReady) {
+    const reason =
+      hybridRes?.error ||
+      (state.pyodideStatus === "loading"
+        ? "El motor simbólico avanzado (Pyodide + SymPy) aún se está inicializando en segundo plano. Mientras termina la carga inicial, utiliza cualquiera de los 4 Ejemplos de Examen o expresiones estándar soportadas al instante (0 ms)."
+        : "Expresión fuera del formato estándar del motor rápido.");
+    renderCalculationError(container, calc, reason);
+    return;
+  }
+
+  // 3. Worker is ready (workerReady === true): run with a strict 4-second timeout and automatic fallback
   container.innerHTML = `
     <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 text-center shadow-sm">
       <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 mb-3 animate-pulse">
@@ -1007,31 +1056,28 @@ async function executeCalculation(calc, expr, direction) {
         Ejecutando resolución simbólica en Web Worker (Pyodide + SymPy)...
       </h3>
       <p class="text-xs text-slate-500 dark:text-slate-400">
-        Calculando derivación algebraica y generando pasos en formato LaTeX sin bloquear la interfaz.
+        Calculando derivación algebraica y generando pasos en formato LaTeX (timeout máx. 4s).
       </p>
     </div>
   `;
 
-  const workerResp = await runWorkerCalculation(calc.id, expr, direction);
+  const workerResp = await runWorkerCalculation(calc.id, expr, direction, 4000);
   if (workerResp?.result?.ok) {
     renderSolutionSteps(calc, expr, workerResp.result, workerResp.engine || "Pyodide + SymPy (WASM)");
-  } else {
-    const errMsg = workerResp?.result?.error || "No se pudo interpretar la expresión simbólica.";
-    container.innerHTML = `
-      <div class="rounded-2xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-6 text-rose-900 dark:text-rose-200">
-        <div class="flex items-center gap-2 font-semibold text-sm mb-1">
-          <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          <span>Error de sintaxis o expresión no soportada</span>
-        </div>
-        <p class="text-xs font-mono mb-3">${escapeHtml(errMsg)}</p>
-        <p class="text-xs text-rose-700 dark:text-rose-300">
-          Sugerencia: Utiliza los botones de <strong>Ejemplos de Examen</strong> o el <strong>Teclado Matemático</strong> para verificar la sintaxis (ej. <code>exp(-3*t)*u(t)</code>, <code>(2*s+5)/(s^2+5*s+6)</code>, o <code>4, 1; 2, 3</code>).
-        </p>
-      </div>
-    `;
+    return;
   }
+
+  // 4. Fallback to hybrid engine if worker timed out or failed
+  if (hybridRes && hybridRes.ok) {
+    renderSolutionSteps(calc, expr, hybridRes, "Motor Simbólico Híbrido (Fallback Instantáneo)");
+    return;
+  }
+
+  const errMsg =
+    workerResp?.result?.error ||
+    hybridRes?.error ||
+    "No se pudo interpretar la expresión simbólica. Verifica los paréntesis y operadores.";
+  renderCalculationError(container, calc, errMsg);
 }
 
 function renderSolutionSteps(calc, expr, solution, engineTag) {
