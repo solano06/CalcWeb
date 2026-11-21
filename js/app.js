@@ -71,7 +71,8 @@ function updateThemeIcons(isDark) {
 function initPyodideWorker() {
   const ui = getUI();
   try {
-    const worker = new Worker("/js/pyodide-worker.js?v=6");
+    const buildVersion = document.querySelector('meta[name="build-version"]')?.content || "1";
+    const worker = new Worker("/js/pyodide-worker.js?v=" + buildVersion);
     state.worker = worker;
 
     worker.addEventListener("message", (event) => {
