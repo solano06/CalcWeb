@@ -62,7 +62,7 @@ function updateThemeIcons(isDark) {
    ========================================================================== */
 function initPyodideWorker() {
   try {
-    const worker = new Worker("/js/pyodide-worker.js");
+    const worker = new Worker("/js/pyodide-worker.js?v=2");
     state.worker = worker;
 
     worker.addEventListener("message", (event) => {
