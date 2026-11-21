@@ -1213,6 +1213,1060 @@ export const VIRTUAL_KEYBOARD_KEYS = [
   { label: "\\begin{pmatrix}n\\times n\\end{pmatrix}", insert: "4, 1; 2, 3", tooltip: "Plantilla Matriz cuadrada" }
 ];
 
+import { ROUTE_MAP } from "./i18n.js";
+
+export const CATALOG_I18N = {
+  en: {
+    fourier: {
+      title: "Step-by-Step Fourier Transform Calculator (Direct & Inverse)",
+      shortTitle: "Fourier Transform",
+      metaDescription: "Online step-by-step Fourier Transform and Inverse Fourier Transform calculator. Solves causal exponentials e^(-at)u(t), rectangular pulses rect(t), cosines, and Dirac deltas 100% in your browser.",
+      h1: "Fourier Transform Calculator (Direct & Inverse)",
+      subtitle: "Continuous spectral analysis in angular frequency ω with improper integral breakdown, Euler's identities, and table properties.",
+      directLabel: "Direct Transform F(ω) = ℱ{f(t)}",
+      inverseLabel: "Inverse Transform f(t) = ℱ⁻¹{F(ω)}",
+      examLabels: ["Causal Exponential", "Rectangular Pulse", "Harmonic Carrier", "Dirac Impulse Train"],
+      guideTitle: "Quick Guide & Key Formulas: Fourier Transform in Engineering",
+      guideIntro: "In Signals & Systems and Telecommunications, the continuous-time Fourier Transform decomposes an aperiodic signal f(t) into its angular frequency spectral density F(ω). Generalized distributions such as the Dirac Delta δ(ω) extend the transform to periodic and DC signals.",
+      tips: [
+        "Always check whether the signal is multiplied by the unit step u(t): this changes the lower integration limit from -∞ to 0.",
+        "When transforming pure undamped trigonometric functions, use Euler's identity to rewrite them as complex exponentials.",
+        "A time delay t → (t - t₀) does not alter the magnitude spectrum |F(ω)|; it only adds a linear phase shift -ω·t₀."
+      ],
+      faqs: [
+        {
+          q: "How do you compute the Fourier Transform of a causal exponential e^(-at)u(t)?",
+          a: "Because the Heaviside step u(t) vanishes for t < 0, the integral limits reduce from (-∞, ∞) to [0, ∞). Combining the exponents yields the integral of e^{-(a + jω)t}, which converges for Re(a) > 0 to F(ω) = 1 / (a + jω)."
+        },
+        {
+          q: "What is the Fourier Transform of a rectangular pulse rect(t/T)?",
+          a: "A rectangular pulse of amplitude A and width T centered at the origin equals A on [-T/2, T/2]. Integrating e^{-jωt} over that interval and applying Euler's identity yields the sinc function: F(ω) = A·T·sinc(ωT/2) = (2A·sin(ωT/2))/ω."
+        },
+        {
+          q: "Why does the Fourier Transform of cos(ω0·t) contain Dirac Deltas?",
+          a: "Because cos(ω0·t) has infinite energy and is not absolutely integrable. Using Euler's formula cos(ω0·t) = (e^{jω0t} + e^{-jω0t})/2 concentrates its spectral energy into two Dirac impulses at ±ω0: F(ω) = π[δ(ω - ω0) + δ(ω + ω0)]."
+        },
+        {
+          q: "What is the difference between Fourier Transform in angular frequency ω and frequency f (Hz)?",
+          a: "In the angular frequency ω = 2πf convention, the factor 1/(2π) appears only in the inverse synthesis integral, and the transform of a constant 1 is 2π·δ(ω)."
+        }
+      ]
+    },
+    ztransform: {
+      title: "Step-by-Step Z-Transform Calculator (Direct & Inverse)",
+      shortTitle: "Z-Transform",
+      metaDescription: "Online step-by-step Z-Transform and Inverse Z-Transform calculator. Shows explicit X(z)/z division, partial fraction expansion, and table inversion for discrete-time sequences.",
+      h1: "Z-Transform Calculator (Direct & Inverse)",
+      subtitle: "Discrete-time signal and system analysis featuring explicit X(z)/z division, partial fraction decomposition, and causal table lookup.",
+      directLabel: "Direct Z-Transform X(z) = 𝒫{x[n]}",
+      inverseLabel: "Inverse Z-Transform x[n] = 𝒫⁻¹{X(z)} (X(z)/z Method)",
+      examLabels: ["Inverse (Simple Poles X(z)/z)", "Inverse (Two Real Poles)", "Inverse (Double Pole z=2)", "Direct (Geometric + Ramp)"],
+      guideTitle: "Quick Guide & Key Formulas: Z-Transform in Digital Signal Processing (DSP)",
+      guideIntro: "The Z-Transform is the discrete-time counterpart of the Laplace Transform for analyzing LTI digital filters (FIR/IIR) and difference equations. To compute the Inverse Z-Transform via partial fractions, always divide by z first —forming X(z)/z— so that multiplying back by z produces canonical z/(z - a) blocks.",
+      tips: [
+        "Never expand X(z) directly into partial fractions: always divide by z first to expand X(z)/z, then multiply by z at the end.",
+        "A causal discrete-time LTI system is BIBO-stable if and only if all poles of H(z) lie strictly inside the unit circle (|p_k| < 1).",
+        "If an A₀/z term appears in X(z)/z, multiplying by z gives the constant A₀, whose inverse Z-transform is the unit impulse A₀·δ[n]."
+      ],
+      faqs: [
+        {
+          q: "Why do we divide by z (forming X(z)/z) when computing the Inverse Z-Transform?",
+          a: "Because standard Z-transform table pairs like Z{a^n u[n]} = z/(z - a) have z in the numerator. Expanding X(z)/z into A_k/(z - p_k) and multiplying back by z yields A_k·z/(z - p_k) blocks ready for immediate inversion."
+        },
+        {
+          q: "How do you check if a digital filter H(z) is stable?",
+          a: "A causal discrete LTI system is BIBO-stable if and only if all poles of its transfer function H(z) have magnitude strictly less than 1 (|p_k| < 1), i.e., inside the unit circle."
+        },
+        {
+          q: "How do you compute the Z-Transform of an exponential ramp n·a^n·u[n]?",
+          a: "By applying the z-domain differentiation property Z{n·x[n]} = -z·d/dz X(z) to z/(z - a), which results in a·z / (z - a)²."
+        },
+        {
+          q: "What is the Region of Convergence (ROC) in the Z-Transform?",
+          a: "The ROC is the annular region in the complex z-plane where ∑ x[n]z^{-n} converges absolutely. For causal sequences, the ROC is the exterior of the circle defined by the largest pole: |z| > max|p_k|."
+        }
+      ]
+    },
+    convolution: {
+      title: "Step-by-Step Continuous & Discrete Convolution Calculator",
+      shortTitle: "Convolution (Continuous & Discrete)",
+      metaDescription: "Step-by-step Continuous Convolution x(t)*h(t) and Discrete Convolution x[n]*h[n] calculator. Shows time-reversal, shifting h(t-τ), Heaviside step bounds, and symbolic integration.",
+      h1: "Continuous x(t) * h(t) & Discrete x[n] * h[n] Convolution",
+      subtitle: "Analytical LTI system response via convolution integral or summation, detailing time folding, shifting, and active integration limits bounded by unit steps.",
+      directLabel: "Continuous Convolution y(t) = x(t) * h(t)",
+      inverseLabel: "Discrete Convolution y[n] = x[n] * h[n]",
+      examLabels: ["Two Causal Exponentials", "RC Step Response", "Discrete (Exponential * Step)", "Discrete (Finite FIR Sequences)"],
+      guideTitle: "Quick Guide & Key Formulas: Convolution Integral and Summation in LTI Systems",
+      guideIntro: "Convolution determines the complete output y(t) or y[n] of any Linear Time-Invariant (LTI) system given its impulse response h(t) or h[n]. The analytical method consists of 4 stages with respect to dummy variable τ (or k): folding h(-τ), shifting h(t - τ), overlapping unit steps u(τ)·u(t - τ), and integrating over the active interval.",
+      tips: [
+        "Always separate the two input signals with a semicolon ';' in the input bar: first x(t), then h(t).",
+        "When convolving two causal signals multiplied by u(t), remember to multiply the final result by u(t) to indicate y(t) = 0 for t < 0.",
+        "In discrete convolution of finite sequences of lengths N and M, the resulting sequence has exact length L = N + M - 1."
+      ],
+      faqs: [
+        {
+          q: "How do you determine the integration limits in a convolution with unit steps u(t)?",
+          a: "In ∫ x(τ)h(t - τ) dτ, the product u(τ)·u(t - τ) requires τ ≥ 0 and t - τ ≥ 0 (so τ ≤ t). Thus, for t ≥ 0 the infinite limits (-∞, ∞) collapse to the finite interval [0, t]."
+        },
+        {
+          q: "What is the length of the discrete convolution of two finite sequences?",
+          a: "If x[n] has length N and the FIR filter h[n] has length M, the convolved sequence y[n] = x[n] * h[n] has exact length L = N + M - 1 samples."
+        },
+        {
+          q: "How can you verify a convolution integral result?",
+          a: "Using the Convolution Theorem in the Laplace domain: compute X(s) and H(s), multiply Y(s) = X(s)·H(s), and take the inverse Laplace transform via partial fractions."
+        },
+        {
+          q: "What happens when you convolve a signal x(t) with a shifted Dirac Delta δ(t - t0)?",
+          a: "The Dirac Delta is the identity element of convolution. Convolving with δ(t - t0) simply shifts the original signal in time: x(t) * δ(t - t0) = x(t - t0)."
+        }
+      ]
+    },
+    fourierseries: {
+      title: "Step-by-Step Fourier Series Calculator (Trigonometric & Complex)",
+      shortTitle: "Fourier Series",
+      metaDescription: "Online step-by-step Fourier Series calculator in trigonometric (a0, an, bn) and complex exponential (cn) form on [-L, L]. Analyzes even/odd parity, coefficient integrals, and Nth harmonic expansion.",
+      h1: "Fourier Series (Trigonometric a₀, aₙ, bₙ & Complex Exponential cₙ)",
+      subtitle: "Harmonic decomposition of periodic signals on [-L, L] with automatic even/odd symmetry detection, explicit coefficient integrals, and N-harmonic partial sum.",
+      directLabel: "Trigonometric Series (a₀, aₙ, bₙ)",
+      inverseLabel: "Complex Exponential Series (cₙ)",
+      examLabels: ["Sawtooth Wave f(x) = x", "Square Wave f(x) = sgn(x)", "Even Parabola f(x) = x²", "Triangle Wave f(x) = |x|"],
+      guideTitle: "Quick Guide & Key Formulas: Fourier Series & Symmetry Conditions",
+      guideIntro: "Any periodic signal of period T = 2L satisfying Dirichlet's conditions can be expanded as an infinite superposition of harmonic sinusoids at integer multiples of the fundamental frequency ω₀ = π/L. Checking for even or odd parity before integrating saves half the work in exams.",
+      tips: [
+        "Before integrating by parts, always check if f(-x) = f(x) (Even, so b_n = 0) or f(-x) = -f(x) (Odd, so a_0 = a_n = 0).",
+        "When evaluating at the endpoints of [-π, π], use the identities cos(nπ) = (-1)^n and sin(nπ) = 0 for every integer n.",
+        "At jump discontinuities of f(x), the Fourier series converges to the midpoint of the left and right limits: (f(x⁺) + f(x⁻))/2."
+      ],
+      faqs: [
+        {
+          q: "How can you tell if Fourier coefficients an or bn are zero without integrating?",
+          a: "By checking parity on a symmetric interval [-L, L]. If f(x) is EVEN (f(-x) = f(x), like x² or |x|), then all sine coefficients bn = 0. If f(x) is ODD (f(-x) = -f(x), like x or sgn(x)), then a0 = 0 and all cosine coefficients an = 0."
+        },
+        {
+          q: "How do you convert trigonometric coefficients (a0, an, bn) to complex exponential coefficients (cn)?",
+          a: "Using Euler's formulas: c0 = a0 / 2, cn = (an - j·bn) / 2 for n ≥ 1, and c_{-n} = (an + j·bn) / 2 (the complex conjugate of cn for real signals)."
+        },
+        {
+          q: "Why is cos(n·π) replaced by (-1)^n in Fourier Series?",
+          a: "Because for integer n, cos(π) = -1, cos(2π) = 1, cos(3π) = -1, which alternates signs exactly as (-1)^n, whereas sin(nπ) = 0 for all integers."
+        },
+        {
+          q: "How do you use a Fourier Series to evaluate numerical series like ∑ 1/n²?",
+          a: "Evaluate the Fourier series at a continuity point (such as x = π or x = 0 for f(x) = x²) or apply Parseval's Theorem."
+        }
+      ]
+    },
+    laplace: {
+      title: "Step-by-Step Laplace Transform & Partial Fractions Calculator",
+      shortTitle: "Laplace Transform",
+      metaDescription: "Step-by-step Direct and Inverse Laplace Transform calculator. Factors the denominator, finds poles, and performs partial fraction decomposition (Heaviside residues) with theoretical explanation.",
+      h1: "Laplace Transform Calculator (Direct & Inverse)",
+      subtitle: "Symbolic resolution in the complex s-plane featuring explicit denominator factorization, pole analysis, and partial fraction decomposition.",
+      directLabel: "Direct Transform F(s) = ℒ{f(t)}",
+      inverseLabel: "Inverse Transform f(t) = ℒ⁻¹{F(s)} (Partial Fractions)",
+      examLabels: ["Partial Fractions (Real Poles)", "Repeated Pole at s = -2", "Complex Conjugate Poles", "Damped Oscillation (Direct)"],
+      guideTitle: "Quick Guide & Key Formulas: Laplace Transform & Partial Fractions",
+      guideIntro: "The Unilateral Laplace Transform converts linear differential equations with initial conditions into algebraic polynomial equations in the complex variable s = σ + jω. To invert F(s) back to the time domain, factor the denominator D(s) and expand into partial fractions.",
+      tips: [
+        "Before expanding into partial fractions, verify that the rational function is strictly proper: degree(N) < degree(D).",
+        "If a quadratic denominator has a negative discriminant (Δ < 0), do not split into complex roots: complete the square (s + α)² + ω² to obtain damped sine and cosine directly.",
+        "Poles located in the open left-half plane (Re(s) < 0) guarantee that the time response f(t) is asymptotically stable."
+      ],
+      faqs: [
+        {
+          q: "How do you compute the Inverse Laplace Transform using partial fractions?",
+          a: "First factor the denominator D(s) to find all poles. Set up a partial fraction sum for simple or repeated poles, compute the Heaviside residues via limits, and invert each elementary fraction using standard Laplace table pairs."
+        },
+        {
+          q: "What should you do when the denominator has complex conjugate roots?",
+          a: "Complete the square in the denominator as (s + α)² + ω² and rearrange the numerator in terms of (s + α) to apply the First Shifting Theorem for e^{-αt}cos(ωt) and e^{-αt}sin(ωt)."
+        },
+        {
+          q: "When is the First Shifting Theorem applied in Laplace Transforms?",
+          a: "Whenever a time function f(t) is multiplied by an exponential e^{-at}. The theorem states L{e^{-at}f(t)} = F(s + a), shifting s → (s + a)."
+        },
+        {
+          q: "Why is the Laplace Transform useful for differential equations and RLC circuits?",
+          a: "Because the differentiation property L{f'(t)} = sF(s) - f(0) turns differential equations into algebraic equations in s while automatically incorporating initial conditions."
+        }
+      ]
+    },
+    ode: {
+      title: "Step-by-Step Differential Equations Calculator (1st & 2nd Order ODEs)",
+      shortTitle: "Differential Equations (ODEs)",
+      metaDescription: "Step-by-step Ordinary Differential Equations (ODE) solver for 1st and 2nd order: separable variables, integrating factor μ(x), characteristic equation, particular solution, and IVP.",
+      h1: "Ordinary Differential Equations (1st & 2nd Order ODEs)",
+      subtitle: "Analytical step-by-step resolution of separable ODEs, 1st-order linear ODEs via integrating factor μ(x), and 2nd-order constant-coefficient ODEs with Initial Value Problems (IVP).",
+      examLabels: ["1st-Order Linear + IVP", "Separable 1st-Order ODE", "2nd-Order Non-Homogeneous", "2nd-Order Harmonic + IVP"],
+      guideTitle: "Quick Guide & Key Formulas: Ordinary Differential Equations (ODEs)",
+      guideIntro: "Ordinary Differential Equations model physical dynamical systems, RLC circuits, and thermal processes. University analytical resolution classifies ODEs according to their order and linearity.",
+      tips: [
+        "Never apply initial conditions y(0), y'(0) to the homogeneous solution y_h(x) alone: always form the complete general solution y(x) = y_h(x) + y_p(x) first.",
+        "In undetermined coefficients, if the forcing term e^{kx} matches a characteristic root r = k of multiplicity m, multiply the trial solution by x^m.",
+        "For a 1st-order linear ODE a(x)y' + b(x)y = c(x), divide by a(x) first so y' has leading coefficient 1 before identifying P(x)."
+      ],
+      faqs: [
+        {
+          q: "How do you solve a first-order linear differential equation using an integrating factor?",
+          a: "Write the ODE in standard form y' + P(x)y = Q(x) and compute μ(x) = e^{∫ P(x) dx}. Multiplying the equation by μ(x) collapses the left side into d/dx[μ(x)·y], so integrating both sides gives y(x) = (∫ μ(x)Q(x) dx + C) / μ(x)."
+        },
+        {
+          q: "How do you build the homogeneous solution of a 2nd-order linear ODE?",
+          a: "Solve the characteristic equation a·r² + b·r + c = 0. Distinct real roots r1, r2 give C1·e^{r1x} + C2·e^{r2x}; a repeated root r gives (C1 + C2·x)e^{rx}; complex conjugate roots α ± jβ give e^{αx}(C1·cos(βx) + C2·sin(βx))."
+        },
+        {
+          q: "When should initial conditions y(0) and y'(0) be substituted in a non-homogeneous ODE?",
+          a: "Always substitute initial conditions into the total general solution y(x) = yh(x) + yp(x), never into yh(x) alone."
+        },
+        {
+          q: "How do you recognize a separable first-order ODE?",
+          a: "An ODE is separable if it can be written as dy/dx = f(x)·g(y). Separate variables as dy/g(y) = f(x)dx and integrate both sides independently."
+        }
+      ]
+    },
+    integrals: {
+      title: "Step-by-Step Indefinite & Definite Integral Calculator",
+      shortTitle: "Step-by-Step Integrals",
+      metaDescription: "Step-by-step indefinite and definite integral calculator powered by SymPy manualintegrate. Shows integration by parts (u and dv), u-substitution, partial fractions, and Fundamental Theorem of Calculus.",
+      h1: "Indefinite & Definite Integrals Step-by-Step",
+      subtitle: "Pedagogical symbolic integration tree breakdown: integration by parts (identifying u and dv), substitution u = g(x), partial fractions, trigonometric identities, and definite evaluation.",
+      directLabel: "Indefinite Integral ∫ f(x) dx",
+      inverseLabel: "Definite Integral ∫_a^b f(x) dx (Barrow)",
+      examLabels: ["Integration by Parts (u, dv)", "u-Substitution u = g(x)", "Rational Partial Fractions", "Definite Integral by Parts"],
+      guideTitle: "Quick Guide & Key Formulas: Integration Techniques & Fundamental Theorem",
+      guideIntro: "Computing antiderivatives requires identifying the algebraic structure of the integrand: u-substitution when an inner derivative is present, integration by parts (LIATE rule) for products of polynomials and exponentials/trigonometric/logarithmic functions, or partial fractions for rational functions.",
+      tips: [
+        "Never forget to add the arbitrary constant of integration '+ C' to every indefinite integral.",
+        "For integrals of the form ∫ P(x)e^{ax} dx or ∫ P(x)cos(ax) dx, always choose the polynomial as u = P(x) to lower its degree upon differentiation.",
+        "For definite integrals in CalcWeb, enter the function followed by a semicolon and the comma-separated limits: f(x) ; a, b."
+      ],
+      faqs: [
+        {
+          q: "How do you choose 'u' and 'dv' in integration by parts?",
+          a: "Follow the LIATE priority rule: choose 'u' as the function appearing earliest in: 1) Logarithmic, 2) Inverse trigonometric, 3) Algebraic (polynomials), 4) Trigonometric, 5) Exponential."
+        },
+        {
+          q: "When should you use u-substitution instead of integration by parts?",
+          a: "Use u-substitution u = g(x) when the integrand contains a composite function f(g(x)) multiplied by the derivative of its inner argument g'(x). Use integration by parts for products of unrelated function families like x·e^{2x}."
+        },
+        {
+          q: "How do you integrate rational functions using partial fractions?",
+          a: "Factor the denominator into linear (x - r) and irreducible quadratic factors. Linear terms integrate to natural logarithms ln|x - r| and quadratic terms integrate to arctan after completing the square."
+        },
+        {
+          q: "How do you evaluate a definite integral using the Fundamental Theorem of Calculus?",
+          a: "First find an antiderivative F(x) such that F'(x) = f(x), then evaluate F(b) - F(a) at the upper and lower limits."
+        }
+      ]
+    },
+    taylor: {
+      title: "Step-by-Step Taylor & Maclaurin Series Calculator",
+      shortTitle: "Taylor & Maclaurin Series",
+      metaDescription: "Step-by-step Taylor and Maclaurin Polynomial and Series calculator around x0 up to order n. Displays all successive derivatives f^(k)(x), their evaluation f^(k)(x0), and the Lagrange remainder.",
+      h1: "Taylor & Maclaurin Series Step-by-Step",
+      subtitle: "Systematic computation of successive derivatives f⁽ᵏ⁾(x), evaluation at the expansion center x₀, and term-by-term assembly of the Taylor polynomial Pₙ(x).",
+      examLabels: ["Maclaurin of e^x (Order 4)", "Maclaurin of cos(x) (Order 6)", "Taylor of ln(x) at x₀=1", "Maclaurin of 1/(1 - x)"],
+      guideTitle: "Quick Guide & Key Formulas: Taylor Polynomials, Maclaurin Series & Lagrange Remainder",
+      guideIntro: "Taylor's Theorem approximates any n-times differentiable function around a center x₀ by a polynomial Pₙ(x) whose derivatives of orders 0 through n match those of f(x) at x = x₀. When centered at the origin (x₀ = 0), it is called a Maclaurin Series.",
+      tips: [
+        "Enter the function, expansion center x₀, and order n separated by semicolons: f(x) ; x0 ; n (for example: ln(x) ; 1 ; 4).",
+        "If a function is even (like cos(x)), all odd derivatives at x₀ = 0 vanish; if it is odd (like sin(x)), all even derivatives vanish.",
+        "To evaluate indeterminate 0/0 limits, replace each function by its Taylor polynomial up to the first non-zero term."
+      ],
+      faqs: [
+        {
+          q: "What is the difference between a Taylor Series and a Maclaurin Series?",
+          a: "A Maclaurin Series is simply the special case of a Taylor Series centered at the origin x0 = 0, expanding in powers of x^k rather than (x - x0)^k."
+        },
+        {
+          q: "How are the coefficients of a Taylor Polynomial of order n computed?",
+          a: "For each k from 0 to n, compute the k-th derivative f^(k)(x), evaluate it at x0 to get f^(k)(x0), and divide by k factorial: c_k = f^(k)(x0) / k!."
+        },
+        {
+          q: "Why can't ln(x) be expanded as a Maclaurin series at x0 = 0?",
+          a: "Because ln(x) and its derivatives (-1)^{k-1}(k-1)!/x^k are undefined at x = 0. Instead, ln(x) is expanded around x0 = 1, or ln(1 + x) is expanded around x0 = 0."
+        },
+        {
+          q: "How do you bound the approximation error of a Taylor Polynomial?",
+          a: "Using the Lagrange Remainder R_n(x) = f^(n+1)(ξ) / (n+1)! · (x - x0)^(n+1) for some ξ between x0 and x."
+        }
+      ]
+    },
+    numseries: {
+      title: "Step-by-Step Numerical Series Convergence & Exact Sum Calculator",
+      shortTitle: "Numerical Series",
+      metaDescription: "Step-by-step infinite Numerical Series convergence and exact sum calculator. Applies necessary condition, D'Alembert ratio test, Cauchy root test, p-series, Leibniz test, and symbolic summation.",
+      h1: "Numerical Series (Convergence Tests & Exact Sum)",
+      subtitle: "Rigorous step-by-step convergence analysis: necessary condition lim aₙ = 0, geometric series, p-series, D'Alembert's ratio test, Cauchy's root test, Leibniz alternating test, and exact sum.",
+      examLabels: ["Geometric Series ∑ 1/2ⁿ", "Necessary Condition (Divergent)", "D'Alembert Factorial ∑ 2ⁿ/n!", "Alternating Leibniz ∑ (-1)ⁿ⁺¹/n"],
+      guideTitle: "Quick Guide & Key Formulas: Convergence Tests & Infinite Series Summation",
+      guideIntro: "Analyzing an infinite numerical series ∑ aₙ consists of determining whether the sequence of partial sums S_N converges to a finite limit as N → ∞. Always start by checking the necessary condition: if lim_{n→∞} aₙ ≠ 0, the series diverges immediately.",
+      tips: [
+        "Always check lim_{n→∞} a_n first: if it is non-zero, the series diverges in a single step.",
+        "If the general term is a rational quotient P(n)/Q(n), compare asymptotically with the p-series 1/n^{deg(Q) - deg(P)}.",
+        "For a geometric series ∑ r^n starting at n = n₀, the exact sum is always (first term) / (1 - ratio) = r^{n₀} / (1 - r)."
+      ],
+      faqs: [
+        {
+          q: "If the limit of the general term lim a_n equals 0, does the series always converge?",
+          a: "No. Having lim_{n→∞} a_n = 0 is a necessary condition, NOT a sufficient one. For example, the harmonic series ∑ 1/n satisfies lim 1/n = 0 yet diverges to infinity."
+        },
+        {
+          q: "When should you use D'Alembert's Ratio Test vs. Cauchy's Root Test?",
+          a: "Use D'Alembert's Ratio Test (lim |a_{n+1}/a_n|) when a_n involves factorials (n!) or products, and Cauchy's Root Test (lim ⁿ√|a_n|) when the entire term is raised to the power n."
+        },
+        {
+          q: "What is the difference between absolute convergence and conditional convergence?",
+          a: "A series converges absolutely if ∑ |a_n| converges. It converges conditionally if ∑ a_n converges (e.g., by Leibniz's test) while ∑ |a_n| diverges (such as ∑ (-1)^{n+1}/n = ln 2)."
+        },
+        {
+          q: "How do you find the exact sum of a geometric or telescoping series?",
+          a: "For a convergent geometric series (|r| < 1) starting at n0, S = r^{n0} / (1 - r). For a telescoping series like ∑ 1/(n(n+1)), expand into partial fractions 1/n - 1/(n+1) so intermediate terms cancel."
+        }
+      ]
+    },
+    matrix: {
+      title: "Step-by-Step 2x2 & 3x3 Matrix Diagonalization Calculator",
+      shortTitle: "Matrix Diagonalization",
+      metaDescription: "Step-by-step 2x2 and 3x3 Matrix Diagonalization calculator. Computes the characteristic polynomial |A - λI| = 0, eigenvalues, eigenvectors, invertible matrix P, and diagonal matrix D.",
+      h1: "Matrix Diagonalization (2×2 & 3×3)",
+      subtitle: "Detailed computation of the characteristic equation |A - λI| = 0, eigenvalue spectrum, homogeneous linear systems for each eigenspace, modal matrix P, and diagonal matrix D.",
+      examLabels: ["2×2 Matrix (Distinct Eigenvalues)", "2×2 Real Symmetric Matrix", "3×3 Diagonalizable Matrix", "2×2 Non-Diagonalizable (Jordan)"],
+      guideTitle: "Quick Guide & Key Formulas: Spectral Matrix Diagonalization A = P·D·P⁻¹",
+      guideIntro: "A square matrix A ∈ ℝ^{n×n} is diagonalizable if and only if ℝ^n admits a basis consisting entirely of eigenvectors of A. In that eigenbasis, the linear transformation simply scales each coordinate axis by its eigenvalue λ_i, enabling instant computation of matrix powers A^k = P·D^k·P⁻¹.",
+      tips: [
+        "Always verify that the sum of all eigenvalues equals trace(A) and their product equals det(A).",
+        "If all eigenvalues are real and distinct (algebraic multiplicity m_a = 1 each), the matrix is guaranteed to be diagonalizable.",
+        "When an eigenvalue has algebraic multiplicity m_a = 2, check immediately whether rank(A - λI) = n - 2; otherwise the matrix is defective and requires Jordan form."
+      ],
+      faqs: [
+        {
+          q: "How do you know if a square matrix A is diagonalizable?",
+          a: "A matrix A of size n×n is diagonalizable over ℝ if and only if the sum of algebraic multiplicities of its real eigenvalues equals n, and for every eigenvalue λ_i its geometric multiplicity m_g(λ_i) = n - rank(A - λ_i·I) equals its algebraic multiplicity m_a(λ_i)."
+        },
+        {
+          q: "How do you construct the modal matrix P and diagonal matrix D?",
+          a: "Place the eigenvalues λ_1, ..., λ_n along the main diagonal of D, and place the corresponding linearly independent eigenvectors v_1, ..., v_n as columns of P in the exact same column order."
+        },
+        {
+          q: "Why is every real symmetric matrix diagonalizable?",
+          a: "By the Real Spectral Theorem: every real symmetric matrix (A = A^T) has only real eigenvalues and mutually orthogonal eigenspaces, so it is always orthogonally diagonalizable."
+        },
+        {
+          q: "Why is diagonalizing a matrix useful in engineering (A = P·D·P⁻¹)?",
+          a: "It reduces high matrix powers A^k = P·D^k·P⁻¹ and matrix exponentials e^{At} = P·e^{Dt}·P⁻¹ to raising or exponentiating scalar diagonal entries."
+        }
+      ]
+    },
+    gauss: {
+      title: "Step-by-Step Gauss-Jordan & Rouché–Capelli Linear Systems Calculator",
+      shortTitle: "Linear Systems (Gauss-Jordan)",
+      metaDescription: "Step-by-step solver for linear systems Ax = b (2x2, 3x3, 4x4) using Gauss-Jordan elimination and the Rouché–Capelli theorem. Displays elementary row operations and RREF.",
+      h1: "Systems of Linear Equations (Gauss-Jordan & Rouché–Capelli)",
+      subtitle: "Step-by-step Gaussian elimination showing every elementary row operation (Fᵢ ← Fᵢ + αFⱼ) on the augmented matrix (A|b), rank calculation, and consistency classification.",
+      examLabels: ["3×3 Unique Solution (Consistent)", "3×3 Infinite Solutions (Underdetermined)", "3×3 Inconsistent System (No Solution)", "4×4 Unique Solution System"],
+      guideTitle: "Quick Guide & Key Formulas: Gauss-Jordan Elimination & Rouché–Capelli Theorem",
+      guideIntro: "Gauss-Jordan elimination transforms the augmented matrix (A|b) of a linear system Ax = b into its Reduced Row Echelon Form (RREF) via elementary row operations. The Rouché–Capelli theorem classifies existence and uniqueness by comparing rank(A) and rank(A|b).",
+      tips: [
+        "Enter each row of the augmented matrix (A|b) separating coefficients with commas and rows with a semicolon ';'. The last number in each row is the constant b_i.",
+        "If a row of the form (0  0  0 | c) with c ≠ 0 appears during elimination, stop immediately: rank(A) < rank(A|b) and the system is inconsistent.",
+        "Always swap in a row with a leading 1 as pivot to avoid fractions as long as possible."
+      ],
+      faqs: [
+        {
+          q: "How do you classify a linear system using the Rouché–Capelli (Rouché–Frobenius) theorem?",
+          a: "Compare rank(A), rank(A|b), and the number of unknowns n. If rank(A) < rank(A|b), the system is Inconsistent (no solution). If rank(A) = rank(A|b) = n, it has a Unique Solution. If rank(A) = rank(A|b) < n, it has Infinitely Many Solutions with n - rank(A) free parameters."
+        },
+        {
+          q: "What is the difference between Gaussian elimination and Gauss-Jordan elimination?",
+          a: "Gaussian elimination only zeroes entries below each pivot to reach upper triangular form, whereas Gauss-Jordan elimination normalizes pivots to 1 and zeroes entries both above and below each pivot (RREF)."
+        },
+        {
+          q: "Which elementary row operations are allowed in Gauss-Jordan elimination?",
+          a: "1) Swapping two rows (Fi ↔ Fj), 2) Multiplying a row by a non-zero scalar (Fi ← k·Fi), and 3) Adding a scalar multiple of one row to another (Fi ← Fi + α·Fj)."
+        },
+        {
+          q: "How do you identify free variables in an underdetermined system?",
+          a: "In RREF, columns containing a leading 1 pivot correspond to basic variables, whereas columns without a pivot correspond to free parameters (λ, μ)."
+        }
+      ]
+    },
+    phasors: {
+      title: "Step-by-Step AC Phasor & Complex Numbers Calculator",
+      shortTitle: "Phasors & AC Circuits",
+      metaDescription: "Phasor and complex number calculator for AC Circuit Analysis. Mix rectangular (a+bj) and polar (M∠θ°) forms, convert step-by-step with quadrant adjustment, and solve 2x2/3x3 complex mesh systems.",
+      h1: "AC Circuit Phasors & Complex Numbers Calculator",
+      subtitle: "Mixed arithmetic in rectangular (a + bj) and polar (M∠θ°) form, detailed magnitude and quadrant-aware angle conversion, and 2×2 / 3×3 AC mesh/nodal linear systems.",
+      directLabel: "Phasor Arithmetic & Conversion (a+bj ↔ M∠θ°)",
+      inverseLabel: "Complex 2×2 / 3×3 AC System (Mesh / Nodal)",
+      examLabels: ["Mixed Rectangular × Polar", "Parallel Equivalent Impedance", "2nd Quadrant Conversion (-3+4j)", "2×2 AC Mesh Current System"],
+      guideTitle: "Quick Guide & Key Formulas: Phasor Algebra & Sinusoidal Steady-State Analysis",
+      guideIntro: "In AC Circuit Theory, the Steinmetz phasor transform converts linear integro-differential equations under sinusoidal excitation v(t) = V_m cos(ωt + φ) into complex linear algebraic systems where inductors have impedance Z_L = jωL and capacitors have impedance Z_C = -j/(ωC).",
+      tips: [
+        "To enter a polar phasor with angle in degrees, use '<' or '∠': for example 10<30 or 10∠-45.",
+        "Before adding or subtracting two polar phasors (e.g. 5<30 + 4<-60), always convert them to rectangular form a + bj.",
+        "In a passive AC mesh system without dependent sources, the impedance matrix Z is symmetric across the main diagonal."
+      ],
+      faqs: [
+        {
+          q: "How do you convert a complex number from rectangular (a + bj) to polar (M∠θ°) form?",
+          a: "Compute magnitude via Pythagoras M = √(a² + b²) and angle via arctan(b/a) with quadrant adjustment: if real part 'a' is negative (2nd or 3rd quadrant), add 180° (for b ≥ 0) or subtract 180° (for b < 0)."
+        },
+        {
+          q: "How do you convert a polar phasor (M∠θ°) to rectangular form?",
+          a: "Apply Euler's formula M·e^{jθ} = M·cos(θ) + j·M·sin(θ), where a = M·cos(θ) and b = M·sin(θ) with θ in degrees."
+        },
+        {
+          q: "Which form is best for adding, subtracting, multiplying, or dividing phasors?",
+          a: "Use rectangular form (a + bj) for addition and subtraction, and polar form (M∠θ°) for multiplication and division."
+        },
+        {
+          q: "How do you solve AC mesh or nodal equations?",
+          a: "Form the complex matrix equation Z·I = V using impedances R, jωL, and -j/(ωC), then apply complex Cramer's rule or Gaussian elimination to obtain each current in polar form I_m∠φ°."
+        }
+      ]
+    }
+  },
+  fr: {
+    fourier: {
+      title: "Calculatrice de Transformée de Fourier Étape par Étape",
+      shortTitle: "Transformée de Fourier",
+      metaDescription: "Calculatrice en ligne de Transformée de Fourier directe et inverse étape par étape. Résout exponentielles causales e^(-at)u(t), impulsions rect(t), cosinus et deltas de Dirac 100% dans le navigateur.",
+      h1: "Transformée de Fourier (Directe et Inverse)",
+      subtitle: "Analyse spectrale continue en pulsation ω avec détail de l'intégrale impropre, identités d'Euler et propriétés des tables.",
+      directLabel: "Transformée Directe F(ω) = ℱ{f(t)}",
+      inverseLabel: "Transformée Inverse f(t) = ℱ⁻¹{F(ω)}",
+      examLabels: ["Exponentielle causale", "Impulsion rectangulaire", "Porteuse harmonique", "Train d'impulsions de Dirac"],
+      guideTitle: "Guide Rapide et Formules Clés : Transformée de Fourier en Ingénierie",
+      guideIntro: "En théorie du Traitement du Signal, la Transformée de Fourier continue décompose un signal temporel apériodique f(t) en sa densité spectrale de pulsation ω (rad/s). L'introduction de l'impulsion de Dirac δ(ω) permet de transformer les signaux périodiques et continus.",
+      tips: [
+        "Vérifiez toujours si le signal est multiplié par l'échelon u(t) : cela réduit la borne inférieure d'intégration de -∞ à 0.",
+        "Pour transformer des fonctions trigonométriques pures, utilisez l'identité d'Euler afin de passer aux exponentielles complexes.",
+        "Un retard temporel t → (t - t₀) ne modifie pas le module du spectre |F(ω)|, il ajoute uniquement un déphasage linéaire -ω·t₀."
+      ],
+      faqs: [
+        {
+          q: "Comment calculer la Transformée de Fourier d'une exponentielle causale e^(-at)u(t) ?",
+          a: "Comme l'échelon de Heaviside u(t) s'annule pour t < 0, les bornes de l'intégrale passent de (-∞, ∞) à [0, ∞). En regroupant les exposants en e^{-(a + jω)t}, la primitive converge pour Re(a) > 0 vers F(ω) = 1 / (a + jω)."
+        },
+        {
+          q: "Quelle est la Transformée de Fourier d'une porte rectangulaire rect(t/T) ?",
+          a: "Une impulsion rectangulaire d'amplitude A et de largeur T vaut A sur [-T/2, T/2]. En intégrant e^{-jωt} sur cet intervalle et en appliquant la formule d'Euler, on obtient le sinus cardinal : F(ω) = A·T·sinc(ωT/2)."
+        },
+        {
+          q: "Pourquoi la Transformée de Fourier de cos(ω0·t) contient-elle des impulsions de Dirac ?",
+          a: "Car cos(ω0·t) est un signal périodique d'énergie infinie. En décomposant cos(ω0·t) = (e^{jω0t} + e^{-jω0t})/2 par Euler, son spectre se concentre en deux impulsions de Dirac situées en ±ω0 : F(ω) = π[δ(ω - ω0) + δ(ω + ω0)]."
+        },
+        {
+          q: "Quelle est la différence entre la Transformée de Fourier en pulsation ω et en fréquence f (Hz) ?",
+          a: "Avec la convention en pulsation ω = 2πf (rad/s), le facteur 1/(2π) n'apparaît que dans l'intégrale de synthèse inverse."
+        }
+      ]
+    },
+    ztransform: {
+      title: "Calculatrice de Transformée en Z Directe et Inverse Étape par Étape",
+      shortTitle: "Transformée en Z",
+      metaDescription: "Calculatrice en ligne de Transformée en Z directe et inverse étape par étape. Affiche la division X(z)/z, la décomposition en éléments simples et l'inversion par tables.",
+      h1: "Transformée en Z (Directe et Inverse)",
+      subtitle: "Analyse des signaux et systèmes à temps discret avec division explicite X(z)/z, décomposition en éléments simples et application des tables causales.",
+      directLabel: "Transformée en Z Directe X(z) = 𝒫{x[n]}",
+      inverseLabel: "Transformée en Z Inverse x[n] = 𝒫⁻¹{X(z)} (Méthode X(z)/z)",
+      examLabels: ["Inverse (Pôles simples X(z)/z)", "Inverse (Deux pôles réels)", "Inverse (Pôle double z = 2)", "Directe (Géométrique + rampe)"],
+      guideTitle: "Guide Rapide et Formules Clés : Transformée en Z en Traitement Numérique (DSP)",
+      guideIntro: "La Transformée en Z est l'équivalent discret de la Transformée de Laplace pour analyser les filtres numériques FIR/IIR et les équations aux différences. Pour calculer la Transformée en Z Inverse par éléments simples, divisez toujours d'abord par z pour former X(z)/z.",
+      tips: [
+        "Ne décomposez jamais directement X(z) en éléments simples : divisez toujours d'abord par z pour décomposer X(z)/z puis multipliez par z à la fin.",
+        "Un système LTI discret causal est BIBO-stable si et seulement si tous les pôles de H(z) sont strictement à l'intérieur du cercle unité (|p_k| < 1).",
+        "Si un terme A₀/z apparaît dans X(z)/z, la multiplication par z donne la constante A₀, dont l'antécédent est l'impulsion unité A₀·δ[n]."
+      ],
+      faqs: [
+        {
+          q: "Pourquoi divise-t-on par z (en formant X(z)/z) pour calculer la Transformée en Z Inverse ?",
+          a: "Parce que les paires fondamentales des tables en Z, comme Z{a^n u[n]} = z/(z - a), possèdent un facteur z au numérateur. En décomposant X(z)/z en A_k/(z - p_k) puis en remultipliant par z, on obtient directement des blocs A_k·z/(z - p_k)."
+        },
+        {
+          q: "Comment savoir si un filtre numérique H(z) est stable ?",
+          a: "Un filtre numérique causal est BIBO-stable si et seulement si tous les pôles de sa fonction de transfert H(z) ont un module strictement inférieur à 1 (|p_k| < 1)."
+        },
+        {
+          q: "Comment calculer la Transformée en Z d'une rampe exponentielle n·a^n·u[n] ?",
+          a: "En appliquant la propriété de dérivation dans le domaine Z : Z{n·x[n]} = -z·d/dz X(z) sur z/(z - a), ce qui donne a·z / (z - a)²."
+        },
+        {
+          q: "Que représente la Région de Convergence (ROC) de la Transformée en Z ?",
+          a: "La ROC est la couronne du plan complexe z où la série ∑ x[n]z^{-n} converge absolument. Pour une suite causale, c'est l'extérieur du cercle passant par le pôle de plus grand module : |z| > max|p_k|."
+        }
+      ]
+    },
+    convolution: {
+      title: "Calculatrice de Convolution Continue et Discrète Étape par Étape",
+      shortTitle: "Convolution Continue et Discrète",
+      metaDescription: "Calculatrice étape par étape de Convolution Continue x(t)*h(t) et Discrète x[n]*h[n]. Détaille le retournement et décalage h(t-τ), les bornes par échelons u(t) et l'intégration symbolique.",
+      h1: "Convolution Continue x(t) * h(t) et Discrète x[n] * h[n]",
+      subtitle: "Calcul analytique de la réponse des systèmes LTI par intégrale ou somme de convolution, détaillant retournement temporel, décalage et bornes actives par échelons.",
+      directLabel: "Convolution Continue y(t) = x(t) * h(t)",
+      inverseLabel: "Convolution Discrète y[n] = x[n] * h[n]",
+      examLabels: ["Deux exponentielles causales", "Réponse indicielle RC", "Discrète (Exponentielle * Échelon)", "Discrète (Séquences finies FIR)"],
+      guideTitle: "Guide Rapide et Formules Clés : Intégrale et Somme de Convolution des Systèmes LTI",
+      guideIntro: "Le produit de convolution détermine la sortie y(t) ou y[n] de tout système Linéaire Invariant dans le Temps (LTI) à partir de sa réponse impulsionnelle h(t) ou h[n]. La méthode comporte 4 étapes : retournement h(-τ), décalage h(t - τ), intersection des échelons u(τ)·u(t - τ) et intégration.",
+      tips: [
+        "Séparez toujours les deux signaux par un point-virgule ';' dans le champ de saisie : d'abord x(t) puis h(t).",
+        "Lors de la convolution de deux signaux causaux multipliés par u(t), n'oubliez pas de multiplier le résultat final par u(t).",
+        "En convolution discrète de deux suites finies de longueurs N et M, la suite résultante a pour longueur exacte L = N + M - 1."
+      ],
+      faqs: [
+        {
+          q: "Comment déterminer les bornes d'intégration dans une convolution avec échelons u(t) ?",
+          a: "Dans ∫ x(τ)h(t - τ) dτ, le produit u(τ)·u(t - τ) impose τ ≥ 0 et t - τ ≥ 0 (soit τ ≤ t). Pour t ≥ 0, les bornes (-∞, ∞) se réduisent donc à l'intervalle fini [0, t]."
+        },
+        {
+          q: "Quelle est la longueur de la convolution discrète de deux séquences finies ?",
+          a: "Si l'entrée x[n] comporte N échantillons et la réponse impulsionnelle FIR h[n] en comporte M, la sortie y[n] comporte exactement L = N + M - 1 échantillons."
+        },
+        {
+          q: "Comment vérifier le résultat d'un produit de convolution ?",
+          a: "Grâce au Théorème de Plancherel/Convolution dans le domaine de Laplace : calculez Y(s) = X(s)·H(s) puis prenez la transformée inverse par éléments simples."
+        },
+        {
+          q: "Que donne la convolution d'un signal x(t) avec une impulsion de Dirac δ(t - t0) ?",
+          a: "L'impulsion de Dirac est l'élément neutre de la convolution : x(t) * δ(t - t0) = x(t - t0), ce qui décale simplement le signal à l'instant t0."
+        }
+      ]
+    },
+    fourierseries: {
+      title: "Calculatrice de Séries de Fourier (Trigonométrique et Exponentielle) Étape par Étape",
+      shortTitle: "Séries de Fourier",
+      metaDescription: "Calculatrice en ligne de Séries de Fourier trigonométrique (a0, an, bn) et exponentielle complexe (cn) étape par étape sur [-L, L]. Analyse la parité, les intégrales et le développement à l'harmonique N.",
+      h1: "Séries de Fourier (Trigonométrique a₀, aₙ, bₙ et Exponentielle cₙ)",
+      subtitle: "Décomposition harmonique des signaux périodiques sur [-L, L] avec analyse préalable de la parité paire/impaire, calcul explicite des intégrales et somme partielle d'ordre N.",
+      directLabel: "Série Trigonométrique (a₀, aₙ, bₙ)",
+      inverseLabel: "Série Exponentielle Complexe (cₙ)",
+      examLabels: ["Dent de scie f(x) = x", "Signal carré f(x) = sgn(x)", "Parabole paire f(x) = x²", "Onde triangulaire f(x) = |x|"],
+      guideTitle: "Guide Rapide et Formules Clés : Séries de Fourier et Propriétés de Symétrie",
+      guideIntro: "Tout signal périodique de période T = 2L vérifiant les conditions de Dirichlet peut se décomposer en une somme infinie d'harmoniques sinusoïdaux de pulsations multiples de ω₀ = π/L. L'étude de la parité (fonction paire ou impaire) avant d'intégrer divise par deux les calculs en examen.",
+      tips: [
+        "Avant toute intégration par parties, vérifiez toujours si f(-x) = f(x) (Paire, donc b_n = 0) ou si f(-x) = -f(x) (Impaire, donc a_0 = a_n = 0).",
+        "Lors de l'évaluation aux bornes de [-π, π], utilisez cos(nπ) = (-1)^n et sin(nπ) = 0 pour tout entier n.",
+        "Aux points de discontinuité de première espèce, la série de Fourier converge vers la demi-somme des limites à gauche et à droite : (f(x⁺) + f(x⁻))/2 (Théorème de Dirichlet)."
+      ],
+      faqs: [
+        {
+          q: "Comment savoir si les coefficients an ou bn d'une Série de Fourier sont nuls sans intégrer ?",
+          a: "En étudiant la parité de f(x) sur un intervalle symétrique [-L, L]. Si f(x) est PAIRE (f(-x) = f(x), comme x² ou |x|), tous les coefficients bn = 0. Si f(x) est IMPAIRE (f(-x) = -f(x), comme x ou sgn(x)), alors a0 = 0 et tous les coefficients an = 0."
+        },
+        {
+          q: "Comment passer des coefficients trigonométriques (a0, an, bn) aux coefficients exponentiels complexes (cn) ?",
+          a: "Par les formules d'Euler : c0 = a0 / 2, cn = (an - j·bn) / 2 pour n ≥ 1 et c_{-n} = (an + j·bn) / 2."
+        },
+        {
+          q: "Pourquoi remplace-t-on cos(n·π) par (-1)^n dans les Séries de Fourier ?",
+          a: "Parce que pour tout entier n, cos(π) = -1, cos(2π) = 1, cos(3π) = -1, ce qui correspond exactement à (-1)^n, tandis que sin(nπ) = 0."
+        },
+        {
+          q: "Comment utiliser une Série de Fourier pour calculer la somme d'une série numérique comme ∑ 1/n² ?",
+          a: "On évalue la Série de Fourier en un point de continuité (par exemple x = π ou x = 0 pour f(x) = x²) ou on applique l'égalité de Parseval."
+        }
+      ]
+    },
+    laplace: {
+      title: "Calculatrice de Transformée de Laplace et Éléments Simples Étape par Étape",
+      shortTitle: "Transformée de Laplace",
+      metaDescription: "Calculatrice étape par étape de Transformée de Laplace directe et inverse. Factorise le dénominateur, calcule les pôles et décompose en éléments simples (résidus de Heaviside).",
+      h1: "Transformée de Laplace (Directe et Inverse)",
+      subtitle: "Résolution symbolique dans le plan complexe s avec factorisation explicite du dénominateur, calcul des pôles et décomposition en éléments simples.",
+      directLabel: "Transformée Directe F(s) = ℒ{f(t)}",
+      inverseLabel: "Transformée Inverse f(t) = ℒ⁻¹{F(s)} (Éléments Simples)",
+      examLabels: ["Éléments simples (Pôles réels)", "Pôle multiple en s = -2", "Pôles complexes conjugués", "Oscillation amortie (Directe)"],
+      guideTitle: "Guide Rapide et Formules Clés : Transformée de Laplace et Éléments Simples",
+      guideIntro: "La Transformée de Laplace Unilatérale convertit les équations différentielles linéaires avec conditions initiales en équations algébriques polynomiales en la variable complexe s. Pour revenir au domaine temporel, on factorise le dénominateur D(s) et on décompose F(s) en éléments simples.",
+      tips: [
+        "Avant de décomposer en éléments simples, vérifiez que la fraction rationnelle est strictement propre : degré(N) < degré(D).",
+        "Si le discriminant d'un dénominateur du second ordre est négatif (Δ < 0), mettez-le sous forme canonique (s + α)² + ω² pour faire apparaître cosinus et sinus amortis.",
+        "Des pôles situés dans le demi-plan gauche (Re(s) < 0) garantissent la stabilité asymptotique de la réponse temporelle f(t)."
+      ],
+      faqs: [
+        {
+          q: "Comment calculer la Transformée de Laplace Inverse par décomposition en éléments simples ?",
+          a: "On factorise d'abord le dénominateur D(s) pour localiser ses pôles, on écrit la décomposition en éléments simples associée aux pôles simples ou multiples, on calcule les résidus par la méthode de Heaviside, puis on inverse chaque terme via les tables."
+        },
+        {
+          q: "Que faire lorsque le dénominateur possède des racines complexes conjuguées ?",
+          a: "On met le trinôme du dénominateur sous forme canonique (s + α)² + ω² et on ajuste le numérateur en fonction de (s + α) pour obtenir directement e^{-αt}cos(ωt) et e^{-αt}sin(ωt)."
+        },
+        {
+          q: "Quand applique-t-on le Premier Théorème de Décalage en Laplace ?",
+          a: "Dès qu'un signal temporel f(t) est multiplié par une exponentielle e^{-at} : L{e^{-at}f(t)} = F(s + a)."
+        },
+        {
+          q: "Pourquoi la Transformée de Laplace est-elle indispensable pour les équations différentielles et circuits RLC ?",
+          a: "Grâce à la propriété L{f'(t)} = sF(s) - f(0), elle transforme les équations différentielles en équations algébriques en intégrant dès le départ les conditions initiales."
+        }
+      ]
+    },
+    ode: {
+      title: "Calculatrice d'Équations Différentielles (EDO 1er et 2nd Ordre) Étape par Étape",
+      shortTitle: "Équations Différentielles (EDO)",
+      metaDescription: "Solveur étape par étape d'Équations Différentielles Ordinaires (EDO) du 1er et 2nd ordre : variables séparables, facteur intégrant μ(x), équation caractéristique et problème de Cauchy.",
+      h1: "Équations Différentielles Ordinaires (1er et 2nd Ordre)",
+      subtitle: "Résolution analytique étape par étape des EDO à variables séparables, linéaires du 1er ordre par facteur intégrant μ(x) et linéaires du 2nd ordre avec conditions initiales.",
+      examLabels: ["Linéaire 1er Ordre + Cauchy", "Variables Séparables 1er Ordre", "2nd Ordre Non Homogène", "2nd Ordre Harmonique + Cauchy"],
+      guideTitle: "Guide Rapide et Formules Clés : Équations Différentielles Ordinaires (EDO)",
+      guideIntro: "Les Équations Différentielles Ordinaires modélisent les systèmes dynamiques physiques, les circuits électriques RLC et les transferts thermiques. Leur résolution analytique dépend de l'ordre et de la linéarité de l'équation.",
+      tips: [
+        "N'appliquez jamais les conditions initiales y(0), y'(0) sur la seule solution homogène y_h(x) : formez d'abord la solution générale complète y(x) = y_h(x) + y_p(x).",
+        "Avec la méthode des coefficients indéterminés, si le second membre e^{kx} correspond à une racine caractéristique r = k de multiplicité m, multipliez la solution particulière d'essai par x^m.",
+        "Pour une EDO linéaire du premier ordre a(x)y' + b(x)y = c(x), divisez d'abord par a(x) pour normaliser le coefficient de y' à 1."
+      ],
+      faqs: [
+        {
+          q: "Comment résoudre une équation différentielle linéaire du premier ordre avec un facteur intégrant ?",
+          a: "On met l'EDO sous forme normalisée y' + P(x)y = Q(x) puis on calcule le facteur intégrant μ(x) = e^{∫ P(x) dx}. En multipliant l'équation par μ(x), le membre de gauche devient la dérivée exacte (μ(x)·y)', ce qui donne y(x) = (∫ μ(x)Q(x) dx + C) / μ(x)."
+        },
+        {
+          q: "Comment construire la solution homogène d'une EDO linéaire du 2nd ordre ?",
+          a: "On résout l'équation caractéristique a·r² + b·r + c = 0. Deux racines réelles distinctes donnent C1·e^{r1x} + C2·e^{r2x} ; une racine double r donne (C1 + C2·x)e^{rx} ; des racines complexes conjuguées α ± jβ donnent e^{αx}(C1·cos(βx) + C2·sin(βx))."
+        },
+        {
+          q: "Quand faut-il utiliser les conditions initiales y(0) et y'(0) dans un problème de Cauchy ?",
+          a: "Toujours sur la solution générale complète y(x) = yh(x) + yp(x), après avoir additionné la solution particulière."
+        },
+        {
+          q: "Comment reconnaître une équation différentielle à variables séparables ?",
+          a: "Une EDO du 1er ordre est à variables séparables si elle s'écrit dy/dx = f(x)·g(y). On sépare alors les variables sous la forme dy/g(y) = f(x)dx avant d'intégrer chaque membre."
+        }
+      ]
+    },
+    integrals: {
+      title: "Calculatrice d'Intégrales Indéfinies et Définies Étape par Étape",
+      shortTitle: "Intégrales Étape par Étape",
+      metaDescription: "Calculatrice d'intégrales indéfinies et définies étape par étape avec SymPy manualintegrate. Affiche l'intégration par parties (u et dv), le changement de variable et les éléments simples.",
+      h1: "Intégrales Indéfinies et Définies Étape par Étape",
+      subtitle: "Détail pédagogique de l'arbre d'intégration symbolique : intégration par parties (choix de u et dv), changement de variable u = g(x), éléments simples et calcul intégral défini.",
+      directLabel: "Intégrale Indéfinie ∫ f(x) dx",
+      inverseLabel: "Intégrale Définie ∫_a^b f(x) dx",
+      examLabels: ["Intégration par parties (u, dv)", "Changement de variable u = g(x)", "Fraction rationnelle", "Intégrale définie par parties"],
+      guideTitle: "Guide Rapide et Formules Clés : Techniques d'Intégration et Primitives",
+      guideIntro: "Le calcul de primitives repose sur l'identification de la structure de l'intégrande : changement de variable lorsqu'apparaît la dérivée d'une fonction composée, intégration par parties (règle ALPES) pour les produits polynôme × exponentielle/trigonométrique/logarithme, ou décomposition en éléments simples.",
+      tips: [
+        "N'oubliez jamais d'ajouter la constante d'intégration '+ C' à la fin de toute intégrale indéfinie.",
+        "Pour les intégrales du type ∫ P(x)e^{ax} dx ou ∫ P(x)cos(ax) dx, choisissez toujours le polynôme comme u = P(x) afin d'abaisser son degré en dérivant.",
+        "Pour une intégrale définie dans CalcWeb, saisissez la fonction suivie d'un point-virgule et des bornes séparées par une virgule : f(x) ; a, b."
+      ],
+      faqs: [
+        {
+          q: "Comment choisir 'u' et 'dv' lors d'une intégration par parties ?",
+          a: "Utilisez la règle mnémotechnique ALPES : choisissez pour 'u' la fonction qui apparaît en premier parmi : 1) Arcsin/Arctan (Inverses), 2) Logarithmes, 3) Polynômes, 4) Exponentielles, 5) Sinus/Cosinus."
+        },
+        {
+          q: "Quand appliquer un changement de variable plutôt qu'une intégration par parties ?",
+          a: "Le changement de variable u = g(x) s'applique lorsque l'intégrande contient une fonction composée f(g(x)) multipliée par sa dérivée interne g'(x). L'intégration par parties s'utilise pour un produit de fonctions indépendantes comme x·e^{2x}."
+        },
+        {
+          q: "Comment intégrer une fraction rationnelle par éléments simples ?",
+          a: "On factorise le dénominateur en facteurs linéaires (x - r) qui s'intègrent en logarithmes ln|x - r|, et en facteurs quadratiques irréductibles qui s'intègrent en arctan."
+        },
+        {
+          q: "Comment calculer une intégrale définie entre a et b ?",
+          a: "On détermine d'abord une primitive F(x) de f(x), puis on calcule la différence F(b) - F(a) entre la borne supérieure et la borne inférieure."
+        }
+      ]
+    },
+    taylor: {
+      title: "Calculatrice de Séries de Taylor et Maclaurin Étape par Étape",
+      shortTitle: "Séries de Taylor et Maclaurin",
+      metaDescription: "Calculatrice étape par étape du Polynôme et Développement Limité de Taylor et Maclaurin en x0 à l'ordre n. Affiche toutes les dérivées successives f^(k)(x) et leur évaluation f^(k)(x0).",
+      h1: "Séries de Taylor et Maclaurin Étape par Étape",
+      subtitle: "Calcul systématique des dérivées successives f⁽ᵏ⁾(x), évaluation au point de développement x₀ et assemblage terme à terme du polynôme de Taylor Pₙ(x).",
+      examLabels: ["Maclaurin de e^x (Ordre 4)", "Maclaurin de cos(x) (Ordre 6)", "Taylor de ln(x) en x₀ = 1", "Maclaurin de 1/(1 - x)"],
+      guideTitle: "Guide Rapide et Formules Clés : Polynômes de Taylor, Maclaurin et Reste de Lagrange",
+      guideIntro: "La formule de Taylor permet d'approcher toute fonction n fois dérivable au voisinage d'un point x₀ par un polynôme Pₙ(x) dont les dérivées d'ordre 0 à n coïncident avec celles de f(x) en x = x₀. Lorsque x₀ = 0, on parle de développement de Maclaurin.",
+      tips: [
+        "Saisissez la fonction, le centre x₀ et l'ordre n séparés par des points-virgules : f(x) ; x0 ; n (par exemple : ln(x) ; 1 ; 4).",
+        "Si la fonction est paire (comme cos(x)), toutes ses dérivées d'ordre impair en x₀ = 0 sont nulles ; si elle est impaire (comme sin(x)), les dérivées paires s'annulent.",
+        "Pour lever une forme indéterminée 0/0 dans une limite, remplacez chaque fonction par son développement limité de Taylor."
+      ],
+      faqs: [
+        {
+          q: "Quelle est la différence entre une Série de Taylor et une Série de Maclaurin ?",
+          a: "La Série de Maclaurin est le cas particulier de la Série de Taylor lorsque le centre de développement est l'origine x0 = 0."
+        },
+        {
+          q: "Comment calcule-t-on les coefficients d'un Polynôme de Taylor d'ordre n ?",
+          a: "Pour chaque entier k de 0 à n, on calcule la dérivée k-ième f^(k)(x), on l'évalue en x0 et on divise par la factorielle k! : c_k = f^(k)(x0) / k!."
+        },
+        {
+          q: "Pourquoi ne peut-on pas développer ln(x) en série de Maclaurin en x0 = 0 ?",
+          a: "Parce que ln(x) et ses dérivées ne sont pas définies en x = 0. On développe donc ln(x) au voisinage de x0 = 1, ou bien ln(1 + x) en x0 = 0."
+        },
+        {
+          q: "Comment majorer l'erreur d'approximation d'un Polynôme de Taylor ?",
+          a: "Grâce à la formule du Reste de Lagrange R_n(x) = f^(n+1)(ξ) / (n+1)! · (x - x0)^(n+1) pour un ξ compris entre x0 et x."
+        }
+      ]
+    },
+    numseries: {
+      title: "Calculatrice de Séries Numériques (Convergence et Somme) Étape par Étape",
+      shortTitle: "Séries Numériques",
+      metaDescription: "Calculatrice étape par étape de convergence et somme exacte de Séries Numériques infinies. Applique condition nécessaire, règle de D'Alembert, Cauchy, séries de Riemann, Leibniz et somme symbolique.",
+      h1: "Séries Numériques (Critères de Convergence et Somme Exacte)",
+      subtitle: "Étude rigoureuse de la convergence étape par étape : condition nécessaire lim aₙ = 0, séries géométriques, séries de Riemann (p-séries), règle de D'Alembert, Cauchy, Leibniz et somme exacte.",
+      examLabels: ["Série Géométrique ∑ 1/2ⁿ", "Condition Nécessaire (Divergente)", "D'Alembert Factorielle ∑ 2ⁿ/n!", "Alternée de Leibniz ∑ (-1)ⁿ⁺¹/n"],
+      guideTitle: "Guide Rapide et Formules Clés : Critères de Convergence et Somme de Séries Infinies",
+      guideIntro: "Étudier la nature d'une série numérique ∑ aₙ consiste à déterminer si la suite de ses sommes partielles S_N converge vers une limite finie lorsque N → ∞. L'étude commence toujours par la condition nécessaire : si lim_{n→∞} aₙ ≠ 0, la série diverge grossièrement.",
+      tips: [
+        "Vérifiez toujours en premier lieu lim_{n→∞} a_n : si cette limite est non nulle, la série diverge immédiatement.",
+        "Si le terme général est une fraction rationnelle P(n)/Q(n), utilisez un équivalent asymptotique pour comparer à la série de Riemann 1/n^{deg(Q) - deg(P)}.",
+        "Pour une série géométrique ∑ r^n débutant en n = n₀, la somme exacte vaut (premier terme) / (1 - raison) = r^{n₀} / (1 - r)."
+      ],
+      faqs: [
+        {
+          q: "Si la limite du terme général lim a_n vaut 0, la série converge-t-elle forcément ?",
+          a: "Non. Le fait que lim_{n→∞} a_n = 0 est une condition nécessaire mais NON suffisante. Par exemple, la série harmonique ∑ 1/n vérifie lim 1/n = 0 mais diverge vers +∞."
+        },
+        {
+          q: "Quand choisir la règle de D'Alembert (quotient) ou le critère de Cauchy (racine) ?",
+          a: "La règle de D'Alembert (lim |a_{n+1}/a_n|) est idéale lorsque a_n comporte des factorielles (n!), tandis que le critère de Cauchy (lim ⁿ√|a_n|) s'applique lorsque tout le terme est élevé à la puissance n."
+        },
+        {
+          q: "Quelle est la différence entre convergence absolue et semi-convergence ?",
+          a: "Une série converge absolument si ∑ |a_n| converge. Elle est semi-convergente (conditionnellement convergente) si ∑ a_n converge (par le critère de Leibniz) alors que ∑ |a_n| diverge (comme ∑ (-1)^{n+1}/n = ln 2)."
+        },
+        {
+          q: "Comment calculer la somme exacte d'une série géométrique ou télescopique ?",
+          a: "Pour une série géométrique convergente (|r| < 1) débutant à n0, S = r^{n0} / (1 - r). Pour une série télescopique comme ∑ 1/(n(n+1)), on décompose en éléments simples 1/n - 1/(n+1)."
+        }
+      ]
+    },
+    matrix: {
+      title: "Calculatrice de Diagonalisation de Matrices 2x2 et 3x3 Étape par Étape",
+      shortTitle: "Diagonalisation de Matrices",
+      metaDescription: "Calculatrice de diagonalisation de matrices 2x2 et 3x3 étape par étape. Calcule le polynôme caractéristique |A - λI| = 0, valeurs propres, vecteurs propres, matrice de passage P et matrice diagonale D.",
+      h1: "Diagonalisation de Matrices (2×2 et 3×3)",
+      subtitle: "Calcul détaillé de l'équation caractéristique |A - λI| = 0, spectre des valeurs propres, sous-espaces propres, matrice de passage P et matrice diagonale D.",
+      examLabels: ["Matrice 2×2 (Valeurs propres simples)", "Matrice 2×2 Symétrique Réelle", "Matrice 3×3 Diagonalisable", "Matrice 2×2 Non Diagonalisable (Jordan)"],
+      guideTitle: "Guide Rapide et Formules Clés : Diagonalisation Endomorphique A = P·D·P⁻¹",
+      guideIntro: "Une matrice carrée A ∈ ℝ^{n×n} est diagonalisable si et seulement s'il existe une base de ℝ^n formée de vecteurs propres de A. Dans cette base, l'endomorphisme agit par simple multiplication par chaque valeur propre λ_i, permettant le calcul immédiat des puissances A^k = P·D^k·P⁻¹.",
+      tips: [
+        "Vérifiez toujours que la somme des valeurs propres est égale à la trace tr(A) et que leur produit est égal au déterminant det(A).",
+        "Si toutes les valeurs propres sont réelles et distinctes (multiplicité algébrique m_a = 1), la matrice est automatiquement diagonalisable.",
+        "Lorsqu'une valeur propre a une multiplicité algébrique m_a = 2, vérifiez si rang(A - λI) = n - 2 ; sinon la matrice n'est pas diagonalisable."
+      ],
+      faqs: [
+        {
+          q: "Comment savoir si une matrice carrée A est diagonalisable ?",
+          a: "Une matrice A de taille n×n est diagonalisable sur ℝ si et seulement si son polynôme caractéristique est scindé sur ℝ et pour chaque valeur propre λ_i, la dimension du sous-espace propre m_g(λ_i) = n - rang(A - λ_i·I) est égale à sa multiplicité algébrique m_a(λ_i)."
+        },
+        {
+          q: "Comment construire la matrice de passage P et la matrice diagonale D ?",
+          a: "On place les valeurs propres λ_1, ..., λ_n sur la diagonale de D et on dispose les vecteurs propres linéairement indépendants correspondants en colonnes dans P dans le même ordre."
+        },
+        {
+          q: "Pourquoi toute matrice symétrique réelle est-elle diagonalisable ?",
+          a: "D'après le Théorème Spectral : toute matrice symétrique réelle (A = A^T) possède uniquement des valeurs propres réelles et ses sous-espaces propres sont orthogonaux deux à deux."
+        },
+        {
+          q: "À quoi sert la diagonalisation A = P·D·P⁻¹ en ingénierie ?",
+          a: "Elle permet de calculer les puissances A^k = P·D^k·P⁻¹ et l'exponentielle de matrice e^{At} = P·e^{Dt}·P⁻¹ pour résoudre les systèmes différentiels linéaires."
+        }
+      ]
+    },
+    gauss: {
+      title: "Calculatrice Pivot de Gauss-Jordan et Rouché-Fontené Étape par Étape",
+      shortTitle: "Systèmes Linéaires (Gauss-Jordan)",
+      metaDescription: "Solveur étape par étape de systèmes d'équations linéaires Ax = b (2x2, 3x3 et 4x4) par élimination de Gauss-Jordan et Théorème de Rouché-Fontené avec opérations élémentaires sur les lignes.",
+      h1: "Systèmes d'Équations Linéaires (Pivot de Gauss-Jordan)",
+      subtitle: "Élimination de Gauss étape par étape affichant chaque opération élémentaire sur les lignes (Fᵢ ← Fᵢ + αFⱼ) de la matrice augmentée (A|b), calcul du rang et théorème de Rouché-Fontené.",
+      examLabels: ["Système 3×3 Solution Unique", "Système 3×3 Indéterminé (Infinité)", "Système 3×3 Incompatible", "Système 4×4 Solution Unique"],
+      guideTitle: "Guide Rapide et Formules Clés : Pivot de Gauss-Jordan et Théorème de Rouché-Fontené",
+      guideIntro: "La méthode du pivot de Gauss-Jordan transforme la matrice augmentée (A|b) d'un système linéaire Ax = b en sa forme échelonnée réduite (RREF) par des opérations élémentaires sur les lignes. Le théorème de Rouché-Fontené caractérise l'existence et l'unicité des solutions via les rangs rg(A) et rg(A|b).",
+      tips: [
+        "Saisissez chaque ligne de la matrice augmentée (A|b) en séparant les coefficients par des virgules et les lignes par un point-virgule ';'.",
+        "Si une ligne du type (0  0  0 | c) avec c ≠ 0 apparaît, arrêtez immédiatement : rg(A) < rg(A|b) et le système est incompatible.",
+        "Choisissez toujours comme ligne pivot une ligne commençant par 1 afin de retarder l'apparition de fractions."
+      ],
+      faqs: [
+        {
+          q: "Comment analyser un système linéaire avec le théorème de Rouché-Fontené ?",
+          a: "On compare rg(A), rg(A|b) et le nombre d'inconnues n. Si rg(A) < rg(A|b), le système est Incompatible (aucune solution). Si rg(A) = rg(A|b) = n, il admet une Solution Unique. Si rg(A) = rg(A|b) < n, il admet une infinité de solutions dépendant de n - rg(A) paramètres libres."
+        },
+        {
+          q: "Quelle est la différence entre le pivot de Gauss et Gauss-Jordan ?",
+          a: "Le pivot de Gauss triangule la matrice pour résoudre par remontée, tandis que Gauss-Jordan normalise chaque pivot à 1 et annule les coefficients au-dessus et en dessous des pivots (forme échelonnée réduite RREF)."
+        },
+        {
+          q: "Quelles sont les opérations élémentaires sur les lignes autorisées ?",
+          a: "1) Échanger deux lignes (Fi ↔ Fj), 2) Multiplier une ligne par un scalaire non nul (Fi ← k·Fi), et 3) Ajouter à une ligne un multiple d'une autre ligne (Fi ← Fi + α·Fj)."
+        },
+        {
+          q: "Comment identifier les inconnues secondaires (paramètres libres) dans un système indéterminé ?",
+          a: "Dans la forme échelonnée réduite RREF, les colonnes comportant un pivot 1 correspondent aux inconnues principales et les colonnes sans pivot aux paramètres libres (λ, μ)."
+        }
+      ]
+    },
+    phasors: {
+      title: "Calculatrice de Phaseurs, Nombres Complexes et Circuits AC Étape par Étape",
+      shortTitle: "Phaseurs et Circuits AC",
+      metaDescription: "Calculatrice de phaseurs et nombres complexes pour les circuits en régime sinusoïdal AC. Opère en forme algébrique (a+bj) et polaire (M∠θ°), convertit avec quadrant et résout les systèmes complexes 2x2 et 3x3.",
+      h1: "Calculatrice de Phaseurs, Complexes et Circuits AC",
+      subtitle: "Opérations mixtes sous forme algébrique (a + bj) et polaire (M∠θ°), conversion détaillée module/argument avec ajustement du quadrant et systèmes de mailles/nœuds AC 2×2 et 3×3.",
+      directLabel: "Arithmétique et Conversion de Phaseurs (a+bj ↔ M∠θ°)",
+      inverseLabel: "Système Complexe 2×2 / 3×3 (Mailles / Nœuds AC)",
+      examLabels: ["Opération mixte Algébrique × Polaire", "Impédance équivalente parallèle", "Conversion 2e Quadrant (-3 + 4j)", "Système 2×2 de Mailles en Régime AC"],
+      guideTitle: "Guide Rapide et Formules Clés : Algèbre des Phaseurs et Régime Sinusoïdal Permanent",
+      guideIntro: "En électrotechnique et théorie des circuits, la représentation complexe (phaseurs de Steinmetz) transforme les équations intégro-différentielles en régime sinusoïdal permanent en systèmes linéaires complexes où les bobines ont une impédance Z_L = jωL et les condensateurs Z_C = -j/(ωC).",
+      tips: [
+        "Pour saisir un phaseur sous forme polaire avec un angle en degrés, utilisez '<' ou '∠' : par exemple 10<30 ou 10∠-45.",
+        "Avant d'additionner deux phaseurs écrits sous forme polaire, convertissez-les toujours sous forme algébrique a + bj.",
+        "Dans un système de mailles AC sans sources liées, la matrice des impédances Z est symétrique par rapport à la diagonale principale."
+      ],
+      faqs: [
+        {
+          q: "Comment convertir un nombre complexe de la forme algébrique (a + bj) à la forme polaire (M∠θ°) ?",
+          a: "Le module vaut M = √(a² + b²) et l'argument se calcule par arctan(b/a) en tenant compte du quadrant : si la partie réelle 'a' est négative (2e ou 3e quadrant), il faut ajouter 180° (si b ≥ 0) ou retrancher 180° (si b < 0)."
+        },
+        {
+          q: "Comment convertir un phaseur de la forme polaire (M∠θ°) à la forme algébrique ?",
+          a: "En appliquant la formule d'Euler M·e^{jθ} = M·cos(θ) + j·M·sin(θ) avec θ en degrés : a = M·cos(θ) et b = M·sin(θ)."
+        },
+        {
+          q: "Quelle forme privilégier pour additionner, soustraire, multiplier ou diviser des phaseurs ?",
+          a: "La forme algébrique (a + bj) est indispensable pour l'addition et la soustraction ; la forme polaire (M∠θ°) est directe pour la multiplication et la division."
+        },
+        {
+          q: "Comment résoudre un système de mailles ou de nœuds en courant alternatif (AC) ?",
+          a: "On pose le système matriciel complexe Z·I = V puis on applique les formules de Cramer complexes pour obtenir chaque courant sous forme polaire I_m∠φ°."
+        }
+      ]
+    }
+  }
+};
+
+export const LEGAL_I18N = {
+  en: {
+    about: {
+      title: "About Us & Client-Side Symbolic Architecture | CalcWeb",
+      shortTitle: "About Us",
+      metaDescription: "Learn about the CalcWeb educational engineering project: step-by-step math and engineering calculators powered by WebAssembly (Pyodide + SymPy) running 100% in your browser.",
+      h1: "About CalcWeb: Open & 100% Client-Side Symbolic Engineering",
+      subtitle: "An academic platform designed for Engineering, Physics, and Mathematics students and educators with step-by-step derivations, pedagogical rigor, and complete privacy.",
+      sections: [
+        {
+          heading: "1. Our Educational Mission (E-E-A-T)",
+          body: "CalcWeb was created to democratize access to university-grade Computer Algebra System (CAS) tools. Unlike traditional calculators that only output a final number or require paid server subscriptions, CalcWeb breaks down every problem step by step, explaining the theorem, trigonometric identity, integrating factor, or elementary row operation applied."
+        },
+        {
+          heading: "2. How Our Browser-Based Symbolic Engine Works ($0 Server Architecture)",
+          body: "All mathematical intelligence in CalcWeb runs directly on your device's CPU via WebAssembly (Pyodide + SymPy inside a dedicated Web Worker) paired with an instant JavaScript hybrid algebraic solver. This architecture delivers zero latency on standard operations, absolute privacy (none of your equations or matrices are sent to external servers), and offline resilience once loaded."
+        },
+        {
+          heading: "3. Covered Engineering Disciplines",
+          body: "Our 12 modules cover core undergraduate courses in Electrical, Mechanical, Aerospace, Computer Engineering, and Mathematics: Signals & Systems (Fourier Transform, Laplace Transform, Z-Transform, Convolution, Fourier Series), Calculus & Differential Equations (Step-by-Step Integrals, 1st & 2nd Order ODEs, Taylor Series, Numerical Series), and Linear Algebra & AC Circuits (Matrix Diagonalization, Gauss-Jordan Elimination, and AC Phasors)."
+        },
+        {
+          heading: "4. Academic Contact & Feedback",
+          body: "We continuously review our symbolic algorithms and formula guides for maximum academic accuracy. If you are a university professor or student and wish to suggest a new module or report an issue, contact us at contacto@calcweb.edu."
+        }
+      ]
+    },
+    privacy: {
+      title: "Privacy Policy, GDPR & Cookie Policy | CalcWeb",
+      shortTitle: "Privacy & Cookies",
+      metaDescription: "CalcWeb Privacy and Cookie Policy compliant with EU GDPR. 100% local client-side mathematical processing in your browser and third-party Google AdSense information.",
+      h1: "Privacy & Cookie Policy (GDPR)",
+      subtitle: "Transparency regarding data protection, local browser storage, and third-party advertising/analytics cookies.",
+      sections: [
+        {
+          heading: "1. 100% Local Mathematical Processing (Client-Side)",
+          body: "In CalcWeb, all mathematical expressions, differential equations, integrals, matrices, and phasors you enter are processed exclusively within your web browser's local memory using WebAssembly (Pyodide/SymPy) and JavaScript. CalcWeb never transmits, stores, or logs your mathematical inputs on remote servers."
+        },
+        {
+          heading: "2. Technical Local Storage (LocalStorage & Cache API)",
+          body: "We use your browser's local storage (localStorage and IndexedDB/Cache API) strictly for technical purposes: remembering your Light/Dark theme preference and caching the Pyodide/SymPy WebAssembly binaries so they load instantly on future visits."
+        },
+        {
+          heading: "3. Third-Party Advertising Cookies (Google AdSense)",
+          body: "To keep the platform free, CalcWeb may display advertisements served by Google AdSense. Google and its advertising partners use cookies (such as the DART cookie) to serve ads based on a user's prior visits to this or other websites. Users may opt out of personalized advertising by visiting Google Ads Settings (https://adssettings.google.com)."
+        },
+        {
+          heading: "4. User Rights under EU GDPR",
+          body: "Under the General Data Protection Regulation (GDPR - EU Regulation 2016/679), users may exercise their rights of access, rectification, erasure, and objection regarding any email correspondence by writing to privacidad@calcweb.edu, and may clear local storage or cookies at any time from their browser settings."
+        }
+      ]
+    },
+    legal: {
+      title: "Legal Notice & Terms of Educational Use | CalcWeb",
+      shortTitle: "Legal Notice",
+      metaDescription: "Legal Notice, intellectual property, academic disclaimer, and general terms of use for CalcWeb engineering calculators.",
+      h1: "Legal Notice & Terms of Use",
+      subtitle: "General legal information, academic terms of use, and limitation of liability.",
+      sections: [
+        {
+          heading: "1. Purpose and Educational Scope",
+          body: "CalcWeb is an educational portal designed to assist students and engineers in learning and verifying step-by-step solutions in advanced mathematics, signal processing, calculus, linear algebra, and electrical engineering."
+        },
+        {
+          heading: "2. Engineering Disclaimer",
+          body: "While CalcWeb relies on battle-tested computer algebra libraries (SymPy) and verified algorithms, all results and step-by-step derivations are provided 'AS IS' for educational purposes. Users are solely responsible for independently verifying any calculation before applying it to critical engineering designs or graded submissions."
+        },
+        {
+          heading: "3. Intellectual Property & Open-Source Licenses",
+          body: "The user interface, pedagogical explanations, theory guides, and original source code of CalcWeb are protected by copyright law. The client-side runtime integrates open-source libraries under their respective permissive licenses (Pyodide under MPL-2.0, SymPy under BSD, and KaTeX under MIT)."
+        },
+        {
+          heading: "4. Governing Law",
+          body: "These terms of use are governed by applicable European Union and Spanish regulations. For any legal inquiries, please contact legal@calcweb.edu."
+        }
+      ]
+    }
+  },
+  fr: {
+    about: {
+      title: "À Propos et Architecture Symbolique Client-Side | CalcWeb",
+      shortTitle: "À Propos",
+      metaDescription: "Découvrez le projet éducatif CalcWeb : calculatrices mathématiques et d'ingénierie étape par étape propulsées par WebAssembly (Pyodide + SymPy) 100% dans votre navigateur.",
+      h1: "À Propos de CalcWeb : Ingénierie Symbolique Ouverte et 100% Locale",
+      subtitle: "Une plateforme académique conçue pour les étudiants et enseignants en Ingénierie, Physique et Mathématiques avec résolution étape par étape et confidentialité totale.",
+      sections: [
+        {
+          heading: "1. Notre Mission Éducative (E-E-A-T)",
+          body: "CalcWeb a pour mission de démocratiser l'accès aux outils de Calcul Formel (CAS) de niveau universitaire. Contrairement aux calculatrices classiques qui n'affichent qu'un résultat brut ou exigent un abonnement serveur coûteux, CalcWeb détaille chaque exercice étape par étape en justifiant le théorème, l'identité trigonométrique, le facteur intégrant ou l'opération élémentaire appliquée."
+        },
+        {
+          heading: "2. Fonctionnement de Notre Moteur Symbolique Local (Architecture 0€ Serveur)",
+          body: "Toute l'intelligence mathématique de CalcWeb s'exécute directement sur le processeur de votre appareil grâce à WebAssembly (Pyodide + SymPy dans un Web Worker dédié) combiné à un moteur algébrique hybride instantané en JavaScript. Cela garantit une latence nulle, une confidentialité absolue (aucune équation ou matrice n'est envoyée sur un serveur) et une disponibilité hors-ligne après chargement."
+        },
+        {
+          heading: "3. Domaines d'Ingénierie Couverts",
+          body: "Nos 12 modules couvrent les matières fondamentales des écoles d'ingénieurs et licences scientifiques : Signaux et Systèmes (Transformées de Fourier, Laplace, en Z, Convolution, Séries de Fourier), Calcul Infinitésimal et Équations Différentielles (Intégrales étape par étape, EDO du 1er et 2nd ordre, Séries de Taylor, Séries Numériques) et Algèbre Linéaire & Circuits AC (Diagonalisation, Pivot de Gauss-Jordan et Phaseurs)."
+        },
+        {
+          heading: "4. Contact Académique",
+          body: "Nous révisons continuellement nos algorithmes symboliques et nos formulaires théoriques. Si vous êtes enseignant ou étudiant et souhaitez proposer une amélioration, écrivez-nous à contacto@calcweb.edu."
+        }
+      ]
+    },
+    privacy: {
+      title: "Politique de Confidentialité, RGPD et Cookies | CalcWeb",
+      shortTitle: "Confidentialité et Cookies",
+      metaDescription: "Politique de Confidentialité et de Cookies de CalcWeb conforme au RGPD européen. Calculs mathématiques 100% locaux dans le navigateur et informations Google AdSense.",
+      h1: "Politique de Confidentialité et Cookies (RGPD)",
+      subtitle: "Transparence sur la protection des données, le stockage local du navigateur et l'utilisation de cookies publicitaires tiers.",
+      sections: [
+        {
+          heading: "1. Traitement Mathématique 100% Local (Client-Side)",
+          body: "Sur CalcWeb, toutes les expressions mathématiques, équations différentielles, intégrales, matrices et phaseurs que vous saisissez sont traités exclusivement dans la mémoire locale de votre navigateur via WebAssembly (Pyodide/SymPy) et JavaScript. CalcWeb ne transmet ni n'enregistre vos calculs sur des serveurs distants."
+        },
+        {
+          heading: "2. Stockage Local Technique (LocalStorage et Cache API)",
+          body: "Nous utilisons le stockage local de votre navigateur uniquement à des fins techniques : mémoriser votre préférence de thème (Clair / Sombre) et mettre en cache les paquets binaires Pyodide/SymPy afin d'éviter leur re-téléchargement lors de vos prochaines visites."
+        },
+        {
+          heading: "3. Cookies Publicitaires Tiers (Google AdSense)",
+          body: "Pour financer la gratuité de la plateforme, CalcWeb peut afficher des annonces gérées par Google AdSense. Google et ses partenaires utilisent des cookies (tels que le cookie DART) pour diffuser des annonces adaptées aux visites antérieures de l'utilisateur. Vous pouvez désactiver la publicité personnalisée dans les Paramètres des annonces Google (https://adssettings.google.com)."
+        },
+        {
+          heading: "4. Droits des Utilisateurs sous le RGPD",
+          body: "Conformément au Règlement Général sur la Protection des Données (RGPD - Règlement UE 2016/679), vous pouvez exercer vos droits d'accès, de rectification et de suppression en écrivant à privacidad@calcweb.edu, et supprimer à tout moment les cookies depuis les paramètres de votre navigateur."
+        }
+      ]
+    },
+    legal: {
+      title: "Mentions Légales et Conditions d'Utilisation Éducative | CalcWeb",
+      shortTitle: "Mentions Légales",
+      metaDescription: "Mentions Légales, propriété intellectuelle, clause de non-responsabilité académique et conditions générales d'utilisation des calculatrices d'ingénierie CalcWeb.",
+      h1: "Mentions Légales et Conditions d'Utilisation",
+      subtitle: "Informations légales générales, conditions d'usage académique et limitation de responsabilité.",
+      sections: [
+        {
+          heading: "1. Objet et Vocation Éducative",
+          body: "CalcWeb est un portail éducatif destiné à accompagner les étudiants et ingénieurs dans l'apprentissage et la vérification étape par étape de problèmes de mathématiques supérieures, traitement du signal, analyse, algèbre linéaire et électrotechnique."
+        },
+        {
+          heading: "2. Limitation de Responsabilité en Ingénierie",
+          body: "Bien que CalcWeb s'appuie sur des bibliothèques de calcul formel éprouvées (SymPy) et des algorithmes vérifiés, les résultats et développements étape par étape sont fournis 'en l'état' à titre strictement pédagogique. L'utilisateur demeure seul responsable de la vérification de tout calcul avant son utilisation dans un projet industriel ou académique."
+        },
+        {
+          heading: "3. Propriété Intellectuelle et Licences Open-Source",
+          body: "L'interface, les textes pédagogiques, les guides théoriques et le code source original de CalcWeb sont protégés par le droit d'auteur. L'application intègre côté client des bibliothèques open-source sous leurs licences respectives (Pyodide sous MPL-2.0, SymPy sous BSD et KaTeX sous MIT)."
+        },
+        {
+          heading: "4. Droit Applicable",
+          body: "Les présentes conditions sont régies par le droit européen et espagnol en vigueur. Pour toute question juridique, vous pouvez contacter legal@calcweb.edu."
+        }
+      ]
+    }
+  }
+};
+
+export function getLocalizedCalculator(calc, lang = "es") {
+  const localizedRoute = ROUTE_MAP[calc.id]?.[lang] || calc.route;
+  const localizedRelated = (calc.relatedRoutes || []).map((esR) => {
+    const targetCalc = CALCULATOR_CATALOG.find((c) => c.route === esR);
+    return targetCalc ? (ROUTE_MAP[targetCalc.id]?.[lang] || esR) : esR;
+  });
+
+  if (lang === "es" || !CATALOG_I18N[lang]?.[calc.id]) {
+    return {
+      ...calc,
+      route: localizedRoute,
+      relatedRoutes: localizedRelated
+    };
+  }
+
+  const tr = CATALOG_I18N[lang][calc.id];
+  const badgePrefix = lang === "en" ? "Exam Preset" : "Exemple d'Examen";
+
+  return {
+    ...calc,
+    route: localizedRoute,
+    title: tr.title,
+    shortTitle: tr.shortTitle,
+    metaDescription: tr.metaDescription,
+    h1: tr.h1,
+    subtitle: tr.subtitle,
+    directLabel: tr.directLabel || calc.directLabel,
+    inverseLabel: tr.inverseLabel || calc.inverseLabel,
+    examExamples: calc.examExamples.map((ex, i) => ({
+      ...ex,
+      badge: `${badgePrefix} ${i + 1}`,
+      label: tr.examLabels?.[i] || ex.label
+    })),
+    guide: {
+      ...calc.guide,
+      title: tr.guideTitle || calc.guide.title,
+      intro: tr.guideIntro || calc.guide.intro,
+      tips: tr.tips || calc.guide.tips
+    },
+    faqs: tr.faqs || calc.faqs,
+    relatedRoutes: localizedRelated
+  };
+}
+
+export function getLocalizedCatalog(lang = "es") {
+  return CALCULATOR_CATALOG.map((c) => getLocalizedCalculator(c, lang));
+}
+
+export function getLocalizedLegalPages(lang = "es") {
+  return LEGAL_PAGES.map((l) => {
+    const localizedRoute = ROUTE_MAP[l.id]?.[lang] || l.route;
+    if (lang === "es" || !LEGAL_I18N[lang]?.[l.id]) {
+      return { ...l, route: localizedRoute };
+    }
+    const tr = LEGAL_I18N[lang][l.id];
+    return {
+      ...l,
+      route: localizedRoute,
+      title: tr.title,
+      shortTitle: tr.shortTitle,
+      metaDescription: tr.metaDescription,
+      h1: tr.h1,
+      subtitle: tr.subtitle,
+      sections: tr.sections
+    };
+  });
+}
+
 /**
  * Legal & E-E-A-T Pages Catalog (For Google AdSense Compliance & Trust)
  */

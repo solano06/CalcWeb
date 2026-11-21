@@ -1,26 +1,28 @@
 /**
- * CalcWeb Main Application Controller (SPA/SSG Clean Router + Pyodide Worker + Hybrid Engine + KaTeX UI)
+ * CalcWeb Main Application Controller (Multilingual ES/EN/FR SPA/SSG Clean Router + Pyodide Worker + Hybrid Engine + KaTeX UI)
  */
 
-import { CALCULATOR_CATALOG, VIRTUAL_KEYBOARD_KEYS, LEGAL_PAGES } from "./catalog.js";
 import {
-  solveFourierHybrid,
-  solveLaplaceHybrid,
-  solveMatrixHybrid,
-  solveZTransformHybrid,
-  solveConvolutionHybrid,
-  solveOdeHybrid,
-  solveIntegralsHybrid,
-  solveTaylorHybrid,
-  solveGaussHybrid,
-  solvePhasorsHybrid,
-  solveFourierSeriesHybrid,
-  solveNumSeriesHybrid
-} from "./hybrid-engine.js";
+  VIRTUAL_KEYBOARD_KEYS,
+  getLocalizedCatalog,
+  getLocalizedLegalPages
+} from "./catalog.js";
+import {
+  SUPPORTED_LANGS,
+  ROUTE_MAP,
+  UI_STRINGS,
+  detectLangFromPath,
+  resolvePageIdFromPath,
+  getEquivalentRoute,
+  localizeStepsResult
+} from "./i18n.js";
+import { solveWithHybridEngine } from "./hybrid-engine.js";
 
 // Application State
 const state = {
   currentRoute: "/",
+  lang: "es", // 'es' | 'en' | 'fr'
+  pageId: "home",
   pyodideStatus: "loading", // 'loading' | 'ready' | 'error'
   workerReady: false,
   pyodideMessage: "Cargando motor simbólico...",
@@ -31,6 +33,10 @@ const state = {
   activeDirection: "direct",
   keyboardOpen: false
 };
+
+function getUI() {
+  return UI_STRINGS[state.lang] || UI_STRINGS.es;
+}
 
 /* ==========================================================================
    1. THEME MANAGEMENT (LIGHT BY DEFAULT + DARK MODE OPTION)
@@ -63,8 +69,9 @@ function updateThemeIcons(isDark) {
    2. DEDICATED PYODIDE + SYMPY WEB WORKER MANAGER
    ========================================================================== */
 function initPyodideWorker() {
+  const ui = getUI();
   try {
-    const worker = new Worker("/js/pyodide-worker.js?v=4");
+    const worker = new Worker("/js/pyodide-worker.js?v=5");
     state.worker = worker;
 
     worker.addEventListener("message", (event) => {
@@ -72,8 +79,15 @@ function initPyodideWorker() {
       if (data.type === "STATUS") {
         state.pyodideStatus = data.status;
         state.workerReady = data.status === "ready";
-        state.pyodideMessage = data.message;
-        updateEngineBadgeUI(data.status, data.message);
+        const curUi = getUI();
+        const msg =
+          data.status === "ready"
+            ? curUi.engineStatusReady
+            : data.status === "loading"
+            ? curUi.engineStatusLoading
+            : curUi.engineStatusFallback;
+        state.pyodideMessage = msg;
+        updateEngineBadgeUI(data.status, msg);
         if (data.status === "ready") {
           localStorage.setItem("calcweb_pyodide_cached", "true");
         }
@@ -90,20 +104,19 @@ function initPyodideWorker() {
       console.error("[CalcWeb Worker Error]", err);
       state.pyodideStatus = "error";
       state.workerReady = false;
-      updateEngineBadgeUI("error", "Motor Híbrido Local Activo");
+      updateEngineBadgeUI("error", getUI().engineStatusFallback);
     });
 
-    // Check if previously cached in browser storage
     const wasCached = localStorage.getItem("calcweb_pyodide_cached") === "true";
     updateEngineBadgeUI(
       "loading",
-      wasCached ? "Restaurando caché WASM (SymPy)..." : "Cargando motor simbólico..."
+      wasCached ? ui.engineStatusCached : ui.engineStatusLoading
     );
 
     worker.postMessage({ action: "INIT" });
   } catch (err) {
     state.pyodideStatus = "error";
-    updateEngineBadgeUI("error", "Motor Híbrido Local Activo");
+    updateEngineBadgeUI("error", ui.engineStatusFallback);
   }
 }
 
@@ -130,10 +143,11 @@ function updateEngineBadgeUI(status, text) {
   }
 }
 
-function runWorkerCalculation(tool, expr, direction, timeoutMs = 15000) {
+function runWorkerCalculation(tool, expr, direction, timeoutMs = 15000, lang = "es") {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
   return new Promise((resolve) => {
     if (!state.worker) {
-      resolve({ result: { ok: false, error: "Web Worker de Pyodide no disponible en este navegador." } });
+      resolve({ result: { ok: false, error: ui.errParse } });
       return;
     }
     const id = ++state.reqCounter;
@@ -143,7 +157,7 @@ function runWorkerCalculation(tool, expr, direction, timeoutMs = 15000) {
         resolve({
           result: {
             ok: false,
-            error: "Tiempo de espera agotado (15s) mientras SymPy compilaba o calculaba la expresión."
+            error: ui.errTimeout
           }
         });
       }
@@ -154,11 +168,10 @@ function runWorkerCalculation(tool, expr, direction, timeoutMs = 15000) {
       resolve(data);
     });
 
-    // The worker queues messages automatically while initPyodideEngine() is in progress
     state.worker.postMessage({
       id,
       action: "SOLVE",
-      payload: { tool, expr, direction }
+      payload: { tool, expr, direction, lang }
     });
   });
 }
@@ -213,43 +226,175 @@ function showToast(message, type = "success") {
 }
 
 /* ==========================================================================
-   4. ROUTER & SEO META MANAGEMENT (CLEAN URLS)
+   4. MULTILINGUAL ROUTER & SEO META MANAGEMENT (ES / EN / FR CLEAN URLS)
    ========================================================================== */
 function normalizePathname(pathname) {
   const clean = pathname.replace(/\/+$/, "") || "/";
   if (clean === "/index.html") return "/";
+  if (clean === "/en/index.html") return "/en";
+  if (clean === "/fr/index.html") return "/fr";
   return clean;
+}
+
+function updateShellNavigationUI(activeRoute, lang) {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const routes = ROUTE_MAP;
+
+  document.documentElement.lang = lang;
+
+  // Update Brand link & subtitle
+  const brandLink = document.querySelector("header a[data-route]");
+  if (brandLink) {
+    brandLink.setAttribute("href", routes.home[lang]);
+    brandLink.setAttribute("data-route", routes.home[lang]);
+    const subP = brandLink.querySelector("p");
+    if (subP) subP.innerHTML = ui.brandSubtitle;
+  }
+
+  // Update Engine Status Badge text to current language
+  const statusMsg =
+    state.pyodideStatus === "ready"
+      ? ui.engineStatusReady
+      : state.pyodideStatus === "loading"
+      ? ui.engineStatusLoading
+      : ui.engineStatusFallback;
+  updateEngineBadgeUI(state.pyodideStatus, statusMsg);
+
+  // Build localized nav items
+  const navItems = [
+    { id: "home", route: routes.home[lang], label: ui.nav.home },
+    { id: "fourier", route: routes.fourier[lang], label: ui.nav.fourier },
+    { id: "fourierseries", route: routes.fourierseries[lang], label: ui.nav.fourierseries },
+    { id: "laplace", route: routes.laplace[lang], label: ui.nav.laplace },
+    { id: "ztransform", route: routes.ztransform[lang], label: ui.nav.ztransform },
+    { id: "convolution", route: routes.convolution[lang], label: ui.nav.convolution },
+    { id: "ode", route: routes.ode[lang], label: ui.nav.ode },
+    { id: "integrals", route: routes.integrals[lang], label: ui.nav.integrals },
+    { id: "taylor", route: routes.taylor[lang], label: ui.nav.taylor },
+    { id: "numseries", route: routes.numseries[lang], label: ui.nav.numseries },
+    { id: "matrix", route: routes.matrix[lang], label: ui.nav.matrix },
+    { id: "gauss", route: routes.gauss[lang], label: ui.nav.gauss },
+    { id: "phasors", route: routes.phasors[lang], label: ui.nav.phasors }
+  ];
+
+  const desktopNav = document.querySelector("header nav[aria-label]");
+  if (desktopNav) {
+    desktopNav.innerHTML = navItems
+      .map(
+        (item) =>
+          `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
+            activeRoute === item.route ? "active " : ""
+          }whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">${escapeHtml(
+            item.label
+          )}</a>`
+      )
+      .join("");
+  }
+
+  const mobileNav = document.querySelector("header div.xl\\:hidden");
+  if (mobileNav) {
+    mobileNav.innerHTML = navItems
+      .map(
+        (item) =>
+          `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
+            activeRoute === item.route ? "active " : ""
+          }whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">${escapeHtml(
+            item.label
+          )}</a>`
+      )
+      .join("");
+  }
+
+  // Ensure or update Language Switcher (ES | EN | FR) in Header
+  let langSwitcher = document.getElementById("lang-switcher");
+  if (!langSwitcher) {
+    const rightControls = document.getElementById("engine-status-btn")?.parentElement;
+    if (rightControls) {
+      langSwitcher = document.createElement("div");
+      langSwitcher.id = "lang-switcher";
+      langSwitcher.className =
+        "flex items-center gap-0.5 p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[11px] font-mono font-semibold";
+      rightControls.insertBefore(langSwitcher, rightControls.firstChild);
+    }
+  }
+
+  if (langSwitcher) {
+    langSwitcher.innerHTML = SUPPORTED_LANGS.map((l) => {
+      const targetUrl = getEquivalentRoute(activeRoute, l);
+      const isCurrent = l === lang;
+      return `<a href="${targetUrl}" data-route="${targetUrl}" data-lang-switch="${l}" class="px-2 py-0.5 rounded transition-colors ${
+        isCurrent
+          ? "bg-blue-700 text-white shadow-2xs"
+          : "text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400"
+      }">${l.toUpperCase()}</a>`;
+    }).join("");
+  }
+
+  // Update Footer Links and Tagline
+  const footer = document.querySelector("footer");
+  if (footer) {
+    const catalog = getLocalizedCatalog(lang);
+    footer.innerHTML = `
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+            <span>&bull;</span>
+            <span>${escapeHtml(ui.footerTagline)}</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 font-medium">
+            <a href="${routes.about[lang]}" data-route="${routes.about[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerAbout)}</a>
+            <a href="${routes.privacy[lang]}" data-route="${routes.privacy[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerPrivacy)}</a>
+            <a href="${routes.legal[lang]}" data-route="${routes.legal[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerLegal)}</a>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+          ${catalog
+            .map(
+              (c) =>
+                `<a href="${c.route}" data-route="${c.route}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(
+                  c.shortTitle
+                )}</a>`
+            )
+            .join("\n          ")}
+        </div>
+      </div>
+    `;
+  }
 }
 
 function navigateTo(route, pushState = true) {
   const normalized = normalizePathname(route);
+  const lang = detectLangFromPath(normalized);
+  const resolved = resolvePageIdFromPath(normalized);
+
   state.currentRoute = normalized;
+  state.lang = lang;
+  state.pageId = typeof resolved === "string" ? resolved : resolved?.pageId || "home";
+
   if (pushState) {
     window.history.pushState({ route: normalized }, "", normalized);
   }
 
-  // Update active nav links
-  document.querySelectorAll(".nav-link").forEach((el) => {
-    const linkRoute = el.getAttribute("data-route");
-    el.classList.toggle("active", linkRoute === normalized);
-  });
+  updateShellNavigationUI(normalized, lang);
 
-  const calc = CALCULATOR_CATALOG.find((c) => c.route === normalized);
-  const legal = LEGAL_PAGES.find((l) => l.route === normalized);
+  const catalog = getLocalizedCatalog(lang);
+  const legalPages = getLocalizedLegalPages(lang);
+  const ui = getUI();
+
+  const calc = catalog.find((c) => c.route === normalized);
+  const legal = legalPages.find((l) => l.route === normalized);
 
   if (calc) {
-    updateDocumentSEO(calc.title, calc.metaDescription, calc.route, calc);
+    updateDocumentSEO(calc.title, calc.metaDescription, calc.route, calc, lang);
     renderCalculatorView(calc);
   } else if (legal) {
-    updateDocumentSEO(legal.title, legal.metaDescription, legal.route, null);
+    updateDocumentSEO(legal.title, legal.metaDescription, legal.route, null, lang);
     renderLegalView(legal);
   } else {
-    updateDocumentSEO(
-      "CalcWeb | Calculadoras Matemáticas y de Ingeniería Paso a Paso (100% Client-Side)",
-      "Resuelve ejercicios de Transformada de Fourier, Transformada de Laplace, Transformada Z, Convolución, EDOs, Integrales, Series de Taylor, Diagonalización, Gauss-Jordan y Fasores AC paso a paso.",
-      "/",
-      null
-    );
+    const homeRoute = ROUTE_MAP.home[lang];
+    updateDocumentSEO(ui.homeSeoTitle, ui.homeSeoDesc, homeRoute, null, lang);
     renderHomeDashboard();
   }
 
@@ -269,7 +414,8 @@ function getBaseSiteUrl() {
   return "https://matespasoapaso.vercel.app";
 }
 
-function updateDocumentSEO(title, description, routePath, calcObj = null) {
+function updateDocumentSEO(title, description, routePath, calcObj = null, lang = "es") {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
   document.title = title;
   const baseOrigin = getBaseSiteUrl();
   const canonicalUrl = `${baseOrigin}${routePath === "/" ? "/" : routePath}`;
@@ -285,11 +431,32 @@ function updateDocumentSEO(title, description, routePath, calcObj = null) {
   if (ogDesc) ogDesc.setAttribute("content", description);
   const ogUrl = document.querySelector('meta[property="og:url"]');
   if (ogUrl) ogUrl.setAttribute("content", canonicalUrl);
+  const ogLocale = document.querySelector('meta[property="og:locale"]');
+  if (ogLocale) ogLocale.setAttribute("content", ui.ogLocale);
 
   const twTitle = document.querySelector('meta[name="twitter:title"]');
   if (twTitle) twTitle.setAttribute("content", title);
   const twDesc = document.querySelector('meta[name="twitter:description"]');
   if (twDesc) twDesc.setAttribute("content", description);
+
+  // Update hreflang alternate link tags dynamically
+  const hreflangs = [
+    { code: "es", path: getEquivalentRoute(routePath, "es") },
+    { code: "en", path: getEquivalentRoute(routePath, "en") },
+    { code: "fr", path: getEquivalentRoute(routePath, "fr") },
+    { code: "x-default", path: getEquivalentRoute(routePath, "es") }
+  ];
+
+  hreflangs.forEach(({ code, path }) => {
+    let link = document.querySelector(`link[rel="alternate"][hreflang="${code}"]`);
+    if (!link) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "alternate");
+      link.setAttribute("hreflang", code);
+      document.head.appendChild(link);
+    }
+    link.setAttribute("href", `${baseOrigin}${path === "/" ? "/" : path}`);
+  });
 
   // Dynamically update JSON-LD Structured Data (@graph with WebApplication + BreadcrumbList + FAQPage)
   let ldScript = document.getElementById("json-ld-seo");
@@ -300,6 +467,8 @@ function updateDocumentSEO(title, description, routePath, calcObj = null) {
     document.head.appendChild(ldScript);
   }
 
+  const homeUrl = `${baseOrigin}${ROUTE_MAP.home[lang] === "/" ? "/" : ROUTE_MAP.home[lang]}`;
+
   const graph = [
     {
       "@type": ["WebApplication", "SoftwareApplication"],
@@ -308,7 +477,7 @@ function updateDocumentSEO(title, description, routePath, calcObj = null) {
       description,
       applicationCategory: "EducationalApplication",
       operatingSystem: "All (100% Client-Side WebAssembly)",
-      inLanguage: "es-ES",
+      inLanguage: ui.locale,
       offers: {
         "@type": "Offer",
         price: "0",
@@ -324,14 +493,14 @@ function updateDocumentSEO(title, description, routePath, calcObj = null) {
         {
           "@type": "ListItem",
           position: 1,
-          name: "Inicio",
-          item: `${baseOrigin}/`
+          name: ui.breadcrumbHome,
+          item: homeUrl
         },
         {
           "@type": "ListItem",
           position: 2,
           name: calcObj.category,
-          item: `${baseOrigin}/`
+          item: homeUrl
         },
         {
           "@type": "ListItem",
@@ -370,7 +539,14 @@ function renderHomeDashboard() {
   const main = document.getElementById("app-main");
   if (!main) return;
 
-  const categories = ["Todas", "Señales y Sistemas", "Cálculo y Ecuaciones Diferenciales", "Álgebra Lineal y Circuitos"];
+  const ui = getUI();
+  const catalog = getLocalizedCatalog(state.lang);
+  const categories = [
+    ui.categories.all,
+    ui.categories["Señales y Sistemas"],
+    ui.categories["Cálculo y Ecuaciones Diferenciales"],
+    ui.categories["Álgebra Lineal y Circuitos"]
+  ];
 
   main.innerHTML = `
     <!-- Hero Academic Header -->
@@ -378,13 +554,13 @@ function renderHomeDashboard() {
       <div class="max-w-3xl">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/80 mb-4">
           <span class="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></span>
-          <span>Arquitectura 0€ Servidor &bull; WebAssembly Pyodide + SymPy + KaTeX</span>
+          <span>${ui.heroBadge}</span>
         </div>
         <h1 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight mb-4">
-          Calculadoras Matemáticas y de Ingeniería <span class="text-blue-700 dark:text-blue-400">Paso a Paso</span>
+          ${escapeHtml(ui.heroTitlePrefix)} <span class="text-blue-700 dark:text-blue-400">${escapeHtml(ui.heroTitleHighlight)}</span>
         </h1>
         <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-          Resolución simbólica rigurosa con justificación teórica en cada transformación. Todo el cálculo se ejecuta <strong>100% en tu navegador</strong> mediante un Web Worker dedicado sin latencia de red ni servidores externos.
+          ${ui.heroDescription}
         </p>
 
         <!-- Instant Calculator & Topic Search Bar -->
@@ -398,7 +574,7 @@ function renderHomeDashboard() {
             id="dashboard-search"
             type="search"
             autocomplete="off"
-            placeholder="Buscar calculadora o técnica (ej. Fourier, fracciones simples, autovalores, Dirac, Laplace...)"
+            placeholder="${escapeHtml(ui.searchPlaceholder)}"
             class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 text-sm sm:text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
           />
         </div>
@@ -413,54 +589,54 @@ function renderHomeDashboard() {
             (cat, idx) => `
           <button
             type="button"
-            data-category="${cat}"
+            data-category="${escapeHtml(cat)}"
             class="cat-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-medium border transition-all ${
               idx === 0
                 ? "bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900 dark:border-white shadow-sm"
                 : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800 dark:hover:bg-slate-800"
             }"
           >
-            ${cat}
+            ${escapeHtml(cat)}
           </button>
         `
           )
           .join("")}
       </div>
       <span id="catalog-count" class="text-xs font-mono text-slate-500 dark:text-slate-400">
-        ${CALCULATOR_CATALOG.length} módulos simbólicos disponibles
+        ${catalog.length} ${escapeHtml(ui.modulesCountPlural)}
       </span>
     </section>
 
     <!-- Calculators Grid -->
     <section id="calculators-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
-      ${CALCULATOR_CATALOG.map((calc) => renderCalculatorCardHTML(calc)).join("")}
+      ${catalog.map((calc) => renderCalculatorCardHTML(calc)).join("")}
     </section>
 
     <!-- Architecture & Pedagogical Guarantees Section -->
     <section class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8">
       <h2 class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-6">
-        Arquitectura Simbólica Client-Side y Estándar Pedagógico
+        ${escapeHtml(ui.archHeading)}
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800">
-          <div class="text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold mb-1">1. Motor Dual Híbrido + WASM</div>
-          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-1.5">Pyodide + SymPy en Web Worker</h3>
+          <div class="text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold mb-1">${escapeHtml(ui.arch1Badge)}</div>
+          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-1.5">${escapeHtml(ui.arch1Title)}</h3>
           <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-            Resolución instantánea en 0 ms mediante el motor algebraico híbrido mientras el Web Worker inicializa SymPy en segundo plano con caché persistente.
+            ${escapeHtml(ui.arch1Body)}
           </p>
         </div>
         <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800">
-          <div class="text-xs font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold mb-1">2. Rigor Universitario</div>
-          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-1.5">Desglose Paso a Paso Justificado</h3>
+          <div class="text-xs font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold mb-1">${escapeHtml(ui.arch2Badge)}</div>
+          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-1.5">${escapeHtml(ui.arch2Title)}</h3>
           <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-            Cada paso incluye la regla aplicada (<code>titulo_paso</code>), la justificación teórica (<code>explicacion</code>) y la expresión en tipografía KaTeX (<code>latex</code>).
+            ${ui.arch2Body}
           </p>
         </div>
         <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800">
-          <div class="text-xs font-mono uppercase tracking-wider text-purple-700 dark:text-purple-400 font-semibold mb-1">3. Flujo Académico</div>
-          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-1.5">Exportación LaTeX y Ejemplos de Examen</h3>
+          <div class="text-xs font-mono uppercase tracking-wider text-purple-700 dark:text-purple-400 font-semibold mb-1">${escapeHtml(ui.arch3Badge)}</div>
+          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-1.5">${escapeHtml(ui.arch3Title)}</h3>
           <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-            Incluye 4 ejercicios reales de examen por asignatura con ejecución en un clic y exportación directa a código LaTeX para informes o TFG.
+            ${escapeHtml(ui.arch3Body)}
           </p>
         </div>
       </div>
@@ -468,15 +644,15 @@ function renderHomeDashboard() {
   `;
 
   // Wire up instant search & category filter
-  let activeCategory = "Todas";
+  let activeCategory = ui.categories.all;
   const searchInput = document.getElementById("dashboard-search");
   const grid = document.getElementById("calculators-grid");
   const countEl = document.getElementById("catalog-count");
 
   function filterCards() {
     const q = (searchInput?.value || "").trim().toLowerCase();
-    const filtered = CALCULATOR_CATALOG.filter((calc) => {
-      const matchCat = activeCategory === "Todas" || calc.category === activeCategory;
+    const filtered = catalog.filter((calc) => {
+      const matchCat = activeCategory === ui.categories.all || calc.category === activeCategory;
       const matchQuery =
         !q ||
         calc.shortTitle.toLowerCase().includes(q) ||
@@ -490,14 +666,16 @@ function renderHomeDashboard() {
     if (filtered.length === 0) {
       grid.innerHTML = `
         <div class="col-span-full text-center py-12 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
-          <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron calculadoras para "<strong>${escapeHtml(q)}</strong>".</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400">${escapeHtml(ui.noResultsFor)} "<strong>${escapeHtml(q)}</strong>".</p>
         </div>
       `;
     } else {
       grid.innerHTML = filtered.map((c) => renderCalculatorCardHTML(c)).join("");
     }
     if (countEl) {
-      countEl.textContent = `${filtered.length} ${filtered.length === 1 ? "módulo disponible" : "módulos disponibles"}`;
+      countEl.textContent = `${filtered.length} ${
+        filtered.length === 1 ? ui.modulesCountSingular : ui.modulesCountPlural
+      }`;
     }
   }
 
@@ -522,24 +700,25 @@ function renderHomeDashboard() {
 }
 
 function renderCalculatorCardHTML(calc) {
+  const ui = getUI();
   return `
     <article class="academic-card flex flex-col justify-between rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:shadow-md hover:border-blue-500/60 dark:hover:border-blue-500/60">
       <div>
         <div class="flex items-center justify-between gap-2 mb-4">
           <span class="px-2.5 py-1 rounded-md text-xs font-semibold border ${calc.categoryBadge}">
-            ${calc.category}
+            ${escapeHtml(calc.category)}
           </span>
           <span class="font-mono text-[11px] text-slate-400">${calc.route}</span>
         </div>
 
         <h2 class="font-serif text-xl font-bold text-slate-900 dark:text-white mb-2">
           <a href="${calc.route}" data-route="${calc.route}" class="hover:text-blue-700 dark:hover:text-blue-400 focus:outline-none">
-            ${calc.shortTitle}
+            ${escapeHtml(calc.shortTitle)}
           </a>
         </h2>
 
         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-          ${calc.subtitle}
+          ${escapeHtml(calc.subtitle)}
         </p>
 
         <!-- Formula Preview Box -->
@@ -555,12 +734,12 @@ function renderCalculatorCardHTML(calc) {
             .map(
               (ex) => `
             <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px]">
-              ${ex.label}
+              ${escapeHtml(ex.label)}
             </span>
           `
             )
             .join("")}
-          <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-mono text-[10px]">+2 ejemplos</span>
+          <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-mono text-[10px]">${escapeHtml(ui.moreExamples)}</span>
         </div>
 
         <a
@@ -568,7 +747,7 @@ function renderCalculatorCardHTML(calc) {
           data-route="${calc.route}"
           class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-medium text-sm transition-colors shadow-sm"
         >
-          <span>Abrir Calculadora Paso a Paso</span>
+          <span>${escapeHtml(ui.openCalculatorBtn)}</span>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
           </svg>
@@ -585,28 +764,32 @@ function renderCalculatorView(calc) {
   const main = document.getElementById("app-main");
   if (!main) return;
 
+  const ui = getUI();
+  const catalog = getLocalizedCatalog(state.lang);
+  const homeRoute = ROUTE_MAP.home[state.lang];
+
   state.activeDirection = calc.defaultDirection || "direct";
 
   main.innerHTML = `
     <!-- Breadcrumb Navigation -->
     <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-      <a href="/" data-route="/" class="hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1">
+      <a href="${homeRoute}" data-route="${homeRoute}" class="hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        <span>Inicio</span>
+        <span>${escapeHtml(ui.breadcrumbHome)}</span>
       </a>
       <span>/</span>
-      <span class="px-2 py-0.5 rounded text-[11px] font-medium border ${calc.categoryBadge}">${calc.category}</span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium border ${calc.categoryBadge}">${escapeHtml(calc.category)}</span>
       <span>/</span>
-      <span class="text-slate-800 dark:text-slate-200 font-medium">${calc.shortTitle}</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">${escapeHtml(calc.shortTitle)}</span>
     </nav>
 
     <!-- Calculator SEO Header (H1 + Subtitle) -->
     <header class="mb-7">
       <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
-        ${calc.h1}
+        ${escapeHtml(calc.h1)}
       </h1>
       <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
-        ${calc.subtitle}
+        ${escapeHtml(calc.subtitle)}
       </p>
     </header>
 
@@ -624,7 +807,7 @@ function renderCalculatorView(calc) {
             data-dir="direct"
             class="dir-toggle-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all"
           >
-            ${calc.directLabel}
+            ${escapeHtml(calc.directLabel)}
           </button>
           <button
             type="button"
@@ -632,7 +815,7 @@ function renderCalculatorView(calc) {
             data-dir="inverse"
             class="dir-toggle-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all"
           >
-            ${calc.inverseLabel}
+            ${escapeHtml(calc.inverseLabel)}
           </button>
         </div>
       `
@@ -646,7 +829,7 @@ function renderCalculatorView(calc) {
             <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
-            Ejemplos de Examen (Clic para resolver al instante)
+            ${escapeHtml(ui.examExamplesHeading)}
           </span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
@@ -659,8 +842,8 @@ function renderCalculatorView(calc) {
               class="exam-preset-btn group text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 hover:bg-blue-50/60 dark:bg-slate-950/60 dark:hover:bg-blue-950/30 hover:border-blue-400 dark:hover:border-blue-600 transition-all flex flex-col justify-between"
             >
               <div class="flex items-center justify-between w-full mb-1.5">
-                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400">${ex.badge}</span>
-                <span class="text-[10px] font-mono text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">${ex.label} &rarr;</span>
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400">${escapeHtml(ex.badge)}</span>
+                <span class="text-[10px] font-mono text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">${escapeHtml(ex.label)} &rarr;</span>
               </div>
               <div class="text-xs overflow-x-auto py-0.5 text-slate-800 dark:text-slate-200">
                 ${renderLatexToHtml(ex.latexLabel, false)}
@@ -695,13 +878,13 @@ function renderCalculatorView(calc) {
               type="button"
               id="toggle-keyboard-btn"
               aria-expanded="${state.keyboardOpen}"
-              title="Desplegar teclado matemático virtual"
+              title="${escapeHtml(ui.mathKeyboardTooltip)}"
               class="px-3.5 py-3.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs sm:text-sm font-medium flex items-center gap-2 transition-colors shrink-0"
             >
               <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
               </svg>
-              <span>Teclado Matemático</span>
+              <span>${escapeHtml(ui.mathKeyboardBtn)}</span>
               <svg id="keyboard-chevron" class="w-4 h-4 transition-transform ${state.keyboardOpen ? "rotate-180" : ""}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -713,7 +896,7 @@ function renderCalculatorView(calc) {
               id="solve-submit-btn"
               class="px-6 py-3.5 rounded-xl bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white font-semibold text-sm sm:text-base shadow-sm hover:shadow transition-all flex items-center gap-2 shrink-0"
             >
-              <span>Resolver Paso a Paso</span>
+              <span>${escapeHtml(ui.solveBtn)}</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
               </svg>
@@ -728,10 +911,10 @@ function renderCalculatorView(calc) {
         >
           <div class="flex items-center justify-between mb-2">
             <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              Haz clic en cualquier símbolo para insertarlo en la posición del cursor:
+              ${escapeHtml(ui.keyboardHint)}
             </span>
             <button type="button" id="clear-input-btn" class="text-[11px] text-rose-600 dark:text-rose-400 hover:underline font-medium">
-              Limpiar entrada
+              ${escapeHtml(ui.clearInput)}
             </button>
           </div>
           <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
@@ -764,13 +947,13 @@ function renderCalculatorView(calc) {
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
         </svg>
-        <span>Formulario Universitario y Resumen Teórico</span>
+        <span>${escapeHtml(ui.guideSectionBadge)}</span>
       </div>
       <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
-        ${calc.guide.title}
+        ${escapeHtml(calc.guide.title)}
       </h2>
       <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-        ${calc.guide.intro}
+        ${escapeHtml(calc.guide.intro)}
       </p>
 
       <!-- Formulas Table / Cards -->
@@ -780,13 +963,13 @@ function renderCalculatorView(calc) {
             (f) => `
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
             <div>
-              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">${f.name}</h3>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">${escapeHtml(f.name)}</h3>
               <div class="overflow-x-auto py-1">
                 ${renderLatexToHtml(f.latex, true)}
               </div>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
-              ${f.note}
+              ${escapeHtml(f.note)}
             </p>
           </div>
         `
@@ -797,10 +980,10 @@ function renderCalculatorView(calc) {
       <!-- Exam Tips Box -->
       <div class="rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/60 p-4">
         <h3 class="text-xs font-semibold uppercase tracking-wider text-blue-800 dark:text-blue-300 mb-2">
-          Consejos Clave para Exámenes de Ingeniería
+          ${escapeHtml(ui.examTipsHeading)}
         </h3>
         <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
-          ${calc.guide.tips.map((tip) => `<li>${tip}</li>`).join("")}
+          ${calc.guide.tips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join("")}
         </ul>
       </div>
     </section>
@@ -814,10 +997,10 @@ function renderCalculatorView(calc) {
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <span>Dudas Frecuentes de Examen (FAQ)</span>
+        <span>${escapeHtml(ui.faqBadge)}</span>
       </div>
       <h2 id="faq-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5">
-        Preguntas Frecuentes sobre ${calc.shortTitle}
+        ${escapeHtml(ui.faqHeadingPrefix)} ${escapeHtml(calc.shortTitle)}
       </h2>
       <div class="space-y-3.5">
         ${calc.faqs
@@ -847,12 +1030,12 @@ function renderCalculatorView(calc) {
     <!-- Contextual Internal Linking: Calculadoras Relacionadas -->
     <section aria-labelledby="related-heading" class="mt-8">
       <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
-        Calculadoras Relacionadas de ${calc.category}
+        ${escapeHtml(ui.relatedHeadingPrefix)} ${escapeHtml(calc.category)}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         ${calc.relatedRoutes
           .map((rRoute) => {
-            const relCalc = CALCULATOR_CATALOG.find((c) => c.route === rRoute);
+            const relCalc = catalog.find((c) => c.route === rRoute);
             if (!relCalc) return "";
             return `
             <a
@@ -862,15 +1045,15 @@ function renderCalculatorView(calc) {
             >
               <div class="flex items-center justify-between gap-2 mb-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-semibold border ${relCalc.categoryBadge}">
-                  ${relCalc.category}
+                  ${escapeHtml(relCalc.category)}
                 </span>
                 <span class="text-xs text-blue-600 dark:text-blue-400 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
               </div>
               <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white group-hover:text-blue-700 dark:group-hover:text-blue-400 mb-1">
-                ${relCalc.shortTitle}
+                ${escapeHtml(relCalc.shortTitle)}
               </h3>
               <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
-                ${relCalc.subtitle}
+                ${escapeHtml(relCalc.subtitle)}
               </p>
             </a>
           `;
@@ -987,40 +1170,29 @@ function renderCalculatorView(calc) {
 /* ==========================================================================
    7. STEP-BY-STEP CALCULATION EXECUTOR & RENDERER
    ========================================================================== */
-function runHybridEngine(calcId, expr, direction) {
+function runHybridEngine(calcId, expr, direction, lang = "es") {
   try {
-    if (calcId === "fourier") return solveFourierHybrid(expr, direction);
-    if (calcId === "laplace") return solveLaplaceHybrid(expr, direction);
-    if (calcId === "matrix") return solveMatrixHybrid(expr);
-    if (calcId === "ztransform") return solveZTransformHybrid(expr, direction);
-    if (calcId === "convolution") return solveConvolutionHybrid(expr, direction);
-    if (calcId === "ode") return solveOdeHybrid(expr);
-    if (calcId === "integrals") return solveIntegralsHybrid(expr, direction);
-    if (calcId === "taylor") return solveTaylorHybrid(expr);
-    if (calcId === "gauss") return solveGaussHybrid(expr);
-    if (calcId === "phasors") return solvePhasorsHybrid(expr, direction);
-    if (calcId === "fourierseries") return solveFourierSeriesHybrid(expr, direction);
-    if (calcId === "numseries") return solveNumSeriesHybrid(expr);
+    return solveWithHybridEngine(calcId, expr, direction, lang);
   } catch (err) {
     return { ok: false, error: err.message };
   }
-  return null;
 }
 
 function renderCalculationError(container, calc, errMsg) {
+  const ui = getUI();
   container.innerHTML = `
     <div class="rounded-2xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-6 text-rose-900 dark:text-rose-200">
       <div class="flex items-center gap-2 font-semibold text-sm mb-1">
         <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <span>No se pudo resolver la expresión introducida</span>
+        <span>${escapeHtml(ui.errHeading)}</span>
       </div>
       <p class="text-xs font-mono mb-3">${escapeHtml(errMsg)}</p>
       <p class="text-xs text-rose-700 dark:text-rose-300">
-        Formato esperado en <strong>${escapeHtml(calc.shortTitle)}</strong>: <code>${escapeHtml(
+        ${escapeHtml(ui.errFormatPrefix)} <strong>${escapeHtml(calc.shortTitle)}</strong>: <code>${escapeHtml(
     calc.placeholderDirect
-  )}</code>. Pulsa cualquiera de los <strong>4 Ejemplos de Examen</strong> superiores para ver una entrada válida.
+  )}</code>. ${escapeHtml(ui.errFormatSuffix)}
       </p>
     </div>
   `;
@@ -1030,29 +1202,24 @@ async function executeCalculation(calc, expr, direction) {
   const container = document.getElementById("solution-container");
   if (!container) return;
 
+  const ui = getUI();
+
   if (!expr || !expr.trim()) {
-    renderCalculationError(container, calc, "El campo de entrada está vacío. Introduce una expresión matemática.");
+    renderCalculationError(container, calc, ui.errEmpty);
     return;
   }
 
-  // 1. Instant 0ms evaluation via Hybrid Symbolic Engine
-  const hybridRes = runHybridEngine(calc.id, expr, direction);
+  // 1. Instant 0ms evaluation via Hybrid Symbolic Engine (localized to state.lang)
+  const hybridRes = runHybridEngine(calc.id, expr, direction, state.lang);
   if (hybridRes && hybridRes.ok) {
-    const engineTag = state.workerReady
-      ? "SymPy CAS + Motor Híbrido Verificado (0 ms)"
-      : "Motor Simbólico Híbrido Instantáneo (0 ms Client-Side)";
+    const engineTag = state.workerReady ? ui.engineVerifiedTag : ui.engineInstantTag;
     renderSolutionSteps(calc, expr, hybridRes, engineTag);
     return;
   }
 
   // 2. Not matched by Hybrid Engine -> Always delegate to Pyodide + SymPy Web Worker
-  // If worker is still loading, show clear loading/queuing state and await resolution
-  const loadingHeading = state.workerReady
-    ? "Resolviendo con motor simbólico SymPy..."
-    : "Inicializando Pyodide + SymPy y resolviendo expresión simbólica...";
-  const loadingSub = state.workerReady
-    ? "Calculando derivación algebraica y generando pasos en formato LaTeX..."
-    : "Tu expresión está encolada y se resolverá automáticamente en cuanto termine de cargar el motor WASM (puede tardar unos segundos la primera vez).";
+  const loadingHeading = state.workerReady ? ui.loadingReadyHeading : ui.loadingInitHeading;
+  const loadingSub = state.workerReady ? ui.loadingReadySub : ui.loadingInitSub;
 
   container.innerHTML = `
     <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 text-center shadow-sm">
@@ -1060,33 +1227,32 @@ async function executeCalculation(calc, expr, direction) {
         <span class="font-serif font-bold text-xl">&Sigma;</span>
       </div>
       <h3 class="font-semibold text-base text-slate-900 dark:text-white mb-1">
-        ${loadingHeading}
+        ${escapeHtml(loadingHeading)}
       </h3>
       <p class="text-xs text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
-        ${loadingSub}
+        ${escapeHtml(loadingSub)}
       </p>
     </div>
   `;
 
-  // Wait up to 35s if Pyodide is still downloading for the first time, or 15s if already ready
   const timeoutMs = state.workerReady ? 15000 : 35000;
-  const workerResp = await runWorkerCalculation(calc.id, expr, direction, timeoutMs);
+  const workerResp = await runWorkerCalculation(calc.id, expr, direction, timeoutMs, state.lang);
   if (workerResp?.result?.ok) {
-    renderSolutionSteps(calc, expr, workerResp.result, workerResp.engine || "Pyodide + SymPy (WASM)");
+    const localizedWorkerRes = localizeStepsResult(workerResp.result, state.lang);
+    renderSolutionSteps(calc, expr, localizedWorkerRes, workerResp.engine || "Pyodide + SymPy (WASM)");
     return;
   }
 
   // 3. Only display red error message if SymPy also failed to parse or compute the expression
-  const errMsg =
-    workerResp?.result?.error ||
-    hybridRes?.error ||
-    "No se pudo interpretar la expresión simbólica. Verifica los paréntesis y operadores.";
+  const errMsg = workerResp?.result?.error || hybridRes?.error || ui.errParse;
   renderCalculationError(container, calc, errMsg);
 }
 
 function renderSolutionSteps(calc, expr, solution, engineTag) {
   const container = document.getElementById("solution-container");
   if (!container) return;
+
+  const ui = getUI();
 
   state.lastSolution = {
     title: calc.h1,
@@ -1104,7 +1270,7 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
         <div>
           <div class="flex flex-wrap items-center gap-2 mb-1.5">
             <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-              Resolución Completada (${solution.steps.length} pasos)
+              ${escapeHtml(ui.solutionCompleted)} (${solution.steps.length} ${escapeHtml(ui.stepsWord)})
             </span>
             <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400">
               &bull; ${escapeHtml(engineTag)}
@@ -1125,7 +1291,7 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
             <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
             </svg>
-            <span>Copiar resultado en LaTeX</span>
+            <span>${escapeHtml(ui.copyFinalLatex)}</span>
           </button>
 
           <button
@@ -1136,14 +1302,14 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
-            <span>Exportar pasos (.tex / .md)</span>
+            <span>${escapeHtml(ui.exportStepsBtn)}</span>
           </button>
 
           <button
             type="button"
             id="toggle-json-view-btn"
             class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-mono transition-colors"
-            title="Inspeccionar estructura JSON de los pasos"
+            title="JSON"
           >
             { JSON }
           </button>
@@ -1171,10 +1337,10 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
                   <button
                     type="button"
                     data-copy-step="${index}"
-                    title="Copiar LaTeX de este paso"
+                    title="${escapeHtml(ui.copyStepLatex)}"
                     class="copy-step-btn text-[11px] font-mono text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 px-2 py-0.5 rounded border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-colors"
                   >
-                    Copiar LaTeX
+                    ${escapeHtml(ui.copyStepLatex)}
                   </button>
                 </div>
 
@@ -1198,8 +1364,8 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
       <!-- Collapsible Raw JSON Structure Inspector (proves compliance with [{titulo_paso, explicacion, latex}]) -->
       <div id="json-inspector-panel" class="hidden border-t border-slate-200 dark:border-slate-800 bg-slate-950 text-slate-200 p-5">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-mono text-blue-400">Estructura JSON devuelta por el motor simbólico:</span>
-          <button type="button" id="copy-json-btn" class="text-xs font-mono text-emerald-400 hover:underline">Copiar JSON</button>
+          <span class="text-xs font-mono text-blue-400">${escapeHtml(ui.jsonStructureLabel)}</span>
+          <button type="button" id="copy-json-btn" class="text-xs font-mono text-emerald-400 hover:underline">${escapeHtml(ui.copyJsonBtn)}</button>
         </div>
         <pre class="text-xs font-mono overflow-x-auto max-h-80 leading-relaxed">${escapeHtml(
           JSON.stringify(solution.steps, null, 2)
@@ -1213,7 +1379,7 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
   if (copyFinalBtn) {
     copyFinalBtn.addEventListener("click", async () => {
       await navigator.clipboard.writeText(solution.final_latex);
-      showToast("Resultado final copiado en formato LaTeX");
+      showToast(ui.toastFinalCopied);
     });
   }
 
@@ -1224,7 +1390,7 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
       const st = solution.steps[idx];
       if (!st) return;
       await navigator.clipboard.writeText(st.latex);
-      showToast(`LaTeX del Paso ${idx + 1} copiado al portapapeles`);
+      showToast(ui.toastStepCopied(idx + 1));
     });
   });
 
@@ -1249,31 +1415,32 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
   if (copyJsonBtn) {
     copyJsonBtn.addEventListener("click", async () => {
       await navigator.clipboard.writeText(JSON.stringify(solution.steps, null, 2));
-      showToast("Array JSON de pasos copiado al portapapeles");
+      showToast(ui.toastJsonCopied);
     });
   }
 }
 
 function exportStepsDocument(calc, expr, solution) {
+  const ui = getUI();
   const lines = [
     `% ============================================================================`,
-    `% CalcWeb - Exportación Académica Paso a Paso (LaTeX / Markdown)`,
-    `% Herramienta: ${calc.h1}`,
-    `% Entrada: ${expr}`,
+    `% CalcWeb - Step-by-Step Academic Export (LaTeX / Markdown)`,
+    `% Tool: ${calc.h1}`,
+    `% Input: ${expr}`,
     `% ============================================================================`,
     ``,
     `# ${calc.h1}`,
-    `**Entrada:** \`${expr}\``,
+    `**Input:** \`${expr}\``,
     ``,
-    `## Resultado Final`,
+    `## Final Result`,
     `$$${solution.final_latex}$$`,
     ``,
-    `## Resolución Paso a Paso`,
+    `## Step-by-Step Solution`,
     ``
   ];
 
   solution.steps.forEach((s, idx) => {
-    lines.push(`### Paso ${idx + 1}: ${s.titulo_paso}`);
+    lines.push(`### Step ${idx + 1}: ${s.titulo_paso}`);
     lines.push(`${s.explicacion}`);
     lines.push(``);
     lines.push(`$$${s.latex}$$`);
@@ -1285,25 +1452,29 @@ function exportStepsDocument(calc, expr, solution) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `solucion-${calc.id}-paso-a-paso.md`;
+  a.download = `solution-${calc.id}-${state.lang}.md`;
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
-  showToast("Documento con todos los pasos en LaTeX exportado (.md)");
+  showToast(ui.toastExported);
 }
 
 /* ==========================================================================
-   7B. VIEW 3: LEGAL & E-E-A-T PAGES (/sobre-nosotros, /privacidad, /aviso-legal)
+   7B. VIEW 3: LEGAL & E-E-A-T PAGES (/sobre-nosotros, /en/about, /fr/a-propos, etc.)
    ========================================================================== */
 function renderLegalView(legal) {
   const main = document.getElementById("app-main");
   if (!main) return;
 
+  const ui = getUI();
+  const routes = ROUTE_MAP;
+  const homeRoute = routes.home[state.lang];
+
   main.innerHTML = `
     <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-      <a href="/" data-route="/" class="hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1">
-        <span>Inicio</span>
+      <a href="${homeRoute}" data-route="${homeRoute}" class="hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1">
+        <span>${escapeHtml(ui.breadcrumbHome)}</span>
       </a>
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-medium">${escapeHtml(legal.shortTitle)}</span>
@@ -1312,7 +1483,7 @@ function renderLegalView(legal) {
     <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-10 shadow-sm max-w-4xl">
       <header class="border-b border-slate-200 dark:border-slate-800 pb-6 mb-6">
         <div class="text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold mb-2">
-          Documentación Institucional y Transparencia (E-E-A-T)
+          ${escapeHtml(ui.legalDocBadge)}
         </div>
         <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
           ${escapeHtml(legal.h1)}
@@ -1341,12 +1512,12 @@ function renderLegalView(legal) {
 
       <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
         <div class="flex flex-wrap gap-4">
-          <a href="/sobre-nosotros" data-route="/sobre-nosotros" class="hover:text-blue-600 underline">Sobre Nosotros</a>
-          <a href="/privacidad" data-route="/privacidad" class="hover:text-blue-600 underline">Política de Privacidad y Cookies</a>
-          <a href="/aviso-legal" data-route="/aviso-legal" class="hover:text-blue-600 underline">Aviso Legal</a>
+          <a href="${routes.about[state.lang]}" data-route="${routes.about[state.lang]}" class="hover:text-blue-600 underline">${escapeHtml(ui.footerAbout)}</a>
+          <a href="${routes.privacy[state.lang]}" data-route="${routes.privacy[state.lang]}" class="hover:text-blue-600 underline">${escapeHtml(ui.footerPrivacy)}</a>
+          <a href="${routes.legal[state.lang]}" data-route="${routes.legal[state.lang]}" class="hover:text-blue-600 underline">${escapeHtml(ui.footerLegal)}</a>
         </div>
-        <a href="/" data-route="/" class="px-4 py-2 rounded-xl bg-blue-700 text-white font-medium hover:bg-blue-800 transition-colors">
-          Volver al Panel de Calculadoras
+        <a href="${homeRoute}" data-route="${homeRoute}" class="px-4 py-2 rounded-xl bg-blue-700 text-white font-medium hover:bg-blue-800 transition-colors">
+          ${escapeHtml(ui.backToDashboard)}
         </a>
       </div>
     </article>
@@ -1371,11 +1542,11 @@ function initRouterEvents() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  state.lang = detectLangFromPath(window.location.pathname);
   initTheme();
   initRouterEvents();
   initPyodideWorker();
 
-  // Wait briefly if KaTeX defer script hasn't finished yet
   const startApp = () => {
     navigateTo(window.location.pathname, false);
   };

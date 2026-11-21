@@ -7,6 +7,8 @@
  * Array<{ titulo_paso: string, explicacion: string, latex: string }>
  */
 
+import { localizeStepsResult } from "./i18n.js";
+
 function normalizeExpr(raw) {
   return raw
     .trim()
@@ -2601,6 +2603,25 @@ export function solveNumSeriesHybrid(rawExpr) {
   return null;
 }
 
+/* ==========================================================================
+   13. UNIFIED DISPATCHER WITH MULTILINGUAL STEP TRANSLATION (ES / EN / FR)
+   ========================================================================== */
+export function solveWithHybridEngine(calcId, expr, direction = "direct", lang = "es") {
+  let rawRes = null;
+  if (calcId === "fourier") rawRes = solveFourierHybrid(expr, direction);
+  else if (calcId === "laplace") rawRes = solveLaplaceHybrid(expr, direction);
+  else if (calcId === "matrix") rawRes = solveMatrixHybrid(expr);
+  else if (calcId === "ztransform") rawRes = solveZTransformHybrid(expr, direction);
+  else if (calcId === "convolution") rawRes = solveConvolutionHybrid(expr, direction);
+  else if (calcId === "ode") rawRes = solveOdeHybrid(expr);
+  else if (calcId === "integrals") rawRes = solveIntegralsHybrid(expr, direction);
+  else if (calcId === "taylor") rawRes = solveTaylorHybrid(expr);
+  else if (calcId === "gauss") rawRes = solveGaussHybrid(expr);
+  else if (calcId === "phasors") rawRes = solvePhasorsHybrid(expr, direction);
+  else if (calcId === "fourierseries") rawRes = solveFourierSeriesHybrid(expr, direction);
+  else if (calcId === "numseries") rawRes = solveNumSeriesHybrid(expr);
 
-
+  if (!rawRes) return null;
+  return localizeStepsResult(rawRes, lang);
+}
 

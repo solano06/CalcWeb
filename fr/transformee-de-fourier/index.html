@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
+  <title>Calculatrice de Transformée de Fourier Étape par Étape | CalcWeb</title>
+  <meta name="description" content="Calculatrice en ligne de Transformée de Fourier directe et inverse étape par étape. Résout exponentielles causales e^(-at)u(t), impulsions rect(t), cosinus et deltas de Dirac 100% dans le navigateur.">
+  <meta name="keywords" content="fourier, espectro, frecuencia angular, rect, sinc, dirac, delta, heaviside, señales y sistemas, coseno">
+  <link rel="canonical" href="https://matespasoapaso.vercel.app/fr/transformee-de-fourier">
+  <link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/transformada-fourier">
+  <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/fourier-transform">
+  <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/transformee-de-fourier">
+  <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/transformada-fourier">
+
+  <!-- Favicon & Mobile PWA Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="CalcWeb">
+  <meta property="og:title" content="Calculatrice de Transformée de Fourier Étape par Étape | CalcWeb">
+  <meta property="og:description" content="Calculatrice en ligne de Transformée de Fourier directe et inverse étape par étape. Résout exponentielles causales e^(-at)u(t), impulsions rect(t), cosinus et deltas de Dirac 100% dans le navigateur.">
+  <meta property="og:url" content="https://matespasoapaso.vercel.app/fr/transformee-de-fourier">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculatrice de Transformée de Fourier Étape par Étape | CalcWeb">
+  <meta name="twitter:description" content="Calculatrice en ligne de Transformée de Fourier directe et inverse étape par étape. Résout exponentielles causales e^(-at)u(t), impulsions rect(t), cosinus et deltas de Dirac 100% dans le navigateur.">
+
+  <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js">
+  <link rel="modulepreload" href="/js/i18n.js">
+  <link rel="modulepreload" href="/js/catalog.js">
+  <link rel="modulepreload" href="/js/hybrid-engine.js">
+
+  <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
+  <script id="json-ld-seo" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebApplication",
+        "SoftwareApplication"
+      ],
+      "name": "Calculatrice de Transformée de Fourier Étape par Étape | CalcWeb",
+      "url": "https://matespasoapaso.vercel.app/fr/transformee-de-fourier",
+      "description": "Calculatrice en ligne de Transformée de Fourier directe et inverse étape par étape. Résout exponentielles causales e^(-at)u(t), impulsions rect(t), cosinus et deltas de Dirac 100% dans le navigateur.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All (100% Client-Side WebAssembly)",
+      "inLanguage": "fr-FR",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Accueil",
+          "item": "https://matespasoapaso.vercel.app/fr"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Señales y Sistemas",
+          "item": "https://matespasoapaso.vercel.app/fr"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Transformée de Fourier",
+          "item": "https://matespasoapaso.vercel.app/fr/transformee-de-fourier"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Comment calculer la Transformée de Fourier d'une exponentielle causale e^(-at)u(t) ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Comme l'échelon de Heaviside u(t) s'annule pour t < 0, les bornes de l'intégrale passent de (-∞, ∞) à [0, ∞). En regroupant les exposants en e^{-(a + jω)t}, la primitive converge pour Re(a) > 0 vers F(ω) = 1 / (a + jω)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quelle est la Transformée de Fourier d'une porte rectangulaire rect(t/T) ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Une impulsion rectangulaire d'amplitude A et de largeur T vaut A sur [-T/2, T/2]. En intégrant e^{-jωt} sur cet intervalle et en appliquant la formule d'Euler, on obtient le sinus cardinal : F(ω) = A·T·sinc(ωT/2)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Pourquoi la Transformée de Fourier de cos(ω0·t) contient-elle des impulsions de Dirac ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Car cos(ω0·t) est un signal périodique d'énergie infinie. En décomposant cos(ω0·t) = (e^{jω0t} + e^{-jω0t})/2 par Euler, son spectre se concentre en deux impulsions de Dirac situées en ±ω0 : F(ω) = π[δ(ω - ω0) + δ(ω + ω0)]."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quelle est la différence entre la Transformée de Fourier en pulsation ω et en fréquence f (Hz) ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Avec la convention en pulsation ω = 2πf (rad/s), le facteur 1/(2π) n'apparaît que dans l'intégrale de synthèse inverse."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX Math Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="/fr" data-route="/fr" class="flex items-center gap-2.5 group focus:outline-none">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">&Sigma;</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-serif font-bold text-xl tracking-tight text-slate-900 dark:text-white">CalcWeb</span>
+              <span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Moteur Symbolique Universitaire &bull; 100% Client-Side</p>
+          </div>
+        </a>
+      </div>
+
+      <nav aria-label="Main Navigation" class="hidden xl:flex items-center gap-0.5">
+        <a href="/fr" data-route="/fr" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Accueil</a>
+        <a href="/fr/transformee-de-fourier" data-route="/fr/transformee-de-fourier" class="nav-link active whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Fourier</a>
+        <a href="/fr/series-de-fourier" data-route="/fr/series-de-fourier" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">S. Fourier</a>
+        <a href="/fr/transformee-de-laplace" data-route="/fr/transformee-de-laplace" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Laplace</a>
+        <a href="/fr/transformee-en-z" data-route="/fr/transformee-en-z" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Transf. Z</a>
+        <a href="/fr/convolution" data-route="/fr/convolution" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Convolution</a>
+        <a href="/fr/equations-differentielles" data-route="/fr/equations-differentielles" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">EDO</a>
+        <a href="/fr/integrales-etape-par-etape" data-route="/fr/integrales-etape-par-etape" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Intégrales</a>
+        <a href="/fr/series-de-taylor" data-route="/fr/series-de-taylor" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Taylor</a>
+        <a href="/fr/series-numeriques" data-route="/fr/series-numeriques" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Séries Num.</a>
+        <a href="/fr/diagonalisation-matrices" data-route="/fr/diagonalisation-matrices" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Matrices</a>
+        <a href="/fr/pivot-de-gauss" data-route="/fr/pivot-de-gauss" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Pivot Gauss</a>
+        <a href="/fr/calculateur-phaseurs" data-route="/fr/calculateur-phaseurs" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Phaseurs AC</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <!-- Language Switcher (ES | EN | FR) -->
+        <div id="lang-switcher" class="flex items-center gap-0.5 p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[11px] font-mono font-semibold">
+          <a href="/transformada-fourier" data-route="/transformada-fourier" data-lang-switch="es" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">ES</a><a href="/en/fourier-transform" data-route="/en/fourier-transform" data-lang-switch="en" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">EN</a><a href="/fr/transformee-de-fourier" data-route="/fr/transformee-de-fourier" data-lang-switch="fr" class="px-2 py-0.5 rounded transition-colors bg-blue-700 text-white shadow-2xs">FR</a>
+        </div>
+
+        <button id="engine-status-btn" type="button" title="État du Web Worker Pyodide + SymPy (WebAssembly)" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="font-mono text-[11px] hidden sm:inline">Chargement du moteur symbolique...</span>
+        </button>
+
+        <button id="theme-toggle" type="button" aria-label="Basculer le thème clair/sombre" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="xl:hidden border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center gap-1 overflow-x-auto no-scrollbar bg-slate-50/70 dark:bg-slate-900/70">
+      <a href="/fr" data-route="/fr" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Accueil</a>
+      <a href="/fr/transformee-de-fourier" data-route="/fr/transformee-de-fourier" class="nav-link active whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fourier</a>
+      <a href="/fr/series-de-fourier" data-route="/fr/series-de-fourier" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">S. Fourier</a>
+      <a href="/fr/transformee-de-laplace" data-route="/fr/transformee-de-laplace" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Laplace</a>
+      <a href="/fr/transformee-en-z" data-route="/fr/transformee-en-z" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Transf. Z</a>
+      <a href="/fr/convolution" data-route="/fr/convolution" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Convolution</a>
+      <a href="/fr/equations-differentielles" data-route="/fr/equations-differentielles" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">EDO</a>
+      <a href="/fr/integrales-etape-par-etape" data-route="/fr/integrales-etape-par-etape" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Intégrales</a>
+      <a href="/fr/series-de-taylor" data-route="/fr/series-de-taylor" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Taylor</a>
+      <a href="/fr/series-numeriques" data-route="/fr/series-numeriques" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Séries Num.</a>
+      <a href="/fr/diagonalisation-matrices" data-route="/fr/diagonalisation-matrices" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Matrices</a>
+      <a href="/fr/pivot-de-gauss" data-route="/fr/pivot-de-gauss" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Pivot Gauss</a>
+      <a href="/fr/calculateur-phaseurs" data-route="/fr/calculateur-phaseurs" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Phaseurs AC</a>
+    </div>
+  </header>
+
+  <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="/fr" data-route="/fr">Accueil</a>
+      <span>/</span>
+      <span>Señales y Sistemas</span>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">Transformée de Fourier</span>
+    </nav>
+    <header class="mb-7">
+      <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+        Transformée de Fourier (Directe et Inverse)
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+        Analyse spectrale continue en pulsation ω avec détail de l'intégrale impropre, identités d'Euler et propriétés des tables.
+      </p>
+    </header>
+    <section id="solution-container" class="mb-12"></section>
+    <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+      <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
+        Guide Rapide et Formules Clés : Transformée de Fourier en Ingénierie
+      </h2>
+      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        En théorie du Traitement du Signal, la Transformée de Fourier continue décompose un signal temporel apériodique f(t) en sa densité spectrale de pulsation ω (rad/s). L'introduction de l'impulsion de Dirac δ(ω) permet de transformer les signaux périodiques et continus.
+      </p>
+      <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
+        <li>Vérifiez toujours si le signal est multiplié par l'échelon u(t) : cela réduit la borne inférieure d'intégration de -∞ à 0.</li><li>Pour transformer des fonctions trigonométriques pures, utilisez l'identité d'Euler afin de passer aux exponentielles complexes.</li><li>Un retard temporel t → (t - t₀) ne modifie pas le module du spectre |F(ω)|, il ajoute uniquement un déphasage linéaire -ω·t₀.</li>
+      </ul>
+    </section>
+    
+    <section aria-labelledby="faq-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
+      <h2 id="faq-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5">
+        Questions Fréquentes sur Transformée de Fourier
+      </h2>
+      <div class="space-y-3.5">
+        
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              Comment calculer la Transformée de Fourier d'une exponentielle causale e^(-at)u(t) ?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Comme l'échelon de Heaviside u(t) s'annule pour t &lt; 0, les bornes de l'intégrale passent de (-∞, ∞) à [0, ∞). En regroupant les exposants en e^{-(a + jω)t}, la primitive converge pour Re(a) &gt; 0 vers F(ω) = 1 / (a + jω).
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              Quelle est la Transformée de Fourier d'une porte rectangulaire rect(t/T) ?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Une impulsion rectangulaire d'amplitude A et de largeur T vaut A sur [-T/2, T/2]. En intégrant e^{-jωt} sur cet intervalle et en appliquant la formule d'Euler, on obtient le sinus cardinal : F(ω) = A·T·sinc(ωT/2).
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              Pourquoi la Transformée de Fourier de cos(ω0·t) contient-elle des impulsions de Dirac ?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Car cos(ω0·t) est un signal périodique d'énergie infinie. En décomposant cos(ω0·t) = (e^{jω0t} + e^{-jω0t})/2 par Euler, son spectre se concentre en deux impulsions de Dirac situées en ±ω0 : F(ω) = π[δ(ω - ω0) + δ(ω + ω0)].
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              Quelle est la différence entre la Transformée de Fourier en pulsation ω et en fréquence f (Hz) ?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Avec la convention en pulsation ω = 2πf (rad/s), le facteur 1/(2π) n'apparaît que dans l'intégrale de synthèse inverse.
+            </p>
+          </details>
+      </div>
+    </section>
+    
+    <section aria-labelledby="related-heading" class="mt-8">
+      <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
+        Calculatrices Associées en Señales y Sistemas
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+          <a href="/fr/transformee-de-laplace" data-route="/fr/transformee-de-laplace" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Transformée de Laplace</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Résolution symbolique dans le plan complexe s avec factorisation explicite du dénominateur, calcul des pôles et décomposition en éléments simples.</p>
+          </a>
+          <a href="/fr/transformee-en-z" data-route="/fr/transformee-en-z" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Transformée en Z</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Analyse des signaux et systèmes à temps discret avec division explicite X(z)/z, décomposition en éléments simples et application des tables causales.</p>
+          </a>
+          <a href="/fr/convolution" data-route="/fr/convolution" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Convolution Continue et Discrète</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Calcul analytique de la réponse des systèmes LTI par intégrale ou somme de convolution, détaillant retournement temporel, décalage et bornes actives par échelons.</p>
+          </a>
+      </div>
+    </section>
+  
+  </main>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+          <span>&bull;</span>
+          <span>Architecture 0€ Serveur (Pyodide WebAssembly + SymPy + Moteur Hybride Instantané)</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/fr/a-propos" data-route="/fr/a-propos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">À Propos</a>
+          <a href="/fr/confidentialite" data-route="/fr/confidentialite" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Confidentialité et Cookies (RGPD)</a>
+          <a href="/fr/mentions-legales" data-route="/fr/mentions-legales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Mentions Légales</a>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <a href="/fr/transformee-de-fourier" data-route="/fr/transformee-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée de Fourier</a>
+        <a href="/fr/transformee-en-z" data-route="/fr/transformee-en-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée en Z</a>
+        <a href="/fr/convolution" data-route="/fr/convolution" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolution Continue et Discrète</a>
+        <a href="/fr/series-de-fourier" data-route="/fr/series-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries de Fourier</a>
+        <a href="/fr/transformee-de-laplace" data-route="/fr/transformee-de-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée de Laplace</a>
+        <a href="/fr/equations-differentielles" data-route="/fr/equations-differentielles" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Équations Différentielles (EDO)</a>
+        <a href="/fr/integrales-etape-par-etape" data-route="/fr/integrales-etape-par-etape" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Intégrales Étape par Étape</a>
+        <a href="/fr/series-de-taylor" data-route="/fr/series-de-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries de Taylor et Maclaurin</a>
+        <a href="/fr/series-numeriques" data-route="/fr/series-numeriques" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries Numériques</a>
+        <a href="/fr/diagonalisation-matrices" data-route="/fr/diagonalisation-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalisation de Matrices</a>
+        <a href="/fr/pivot-de-gauss" data-route="/fr/pivot-de-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Systèmes Linéaires (Gauss-Jordan)</a>
+        <a href="/fr/calculateur-phaseurs" data-route="/fr/calculateur-phaseurs" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Phaseurs et Circuits AC</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

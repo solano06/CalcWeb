@@ -1333,7 +1333,143 @@ def solve_num_series(expr_str):
     return {"ok": True, "steps": steps, "final_latex": final_tex}
 
 
-def dispatch_calculation(tool, expr_str, direction="direct"):
+PY_PHRASES_EN = [
+    ("Identificación de la señal en el dominio del tiempo", "Time-domain signal identification"),
+    ("Planteamiento de la integral de Transformada de Fourier", "Setting up the Fourier Transform integral"),
+    ("Evaluación simbólica e integración respecto a t", "Symbolic evaluation and integration with respect to t"),
+    ("Transformada de Fourier F(\\omega) obtenida", "Resulting Fourier Transform F(\\omega)"),
+    ("Identificación del espectro en frecuencia F(\\omega)", "Frequency spectrum F(\\omega) identification"),
+    ("Planteamiento de la integral de síntesis de Fourier", "Setting up the Inverse Fourier synthesis integral"),
+    ("Cálculo simbólico de la Transformada Inversa de Fourier", "Symbolic computation of the Inverse Fourier Transform"),
+    ("Planteamiento de la Transformada de Laplace Unilateral", "Setting up the Unilateral Laplace Transform"),
+    ("Integración simbólica en el dominio complejo s", "Symbolic integration in the complex s-domain"),
+    ("Descomposición en Fracciones Simples (sympy.apart)", "Partial Fraction Decomposition (sympy.apart)"),
+    ("Factorización del denominador y búsqueda de polos", "Denominator factorization and pole analysis"),
+    ("Antitransformación término a término (Tablas de Laplace)", "Term-by-term Inverse Laplace Transform"),
+    ("Polinomio característico y cálculo de autovalores", "Characteristic polynomial and eigenvalue computation"),
+    ("Cálculo de autovectores y bases de los subespacios propios", "Eigenvectors and eigenspace basis computation"),
+    ("Construcción de la matriz modal P y matriz diagonal D", "Constructing modal matrix P and diagonal matrix D"),
+    ("Verificación de factorización espectral A = P D P^{-1}", "Spectral factorization verification A = P D P^{-1}"),
+    ("División previa entre z: formación de X(z)/z", "Pre-division by z: forming X(z)/z"),
+    ("Descomposición en fracciones simples de X(z)/z (sympy.apart)", "Partial fraction expansion of X(z)/z (sympy.apart)"),
+    ("Multiplicación final por z y antitransformación por tablas", "Final multiplication by z and table inversion"),
+    ("Planteamiento de la Transformada Z Unilateral", "Setting up the Unilateral Z-Transform"),
+    ("Suma simbólica de la serie en el dominio Z", "Symbolic summation in the Z-domain"),
+    ("Planteamiento de la integral de convolución continua", "Setting up the continuous convolution integral"),
+    ("Desplazamiento temporal h(t - \\tau) e integración simbólica", "Time shift h(t - \\tau) and symbolic integration"),
+    ("Planteamiento del sumatorio de convolución discreta", "Setting up the discrete convolution summation"),
+    ("Identificación y clasificación de la Ecuación Diferencial Ordinaria", "Ordinary Differential Equation identification and classification"),
+    ("Resolución simbólica de la EDO mediante sympy.dsolve()", "Symbolic ODE resolution via sympy.dsolve()"),
+    ("Aplicación de condiciones iniciales (Problema de Valor Inicial)", "Applying initial conditions (Initial Value Problem)"),
+    ("Planteamiento de la integral indefinida", "Setting up the indefinite integral"),
+    ("Cálculo simbólico de la primitiva F(x) con SymPy", "Symbolic antiderivative F(x) computation with SymPy"),
+    ("Aplicación de la Regla de Barrow en los límites [a, b]", "Applying the Fundamental Theorem of Calculus on [a, b]"),
+    ("Evaluación de la función y sus derivadas en el centro x_0", "Evaluating the function and its derivatives at center x_0"),
+    ("Construcción del Polinomio de Taylor de orden N", "Constructing the Taylor Polynomial of degree N"),
+    ("Construcción de la matriz aumentada [A | b] y análisis Rouché-Frobenius", "Constructing augmented matrix [A | b] and Rouché-Frobenius rank analysis"),
+    ("Eliminación de Gauss-Jordan hasta la forma escalonada reducida (RREF)", "Gauss-Jordan elimination to Reduced Row Echelon Form (RREF)"),
+    ("Representación algebraica y polar del número complejo / fasor", "Rectangular and polar representation of the complex phasor"),
+    ("Análisis de paridad de f(x) en el intervalo simétrico [-L, L]", "Parity symmetry analysis of f(x) on [-L, L]"),
+    ("Cálculo de los coeficientes de Fourier a_0, a_n y b_n", "Computing Fourier coefficients a_0, a_n, and b_n"),
+    ("Cálculo de los coeficientes complejos de Fourier c_n", "Computing complex exponential Fourier coefficients c_n"),
+    ("Desarrollo de la Serie de Fourier hasta el armónico N", "Fourier Series expansion up to harmonic N"),
+    ("Comprobación de la Condición Necesaria de Convergencia", "Checking the Necessary Condition for Convergence"),
+    ("Veredicto Inmediato: Serie Divergente", "Immediate Verdict: Divergent Series"),
+    ("Aplicación del Criterio del Cociente de D'Alembert", "Applying D'Alembert's Ratio Test"),
+    ("Análisis por Criterios de Comparación / p-Series / Leibniz", "Comparison / p-Series / Alternating Leibniz Test Analysis"),
+    ("Veredicto de Convergencia y Suma Exacta Simbólica", "Convergence Verdict and Exact Symbolic Sum"),
+    ("Veredicto Final: Serie Divergente", "Final Verdict: Divergent Series"),
+    ("Verificamos que el término general tiende a cero", "We verify that the general term approaches zero"),
+    ("Calculamos el límite del cociente", "We compute the limit of the ratio"),
+    ("el criterio decide de forma concluyente", "the test is conclusive"),
+    ("Evaluamos la suma infinita cerrada mediante", "We evaluate the closed-form infinite sum via"),
+    ("La suma parcial crece sin cota finita", "The partial sum grows without bound"),
+    ("Función PAR", "EVEN function"),
+    ("Función IMPAR", "ODD function"),
+    ("Sin paridad definida", "Neither even nor odd"),
+    ("CONVERGENTE", "CONVERGENT"),
+    ("DIVERGENTE", "DIVERGENT")
+]
+
+PY_PHRASES_FR = [
+    ("Identificación de la señal en el dominio del tiempo", "Identification du signal dans le domaine temporel"),
+    ("Planteamiento de la integral de Transformada de Fourier", "Formulation de l'intégrale de la Transformée de Fourier"),
+    ("Evaluación simbólica e integración respecto a t", "Évaluation symbolique et intégration par rapport à t"),
+    ("Transformada de Fourier F(\\omega) obtenida", "Transformée de Fourier F(\\omega) obtenue"),
+    ("Identificación del espectro en frecuencia F(\\omega)", "Identification du spectre fréquentiel F(\\omega)"),
+    ("Planteamiento de la integral de síntesis de Fourier", "Formulation de l'intégrale de synthèse de Fourier"),
+    ("Cálculo simbólico de la Transformada Inversa de Fourier", "Calcul symbolique de la Transformée de Fourier Inverse"),
+    ("Planteamiento de la Transformada de Laplace Unilateral", "Formulation de la Transformée de Laplace Unilatérale"),
+    ("Integración simbólica en el dominio complejo s", "Intégration symbolique dans le domaine complexe s"),
+    ("Descomposición en Fracciones Simples (sympy.apart)", "Décomposition en Éléments Simples (sympy.apart)"),
+    ("Factorización del denominador y búsqueda de polos", "Factorisation du dénominateur et recherche des pôles"),
+    ("Antitransformación término a término (Tablas de Laplace)", "Transformée inverse terme à terme (Tables de Laplace)"),
+    ("Polinomio característico y cálculo de autovalores", "Polynôme caractéristique et calcul des valeurs propres"),
+    ("Cálculo de autovectores y bases de los subespacios propios", "Calcul des vecteurs propres et bases des sous-espaces propres"),
+    ("Construcción de la matriz modal P y matriz diagonal D", "Construction de la matrice de passage P et matrice diagonale D"),
+    ("Verificación de factorización espectral A = P D P^{-1}", "Vérification de la factorisation spectrale A = P D P^{-1}"),
+    ("División previa entre z: formación de X(z)/z", "Division préalable par z : formation de X(z)/z"),
+    ("Descomposición en fracciones simples de X(z)/z (sympy.apart)", "Décomposition en éléments simples de X(z)/z (sympy.apart)"),
+    ("Multiplicación final por z y antitransformación por tablas", "Multiplication finale par z et inversion par tables"),
+    ("Planteamiento de la Transformada Z Unilateral", "Formulation de la Transformée en Z Unilatérale"),
+    ("Suma simbólica de la serie en el dominio Z", "Somme symbolique de la série dans le domaine Z"),
+    ("Planteamiento de la integral de convolución continua", "Formulation de l'intégrale de convolution continue"),
+    ("Desplazamiento temporal h(t - \\tau) e integración simbólica", "Décalage temporel h(t - \\tau) et intégration symbolique"),
+    ("Planteamiento del sumatorio de convolución discreta", "Formulation de la somme de convolution discrète"),
+    ("Identificación y clasificación de la Ecuación Diferencial Ordinaria", "Identification et classification de l'Équation Différentielle Ordinaire"),
+    ("Resolución simbólica de la EDO mediante sympy.dsolve()", "Résolution symbolique de l'EDO via sympy.dsolve()"),
+    ("Aplicación de condiciones iniciales (Problema de Valor Inicial)", "Application des conditions initiales (Problème de Cauchy)"),
+    ("Planteamiento de la integral indefinida", "Formulation de l'intégrale indéfinie"),
+    ("Cálculo simbólico de la primitiva F(x) con SymPy", "Calcul symbolique de la primitive F(x) avec SymPy"),
+    ("Aplicación de la Regla de Barrow en los límites [a, b]", "Application du théorème fondamental sur les bornes [a, b]"),
+    ("Evaluación de la función y sus derivadas en el centro x_0", "Évaluation de la fonction et de ses dérivées au centre x_0"),
+    ("Construcción del Polinomio de Taylor de orden N", "Construction du Polynôme de Taylor d'ordre N"),
+    ("Construcción de la matriz aumentada [A | b] y análisis Rouché-Frobenius", "Construction de la matrice augmentée [A | b] et théorème de Rouché-Fontené"),
+    ("Eliminación de Gauss-Jordan hasta la forma escalonada reducida (RREF)", "Élimination de Gauss-Jordan jusqu'à la forme échelonnée réduite (RREF)"),
+    ("Representación algebraica y polar del número complejo / fasor", "Représentation algébrique et polaire du nombre complexe / phaseur"),
+    ("Análisis de paridad de f(x) en el intervalo simétrico [-L, L]", "Analyse de la parité de f(x) sur l'intervalle symétrique [-L, L]"),
+    ("Cálculo de los coeficientes de Fourier a_0, a_n y b_n", "Calcul des coefficients de Fourier a_0, a_n et b_n"),
+    ("Cálculo de los coeficientes complejos de Fourier c_n", "Calcul des coefficients complexes de Fourier c_n"),
+    ("Desarrollo de la Serie de Fourier hasta el armónico N", "Développement en Série de Fourier jusqu'à l'harmonique N"),
+    ("Comprobación de la Condición Necesaria de Convergencia", "Vérification de la Condition Nécessaire de Convergence"),
+    ("Veredicto Inmediato: Serie Divergente", "Verdict Immédiat : Série Divergente"),
+    ("Aplicación del Criterio del Cociente de D'Alembert", "Application de la Règle de D'Alembert"),
+    ("Análisis por Criterios de Comparación / p-Series / Leibniz", "Analyse par Critères de Comparaison / Séries de Riemann / Leibniz"),
+    ("Veredicto de Convergencia y Suma Exacta Simbólica", "Verdict de Convergence et Somme Exacte Symbolique"),
+    ("Veredicto Final: Serie Divergente", "Verdict Final : Série Divergente"),
+    ("Verificamos que el término general tiende a cero", "Nous vérifions que le terme général tend vers zéro"),
+    ("Calculamos el límite del cociente", "Nous calculons la limite du quotient"),
+    ("el criterio decide de forma concluyente", "le critère permet de conclure"),
+    ("Evaluamos la suma infinita cerrada mediante", "Nous évaluons la somme infinie exacte via"),
+    ("La suma parcial crece sin cota finita", "La somme partielle croît sans borne finie"),
+    ("Función PAR", "Fonction PAIRE"),
+    ("Función IMPAR", "Fonction IMPAIRE"),
+    ("Sin paridad definida", "Ni paire ni impaire"),
+    ("CONVERGENTE", "CONVERGENTE"),
+    ("DIVERGENTE", "DIVERGENTE")
+]
+
+
+def localize_py_steps(res, lang="es"):
+    if not res or not res.get("ok") or lang == "es":
+        return res
+    table = PY_PHRASES_EN if lang == "en" else (PY_PHRASES_FR if lang == "fr" else None)
+    if not table:
+        return res
+    for step in res.get("steps", []):
+        t = step.get("titulo_paso", "")
+        e = step.get("explicacion", "")
+        for src, dst in table:
+            if src in t:
+                t = t.replace(src, dst)
+            if src in e:
+                e = e.replace(src, dst)
+        step["titulo_paso"] = t
+        step["explicacion"] = e
+    return res
+
+
+def dispatch_calculation(tool, expr_str, direction="direct", lang="es"):
     try:
         if tool == "fourier":
             res = solve_fourier(expr_str, direction)
@@ -1361,6 +1497,7 @@ def dispatch_calculation(tool, expr_str, direction="direct"):
             res = solve_num_series(expr_str)
         else:
             res = {"ok": False, "error": f"Herramienta desconocida: {tool}"}
+        res = localize_py_steps(res, lang)
         return json.dumps(res)
     except Exception as e:
         return json.dumps({"ok": False, "error": str(e)})
@@ -1405,13 +1542,14 @@ self.addEventListener("message", async (event) => {
   if (action === "SOLVE") {
     try {
       const pyodide = await initPyodideEngine();
-      const { tool, expr, direction } = payload;
+      const { tool, expr, direction, lang } = payload;
       pyodide.globals.set("_req_tool", tool);
       pyodide.globals.set("_req_expr", expr);
       pyodide.globals.set("_req_dir", direction || "direct");
+      pyodide.globals.set("_req_lang", lang || "es");
 
       const rawJson = await pyodide.runPythonAsync(
-        `dispatch_calculation(_req_tool, _req_expr, _req_dir)`
+        `dispatch_calculation(_req_tool, _req_expr, _req_dir, _req_lang)`
       );
       const parsed = JSON.parse(rawJson);
       self.postMessage({ type: "RESULT", id, result: parsed, engine: "Pyodide + SymPy (WASM)" });

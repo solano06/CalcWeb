@@ -1,21 +1,27 @@
 /**
- * Static Route & SEO Generator (SSG) for CalcWeb
+ * Multilingual Static Route & SEO Generator (SSG) for CalcWeb (ES / EN / FR)
  *
- * Centralizes SITE_URL and generates:
- * 1. /index.html (Home Dashboard with pre-rendered SEO links & WebApplication JSON-LD)
- * 2. All 10 Calculator static routes (/transformada-fourier/index.html, etc.) with:
- *    - Pre-rendered H1, 4 Exam Examples, Quick Theory Guide, 4 FAQs & Related Calculators (instant LCP, CLS = 0)
- *    - Synchronized JSON-LD @graph: WebApplication + BreadcrumbList + FAQPage
- *    - Open Graph (og:*) & Twitter Cards (twitter:*) + favicon.svg + site.webmanifest
- * 3. All 3 Legal & E-E-A-T static routes (/sobre-nosotros, /privacidad, /aviso-legal) for Google AdSense
- * 4. /404.html SPA fallback
- * 5. /sitemap.xml with current <lastmod> date and priorities (1.0 home, 0.9 tools, 0.3 legal)
- * 6. /robots.txt pointing to `${SITE_URL}/sitemap.xml`
+ * Centralizes SITE_URL and generates 48 static routes across 3 languages:
+ * - 16 Spanish (es) routes at root: /, /transformada-fourier, ..., /sobre-nosotros, /privacidad, /aviso-legal
+ * - 16 English (en) routes under /en/: /en, /en/fourier-transform, ..., /en/about, /en/privacy, /en/legal
+ * - 16 French (fr) routes under /fr/: /fr, /fr/transformee-de-fourier, ..., /fr/a-propos, /fr/confidentialite, /fr/mentions-legales
+ * - /404.html SPA fallback
+ * - /sitemap.xml with all 48 URLs, current <lastmod> date, hreflang alternates, and priorities (1.0 home, 0.9 tools, 0.3 legal)
+ * - /robots.txt pointing to `${SITE_URL}/sitemap.xml`
  */
 
 import fs from "node:fs";
 import path from "node:path";
-import { CALCULATOR_CATALOG, LEGAL_PAGES } from "./js/catalog.js";
+import {
+  getLocalizedCatalog,
+  getLocalizedLegalPages
+} from "./js/catalog.js";
+import {
+  SUPPORTED_LANGS,
+  ROUTE_MAP,
+  UI_STRINGS,
+  getEquivalentRoute
+} from "./js/i18n.js";
 
 export const SITE_URL = (process.env.SITE_URL || "https://matespasoapaso.vercel.app").replace(/\/+$/, "");
 const TODAY_ISO = new Date().toISOString().split("T")[0];
@@ -29,21 +35,24 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
-function buildNavLinksHtml(activeRoute) {
+function buildNavLinksHtml(activeRoute, lang = "es") {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const routes = ROUTE_MAP;
+
   const navItems = [
-    { route: "/", label: "Inicio" },
-    { route: "/transformada-fourier", label: "Fourier" },
-    { route: "/series-de-fourier", label: "S. Fourier" },
-    { route: "/transformada-laplace", label: "Laplace" },
-    { route: "/transformada-z", label: "Transf. Z" },
-    { route: "/convolucion", label: "Convolución" },
-    { route: "/ecuaciones-diferenciales", label: "EDOs" },
-    { route: "/integrales-paso-a-paso", label: "Integrales" },
-    { route: "/series-taylor", label: "Taylor" },
-    { route: "/series-numericas", label: "Series Num." },
-    { route: "/diagonalizacion-matrices", label: "Matrices" },
-    { route: "/sistemas-ecuaciones-gauss", label: "Gauss-Jordan" },
-    { route: "/calculadora-fasores-complejos", label: "Fasores AC" }
+    { route: routes.home[lang], label: ui.nav.home },
+    { route: routes.fourier[lang], label: ui.nav.fourier },
+    { route: routes.fourierseries[lang], label: ui.nav.fourierseries },
+    { route: routes.laplace[lang], label: ui.nav.laplace },
+    { route: routes.ztransform[lang], label: ui.nav.ztransform },
+    { route: routes.convolution[lang], label: ui.nav.convolution },
+    { route: routes.ode[lang], label: ui.nav.ode },
+    { route: routes.integrals[lang], label: ui.nav.integrals },
+    { route: routes.taylor[lang], label: ui.nav.taylor },
+    { route: routes.numseries[lang], label: ui.nav.numseries },
+    { route: routes.matrix[lang], label: ui.nav.matrix },
+    { route: routes.gauss[lang], label: ui.nav.gauss },
+    { route: routes.phasors[lang], label: ui.nav.phasors }
   ];
 
   const desktop = navItems
@@ -51,7 +60,9 @@ function buildNavLinksHtml(activeRoute) {
       (item) =>
         `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
           activeRoute === item.route ? "active " : ""
-        }whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">${item.label}</a>`
+        }whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">${escapeHtml(
+          item.label
+        )}</a>`
     )
     .join("\n        ");
 
@@ -60,14 +71,47 @@ function buildNavLinksHtml(activeRoute) {
       (item) =>
         `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
           activeRoute === item.route ? "active " : ""
-        }whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">${item.label}</a>`
+        }whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">${escapeHtml(
+          item.label
+        )}</a>`
     )
     .join("\n      ");
 
-  return { desktop, mobile };
+  const langSwitcher = SUPPORTED_LANGS.map((l) => {
+    const targetUrl = getEquivalentRoute(activeRoute, l);
+    const isCurrent = l === lang;
+    return `<a href="${targetUrl}" data-route="${targetUrl}" data-lang-switch="${l}" class="px-2 py-0.5 rounded transition-colors ${
+      isCurrent
+        ? "bg-blue-700 text-white shadow-2xs"
+        : "text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400"
+    }">${l.toUpperCase()}</a>`;
+  }).join("");
+
+  return { desktop, mobile, langSwitcher };
 }
 
-function buildJsonLdForPage({ title, description, canonicalUrl, calc = null }) {
+function buildHreflangTags(route) {
+  const esPath = getEquivalentRoute(route, "es");
+  const enPath = getEquivalentRoute(route, "en");
+  const frPath = getEquivalentRoute(route, "fr");
+
+  const esUrl = `${SITE_URL}${esPath === "/" ? "/" : esPath}`;
+  const enUrl = `${SITE_URL}${enPath}`;
+  const frUrl = `${SITE_URL}${frPath}`;
+
+  return [
+    `<link rel="alternate" hreflang="es" href="${esUrl}">`,
+    `<link rel="alternate" hreflang="en" href="${enUrl}">`,
+    `<link rel="alternate" hreflang="fr" href="${frUrl}">`,
+    `<link rel="alternate" hreflang="x-default" href="${esUrl}">`
+  ].join("\n  ");
+}
+
+function buildJsonLdForPage({ title, description, canonicalUrl, calc = null, lang = "es" }) {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const homePath = ROUTE_MAP.home[lang];
+  const homeUrl = `${SITE_URL}${homePath === "/" ? "/" : homePath}`;
+
   const graph = [
     {
       "@type": ["WebApplication", "SoftwareApplication"],
@@ -76,7 +120,7 @@ function buildJsonLdForPage({ title, description, canonicalUrl, calc = null }) {
       description,
       applicationCategory: "EducationalApplication",
       operatingSystem: "All (100% Client-Side WebAssembly)",
-      inLanguage: "es-ES",
+      inLanguage: ui.locale,
       offers: {
         "@type": "Offer",
         price: "0",
@@ -92,14 +136,14 @@ function buildJsonLdForPage({ title, description, canonicalUrl, calc = null }) {
         {
           "@type": "ListItem",
           position: 1,
-          name: "Inicio",
-          item: `${SITE_URL}/`
+          name: ui.breadcrumbHome,
+          item: homeUrl
         },
         {
           "@type": "ListItem",
           position: 2,
           name: calc.category,
-          item: `${SITE_URL}/`
+          item: homeUrl
         },
         {
           "@type": "ListItem",
@@ -135,13 +179,17 @@ function buildJsonLdForPage({ title, description, canonicalUrl, calc = null }) {
   );
 }
 
-function buildStaticCalculatorMainHtml(calc) {
+function buildStaticCalculatorMainHtml(calc, lang = "es") {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const catalog = getLocalizedCatalog(lang);
+  const homeRoute = ROUTE_MAP.home[lang];
+
   const faqsHtml =
     Array.isArray(calc.faqs) && calc.faqs.length > 0
       ? `
     <section aria-labelledby="faq-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
       <h2 id="faq-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5">
-        Preguntas Frecuentes sobre ${escapeHtml(calc.shortTitle)}
+        ${escapeHtml(ui.faqHeadingPrefix)} ${escapeHtml(calc.shortTitle)}
       </h2>
       <div class="space-y-3.5">
         ${calc.faqs
@@ -166,12 +214,12 @@ function buildStaticCalculatorMainHtml(calc) {
       ? `
     <section aria-labelledby="related-heading" class="mt-8">
       <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
-        Calculadoras Relacionadas de ${escapeHtml(calc.category)}
+        ${escapeHtml(ui.relatedHeadingPrefix)} ${escapeHtml(calc.category)}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         ${calc.relatedRoutes
           .map((rRoute) => {
-            const rel = CALCULATOR_CATALOG.find((c) => c.route === rRoute);
+            const rel = catalog.find((c) => c.route === rRoute);
             if (!rel) return "";
             return `
           <a href="${rel.route}" data-route="${rel.route}" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
@@ -186,7 +234,7 @@ function buildStaticCalculatorMainHtml(calc) {
 
   return `
     <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-      <a href="/" data-route="/">Inicio</a>
+      <a href="${homeRoute}" data-route="${homeRoute}">${escapeHtml(ui.breadcrumbHome)}</a>
       <span>/</span>
       <span>${escapeHtml(calc.category)}</span>
       <span>/</span>
@@ -217,10 +265,13 @@ function buildStaticCalculatorMainHtml(calc) {
   `;
 }
 
-function buildStaticLegalMainHtml(legal) {
+function buildStaticLegalMainHtml(legal, lang = "es") {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const homeRoute = ROUTE_MAP.home[lang];
+
   return `
     <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-      <a href="/" data-route="/">Inicio</a>
+      <a href="${homeRoute}" data-route="${homeRoute}">${escapeHtml(ui.breadcrumbHome)}</a>
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-medium">${escapeHtml(legal.shortTitle)}</span>
     </nav>
@@ -248,26 +299,31 @@ function buildStaticLegalMainHtml(legal) {
   `;
 }
 
-function buildStaticHomeMainHtml() {
+function buildStaticHomeMainHtml(lang = "es") {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const catalog = getLocalizedCatalog(lang);
+
   return `
     <section class="rounded-3xl bg-gradient-to-b from-white to-slate-100/80 dark:from-slate-900 dark:to-slate-900/60 border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 mb-10 shadow-sm">
       <h1 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight mb-4">
-        Calculadoras Matemáticas y de Ingeniería Paso a Paso
+        ${escapeHtml(ui.heroTitlePrefix)} ${escapeHtml(ui.heroTitleHighlight)}
       </h1>
       <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-        Resolución simbólica rigurosa con justificación teórica en cada transformación. Todo el cálculo se ejecuta 100% en tu navegador mediante WebAssembly (Pyodide + SymPy).
+        ${ui.heroDescription}
       </p>
     </section>
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
-      ${CALCULATOR_CATALOG.map(
-        (c) => `
+      ${catalog
+        .map(
+          (c) => `
         <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
           <h2 class="font-serif text-xl font-bold mb-2">
             <a href="${c.route}" data-route="${c.route}">${escapeHtml(c.shortTitle)}</a>
           </h2>
           <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">${escapeHtml(c.subtitle)}</p>
         </article>`
-      ).join("")}
+        )
+        .join("")}
     </section>
   `;
 }
@@ -277,21 +333,29 @@ function buildFullHtmlDocument({
   description,
   keywords,
   route,
+  lang = "es",
   calc = null,
   mainInnerHtml = ""
 }) {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const routes = ROUTE_MAP;
+  const homeRoute = routes.home[lang];
+  const catalog = getLocalizedCatalog(lang);
+
   const canonicalUrl = `${SITE_URL}${route === "/" ? "/" : route}`;
   const fullTitle = title.includes("CalcWeb") ? title : `${title} | CalcWeb`;
-  const nav = buildNavLinksHtml(route);
+  const nav = buildNavLinksHtml(route, lang);
+  const hreflangTags = buildHreflangTags(route);
   const jsonLd = buildJsonLdForPage({
     title: fullTitle,
     description,
     canonicalUrl,
-    calc
+    calc,
+    lang
   });
 
   return `<!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="${lang}" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -300,6 +364,7 @@ function buildFullHtmlDocument({
   <meta name="description" content="${escapeHtml(description)}">
   <meta name="keywords" content="${escapeHtml(keywords)}">
   <link rel="canonical" href="${canonicalUrl}">
+  ${hreflangTags}
 
   <!-- Favicon & Mobile PWA Manifest -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -308,7 +373,7 @@ function buildFullHtmlDocument({
 
   <!-- Open Graph & Twitter Cards -->
   <meta property="og:type" content="website">
-  <meta property="og:locale" content="es_ES">
+  <meta property="og:locale" content="${ui.ogLocale}">
   <meta property="og:site_name" content="CalcWeb">
   <meta property="og:title" content="${escapeHtml(fullTitle)}">
   <meta property="og:description" content="${escapeHtml(description)}">
@@ -323,6 +388,7 @@ function buildFullHtmlDocument({
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="modulepreload" href="/js/app.js">
+  <link rel="modulepreload" href="/js/i18n.js">
   <link rel="modulepreload" href="/js/catalog.js">
   <link rel="modulepreload" href="/js/hybrid-engine.js">
 
@@ -361,29 +427,34 @@ ${jsonLd}
   <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <a href="/" data-route="/" class="flex items-center gap-2.5 group focus:outline-none">
+        <a href="${homeRoute}" data-route="${homeRoute}" class="flex items-center gap-2.5 group focus:outline-none">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">&Sigma;</div>
           <div>
             <div class="flex items-center gap-2">
               <span class="font-serif font-bold text-xl tracking-tight text-slate-900 dark:text-white">CalcWeb</span>
               <span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Motor Simbólico Universitario &bull; 100% Client-Side</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">${ui.brandSubtitle}</p>
           </div>
         </a>
       </div>
 
-      <nav aria-label="Navegación principal" class="hidden xl:flex items-center gap-0.5">
+      <nav aria-label="Main Navigation" class="hidden xl:flex items-center gap-0.5">
         ${nav.desktop}
       </nav>
 
-      <div class="flex items-center gap-2.5">
-        <button id="engine-status-btn" type="button" title="Estado del Web Worker Pyodide + SymPy (WebAssembly)" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+      <div class="flex items-center gap-2">
+        <!-- Language Switcher (ES | EN | FR) -->
+        <div id="lang-switcher" class="flex items-center gap-0.5 p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[11px] font-mono font-semibold">
+          ${nav.langSwitcher}
+        </div>
+
+        <button id="engine-status-btn" type="button" title="${escapeHtml(ui.engineStatusTooltip)}" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
           <span id="engine-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
-          <span id="engine-status-text" class="font-mono text-[11px]">Cargando motor simbólico...</span>
+          <span id="engine-status-text" class="font-mono text-[11px] hidden sm:inline">${escapeHtml(ui.engineStatusLoading)}</span>
         </button>
 
-        <button id="theme-toggle" type="button" aria-label="Cambiar tema claro/oscuro" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <button id="theme-toggle" type="button" aria-label="${escapeHtml(ui.themeToggleLabel)}" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
         </button>
@@ -407,28 +478,24 @@ ${jsonLd}
         <div class="flex items-center gap-3">
           <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
           <span>&bull;</span>
-          <span>Arquitectura 0€ Servidor (Pyodide WebAssembly + SymPy + Motor Híbrido Instantáneo)</span>
+          <span>${escapeHtml(ui.footerTagline)}</span>
         </div>
         <div class="flex flex-wrap items-center gap-4 font-medium">
-          <a href="/sobre-nosotros" data-route="/sobre-nosotros" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Sobre Nosotros</a>
-          <a href="/privacidad" data-route="/privacidad" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Privacidad y Cookies (RGPD)</a>
-          <a href="/aviso-legal" data-route="/aviso-legal" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Aviso Legal</a>
+          <a href="${routes.about[lang]}" data-route="${routes.about[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerAbout)}</a>
+          <a href="${routes.privacy[lang]}" data-route="${routes.privacy[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerPrivacy)}</a>
+          <a href="${routes.legal[lang]}" data-route="${routes.legal[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerLegal)}</a>
         </div>
       </div>
 
       <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-        <a href="/transformada-fourier" data-route="/transformada-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fourier</a>
-        <a href="/series-de-fourier" data-route="/series-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series de Fourier</a>
-        <a href="/transformada-laplace" data-route="/transformada-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Laplace</a>
-        <a href="/transformada-z" data-route="/transformada-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada Z</a>
-        <a href="/convolucion" data-route="/convolucion" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolución</a>
-        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">EDOs</a>
-        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Integrales</a>
-        <a href="/series-taylor" data-route="/series-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Taylor</a>
-        <a href="/series-numericas" data-route="/series-numericas" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series Numéricas</a>
-        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalización</a>
-        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Gauss-Jordan</a>
-        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fasores AC</a>
+        ${catalog
+          .map(
+            (c) =>
+              `<a href="${c.route}" data-route="${c.route}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(
+                c.shortTitle
+              )}</a>`
+          )
+          .join("\n        ")}
       </div>
     </div>
   </footer>
@@ -447,100 +514,135 @@ for (const entry of fs.readdirSync(ROOT_DIR)) {
   }
 }
 
-// 1. Generate Home /index.html and /404.html
-const homeTitle = "CalcWeb | Calculadoras Matemáticas y de Ingeniería Paso a Paso (100% Client-Side)";
-const homeDesc =
-  "Resuelve ejercicios de Transformada de Fourier, Transformada de Laplace, Transformada Z, Convolución, EDOs, Integrales, Series de Taylor, Diagonalización, Gauss-Jordan y Fasores AC paso a paso 100% en tu navegador.";
-const homeKeywords =
-  "calculadora fourier paso a paso, transformada de laplace fracciones simples, transformada z, convolucion, ecuaciones diferenciales, integrales paso a paso, series de taylor, gauss jordan, fasores, sympy webassembly";
+const sitemapEntries = [];
 
-const homeHtml = buildFullHtmlDocument({
-  title: homeTitle,
-  description: homeDesc,
-  keywords: homeKeywords,
-  route: "/",
-  calc: null,
-  mainInnerHtml: buildStaticHomeMainHtml()
-});
+// Loop over all 3 supported languages: ES, EN, FR
+for (const lang of SUPPORTED_LANGS) {
+  const ui = UI_STRINGS[lang];
+  const homeRoute = ROUTE_MAP.home[lang];
+  const catalog = getLocalizedCatalog(lang);
+  const legalPages = getLocalizedLegalPages(lang);
 
-fs.writeFileSync(path.join(ROOT_DIR, "index.html"), homeHtml, "utf8");
-fs.writeFileSync(path.join(ROOT_DIR, "404.html"), homeHtml, "utf8");
-console.log(`[SSG] Generados /index.html y /404.html con SITE_URL = ${SITE_URL}`);
-
-// 2. Generate All 10 Calculator Static Pages
-for (const calc of CALCULATOR_CATALOG) {
-  const routeFolder = calc.route.replace(/^\/+/, "");
-  const targetDir = path.join(ROOT_DIR, routeFolder);
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir, { recursive: true });
-  }
-
-  const pageHtml = buildFullHtmlDocument({
-    title: calc.title,
-    description: calc.metaDescription,
-    keywords: calc.keywords.join(", "),
-    route: calc.route,
-    calc,
-    mainInnerHtml: buildStaticCalculatorMainHtml(calc)
-  });
-
-  fs.writeFileSync(path.join(targetDir, "index.html"), pageHtml, "utf8");
-  console.log(`[SSG] Generada calculadora SEO + FAQPage JSON-LD: ${calc.route}/index.html`);
-}
-
-// 3. Generate All 3 Legal & E-E-A-T Static Pages
-for (const legal of LEGAL_PAGES) {
-  const routeFolder = legal.route.replace(/^\/+/, "");
-  const targetDir = path.join(ROOT_DIR, routeFolder);
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir, { recursive: true });
-  }
-
-  const legalHtml = buildFullHtmlDocument({
-    title: legal.title,
-    description: legal.metaDescription,
-    keywords: "calcweb, ingenieria, matematicas, rgpd, privacidad, aviso legal",
-    route: legal.route,
+  // 1. Generate Home Page (/index.html, /en/index.html, /fr/index.html)
+  const homeHtml = buildFullHtmlDocument({
+    title: ui.homeSeoTitle,
+    description: ui.homeSeoDesc,
+    keywords: ui.homeSeoKeywords,
+    route: homeRoute,
+    lang,
     calc: null,
-    mainInnerHtml: buildStaticLegalMainHtml(legal)
+    mainInnerHtml: buildStaticHomeMainHtml(lang)
   });
 
-  fs.writeFileSync(path.join(targetDir, "index.html"), legalHtml, "utf8");
-  console.log(`[SSG] Generada página legal E-E-A-T: ${legal.route}/index.html`);
+  if (homeRoute === "/") {
+    fs.writeFileSync(path.join(ROOT_DIR, "index.html"), homeHtml, "utf8");
+    fs.writeFileSync(path.join(ROOT_DIR, "404.html"), homeHtml, "utf8");
+    console.log(`[SSG][${lang.toUpperCase()}] Generados /index.html y /404.html`);
+  } else {
+    const langFolder = homeRoute.replace(/^\/+/, "");
+    const targetDir = path.join(ROOT_DIR, langFolder);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+    fs.writeFileSync(path.join(targetDir, "index.html"), homeHtml, "utf8");
+    console.log(`[SSG][${lang.toUpperCase()}] Generado Home ${homeRoute}/index.html`);
+  }
+
+  sitemapEntries.push({
+    loc: `${SITE_URL}${homeRoute === "/" ? "/" : homeRoute}`,
+    route: homeRoute,
+    changefreq: "weekly",
+    priority: "1.0"
+  });
+
+  // 2. Generate All 12 Calculator Static Pages for this language
+  for (const calc of catalog) {
+    const routeFolder = calc.route.replace(/^\/+/, "");
+    const targetDir = path.join(ROOT_DIR, routeFolder);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const pageHtml = buildFullHtmlDocument({
+      title: calc.title,
+      description: calc.metaDescription,
+      keywords: calc.keywords.join(", "),
+      route: calc.route,
+      lang,
+      calc,
+      mainInnerHtml: buildStaticCalculatorMainHtml(calc, lang)
+    });
+
+    fs.writeFileSync(path.join(targetDir, "index.html"), pageHtml, "utf8");
+    console.log(`[SSG][${lang.toUpperCase()}] Generada calculadora: ${calc.route}/index.html`);
+
+    sitemapEntries.push({
+      loc: `${SITE_URL}${calc.route}`,
+      route: calc.route,
+      changefreq: "monthly",
+      priority: "0.9"
+    });
+  }
+
+  // 3. Generate All 3 Legal & E-E-A-T Static Pages for this language
+  for (const legal of legalPages) {
+    const routeFolder = legal.route.replace(/^\/+/, "");
+    const targetDir = path.join(ROOT_DIR, routeFolder);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const legalHtml = buildFullHtmlDocument({
+      title: legal.title,
+      description: legal.metaDescription,
+      keywords: "calcweb, engineering, mathematics, gdpr, privacy, legal notice",
+      route: legal.route,
+      lang,
+      calc: null,
+      mainInnerHtml: buildStaticLegalMainHtml(legal, lang)
+    });
+
+    fs.writeFileSync(path.join(targetDir, "index.html"), legalHtml, "utf8");
+    console.log(`[SSG][${lang.toUpperCase()}] Generada página legal: ${legal.route}/index.html`);
+
+    sitemapEntries.push({
+      loc: `${SITE_URL}${legal.route}`,
+      route: legal.route,
+      changefreq: "yearly",
+      priority: "0.3"
+    });
+  }
 }
 
-// 4. Generate sitemap.xml with current <lastmod> and priorities (1.0 home, 0.9 tools, 0.3 legal)
-const sitemapEntries = [
-  { loc: `${SITE_URL}/`, changefreq: "weekly", priority: "1.0" },
-  ...CALCULATOR_CATALOG.map((c) => ({
-    loc: `${SITE_URL}${c.route}`,
-    changefreq: "monthly",
-    priority: "0.9"
-  })),
-  ...LEGAL_PAGES.map((l) => ({
-    loc: `${SITE_URL}${l.route}`,
-    changefreq: "yearly",
-    priority: "0.3"
-  }))
-];
-
+// 4. Generate sitemap.xml with all 48 URLs and xhtml:link hreflang alternates
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${sitemapEntries
-  .map(
-    (entry) => `  <url>
+  .map((entry) => {
+    const esPath = getEquivalentRoute(entry.route, "es");
+    const enPath = getEquivalentRoute(entry.route, "en");
+    const frPath = getEquivalentRoute(entry.route, "fr");
+    const esUrl = `${SITE_URL}${esPath === "/" ? "/" : esPath}`;
+    const enUrl = `${SITE_URL}${enPath}`;
+    const frUrl = `${SITE_URL}${frPath}`;
+
+    return `  <url>
     <loc>${entry.loc}</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="${esUrl}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}" />
+    <xhtml:link rel="alternate" hreflang="fr" href="${frUrl}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${esUrl}" />
     <lastmod>${TODAY_ISO}</lastmod>
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority}</priority>
-  </url>`
-  )
+  </url>`;
+  })
   .join("\n")}
 </urlset>
 `;
 
 fs.writeFileSync(path.join(ROOT_DIR, "sitemap.xml"), sitemapXml, "utf8");
-console.log(`[SSG] Generado /sitemap.xml (${sitemapEntries.length} URLs, lastmod: ${TODAY_ISO})`);
+console.log(`[SSG] Generado /sitemap.xml (${sitemapEntries.length} URLs en ES/EN/FR, lastmod: ${TODAY_ISO})`);
 
 // 5. Generate robots.txt pointing to `${SITE_URL}/sitemap.xml`
 const robotsTxt = `User-agent: *
