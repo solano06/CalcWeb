@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre Nosotros y Arquitectura Simbólica Client-Side | CalcWeb</title>
+  <meta name="description" content="Conoce el proyecto educativo CalcWeb: calculadoras matemáticas y de ingeniería paso a paso con motor simbólico WebAssembly (Pyodide + SymPy) ejecutado 100% en tu navegador.">
+  <meta name="keywords" content="calcweb, ingenieria, matematicas, rgpd, privacidad, aviso legal">
+  <link rel="canonical" href="https://matespasoapaso.vercel.app/sobre-nosotros">
+
+  <!-- Favicon & Mobile PWA Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="CalcWeb">
+  <meta property="og:title" content="Sobre Nosotros y Arquitectura Simbólica Client-Side | CalcWeb">
+  <meta property="og:description" content="Conoce el proyecto educativo CalcWeb: calculadoras matemáticas y de ingeniería paso a paso con motor simbólico WebAssembly (Pyodide + SymPy) ejecutado 100% en tu navegador.">
+  <meta property="og:url" content="https://matespasoapaso.vercel.app/sobre-nosotros">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Sobre Nosotros y Arquitectura Simbólica Client-Side | CalcWeb">
+  <meta name="twitter:description" content="Conoce el proyecto educativo CalcWeb: calculadoras matemáticas y de ingeniería paso a paso con motor simbólico WebAssembly (Pyodide + SymPy) ejecutado 100% en tu navegador.">
+
+  <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js">
+  <link rel="modulepreload" href="/js/catalog.js">
+  <link rel="modulepreload" href="/js/hybrid-engine.js">
+
+  <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
+  <script id="json-ld-seo" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebApplication",
+        "SoftwareApplication"
+      ],
+      "name": "Sobre Nosotros y Arquitectura Simbólica Client-Side | CalcWeb",
+      "url": "https://matespasoapaso.vercel.app/sobre-nosotros",
+      "description": "Conoce el proyecto educativo CalcWeb: calculadoras matemáticas y de ingeniería paso a paso con motor simbólico WebAssembly (Pyodide + SymPy) ejecutado 100% en tu navegador.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All (100% Client-Side WebAssembly)",
+      "inLanguage": "es-ES",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX Math Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="/" data-route="/" class="flex items-center gap-2.5 group focus:outline-none">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">&Sigma;</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-serif font-bold text-xl tracking-tight text-slate-900 dark:text-white">CalcWeb</span>
+              <span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Motor Simbólico Universitario &bull; 100% Client-Side</p>
+          </div>
+        </a>
+      </div>
+
+      <nav aria-label="Navegación principal" class="hidden xl:flex items-center gap-0.5">
+        <a href="/" data-route="/" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Inicio</a>
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Laplace</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Transf. Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Convolución</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">EDOs</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Integrales</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Taylor</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Matrices</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Gauss-Jordan</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Fasores AC</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5">
+        <button id="engine-status-btn" type="button" title="Estado del Web Worker Pyodide + SymPy (WebAssembly)" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="font-mono text-[11px]">Cargando motor simbólico...</span>
+        </button>
+
+        <button id="theme-toggle" type="button" aria-label="Cambiar tema claro/oscuro" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="xl:hidden border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center gap-1 overflow-x-auto no-scrollbar bg-slate-50/70 dark:bg-slate-900/70">
+      <a href="/" data-route="/" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Inicio</a>
+      <a href="/transformada-fourier" data-route="/transformada-fourier" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fourier</a>
+      <a href="/transformada-laplace" data-route="/transformada-laplace" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Laplace</a>
+      <a href="/transformada-z" data-route="/transformada-z" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Transf. Z</a>
+      <a href="/convolucion" data-route="/convolucion" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Convolución</a>
+      <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">EDOs</a>
+      <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Integrales</a>
+      <a href="/series-taylor" data-route="/series-taylor" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Taylor</a>
+      <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Matrices</a>
+      <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Gauss-Jordan</a>
+      <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fasores AC</a>
+    </div>
+  </header>
+
+  <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="/" data-route="/">Inicio</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">Sobre Nosotros</span>
+    </nav>
+    <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-10 shadow-sm max-w-4xl">
+      <header class="border-b border-slate-200 dark:border-slate-800 pb-6 mb-6">
+        <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
+          Sobre CalcWeb: Ingeniería Simbólica Abierta y 100% Local
+        </h1>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300">
+          Una plataforma académica diseñada para estudiantes y docentes de Ingeniería, Física y Matemáticas con resolución paso a paso, rigor pedagógico y privacidad total.
+        </p>
+      </header>
+      <div class="space-y-6">
+        
+          <section>
+            <h2 class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">1. Nuestra Misión Educativa (E-E-A-T)</h2>
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">CalcWeb nace con el objetivo de democratizar el acceso a herramientas de Cálculo Simbólico (CAS) de nivel universitario en español. A diferencia de las calculadoras tradicionales que solo devuelven un resultado numérico final o requieren costosas suscripciones de servidor, CalcWeb desglosa cada ejercicio paso a paso justificando el teorema, la identidad trigonométrica, el factor integrante o la operación elemental de fila aplicada.</p>
+          </section>
+          <section>
+            <h2 class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">2. Cómo Funciona Nuestro Motor Simbólico en tu Navegador (0€ Servidor)</h2>
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">Toda la inteligencia matemática de CalcWeb se ejecuta directamente en el procesador de tu dispositivo mediante WebAssembly (Pyodide + SymPy en un Web Worker dedicado) combinado con un motor algebraico híbrido instantáneo en JavaScript. Esta arquitectura ofrece tres ventajas fundamentales: 1) Latencia cero en operaciones frecuentes, 2) Privacidad absoluta (ninguna fórmula o matriz que escribas se envía a servidores externos), y 3) Disponibilidad continua incluso tras cortes de conexión una vez cargado el entorno.</p>
+          </section>
+          <section>
+            <h2 class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">3. Áreas de Ingeniería Cubiertas</h2>
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">Nuestros módulos abarcan las asignaturas troncales de los grados en Ingeniería Industrial, Telecomunicación, Informática, Aeroespacial y Matemáticas: Señales y Sistemas (Transformadas de Fourier, Laplace, Z y Convolución LTI), Cálculo Infinitesimal y Ecuaciones Diferenciales (Integrales manuales paso a paso, EDOs de 1º y 2º orden, Series de Taylor) y Álgebra Lineal y Teoría de Circuitos (Diagonalización espectral, Sistemas por Gauss-Jordan/Rouché-Frobenius y Fasores en Corriente Alterna).</p>
+          </section>
+          <section>
+            <h2 class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">4. Contacto Académico y Reporte de Mejoras</h2>
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">Revisamos continuamente nuestros algoritmos simbólicos y guías teóricas para mantener la máxima precisión docente. Si eres profesor universitario o estudiante y deseas proponer un nuevo módulo, reportar una errata o sugerir ejemplos de examen, puedes escribirnos a contacto@calcweb.edu.</p>
+          </section>
+      </div>
+    </article>
+  
+  </main>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+          <span>&bull;</span>
+          <span>Arquitectura 0€ Servidor (Pyodide WebAssembly + SymPy + Motor Híbrido Instantáneo)</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/sobre-nosotros" data-route="/sobre-nosotros" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Sobre Nosotros</a>
+          <a href="/privacidad" data-route="/privacidad" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Privacidad y Cookies (RGPD)</a>
+          <a href="/aviso-legal" data-route="/aviso-legal" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Aviso Legal</a>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Laplace</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolución</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">EDOs</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Integrales</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Taylor</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalización</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Gauss-Jordan</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fasores AC</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+/* CalcWeb Custom Academic Styles */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* KaTeX Overflow & Responsiveness + CLS = 0 Reservation */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0.25rem;
+  margin: 0.4rem 0 !important;
+  min-height: 2.25rem;
+}
+
+#solution-container {
+  min-height: 320px;
+  contain: layout style;
+}
+
+.katex-display::-webkit-scrollbar {
+  height: 5px;
+}
+
+.katex-display::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+
+/* Active Nav Link */
+.nav-link.active {
+  background-color: rgba(29, 78, 216, 0.09);
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.dark .nav-link.active {
+  background-color: rgba(59, 130, 246, 0.16);
+  color: #60a5fa;
+}
+
+/* Academic Paper Card Subtle Texture/Border */
+.academic-card {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.academic-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Step Connector Line */
+.step-item {
+  position: relative;
+}
+
+/* Virtual Keyboard Key animation */
+.math-key {
+  transition: all 0.12s ease;
+  user-select: none;
+}
+.math-key:active {
+  transform: scale(0.95);
+}
+
+/* Subtle fade-in animation for steps */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-step {
+  animation: fadeInSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

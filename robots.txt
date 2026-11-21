@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://matespasoapaso.vercel.app/sitemap.xml

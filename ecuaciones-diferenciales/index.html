@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Ecuaciones Diferenciales (EDOs 1º y 2º Orden) Paso a Paso | CalcWeb</title>
+  <meta name="description" content="Resolutor paso a paso de Ecuaciones Diferenciales Ordinarias (EDOs) de 1º y 2º orden: variables separables, factor integrante μ(x), ecuación característica, solución particular y PVI con condiciones iniciales.">
+  <meta name="keywords" content="ecuaciones diferenciales, edo, factor integrante, variables separables, ecuacion caracteristica, coeficientes indeterminados, condiciones iniciales, pvi, calculo">
+  <link rel="canonical" href="https://matespasoapaso.vercel.app/ecuaciones-diferenciales">
+
+  <!-- Favicon & Mobile PWA Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="CalcWeb">
+  <meta property="og:title" content="Calculadora de Ecuaciones Diferenciales (EDOs 1º y 2º Orden) Paso a Paso | CalcWeb">
+  <meta property="og:description" content="Resolutor paso a paso de Ecuaciones Diferenciales Ordinarias (EDOs) de 1º y 2º orden: variables separables, factor integrante μ(x), ecuación característica, solución particular y PVI con condiciones iniciales.">
+  <meta property="og:url" content="https://matespasoapaso.vercel.app/ecuaciones-diferenciales">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculadora de Ecuaciones Diferenciales (EDOs 1º y 2º Orden) Paso a Paso | CalcWeb">
+  <meta name="twitter:description" content="Resolutor paso a paso de Ecuaciones Diferenciales Ordinarias (EDOs) de 1º y 2º orden: variables separables, factor integrante μ(x), ecuación característica, solución particular y PVI con condiciones iniciales.">
+
+  <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js">
+  <link rel="modulepreload" href="/js/catalog.js">
+  <link rel="modulepreload" href="/js/hybrid-engine.js">
+
+  <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
+  <script id="json-ld-seo" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebApplication",
+        "SoftwareApplication"
+      ],
+      "name": "Calculadora de Ecuaciones Diferenciales (EDOs 1º y 2º Orden) Paso a Paso | CalcWeb",
+      "url": "https://matespasoapaso.vercel.app/ecuaciones-diferenciales",
+      "description": "Resolutor paso a paso de Ecuaciones Diferenciales Ordinarias (EDOs) de 1º y 2º orden: variables separables, factor integrante μ(x), ecuación característica, solución particular y PVI con condiciones iniciales.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All (100% Client-Side WebAssembly)",
+      "inLanguage": "es-ES",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://matespasoapaso.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cálculo y Ecuaciones Diferenciales",
+          "item": "https://matespasoapaso.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Ecuaciones Diferenciales (EDOs)",
+          "item": "https://matespasoapaso.vercel.app/ecuaciones-diferenciales"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Cómo resolver una ecuación diferencial lineal de primer orden con factor integrante?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Primero se escribe la ecuación en forma normalizada y' + P(x)y = Q(x). Luego se calcula el factor integrante μ(x) = e^{∫ P(x) dx}. Al multiplicar toda la ecuación por μ(x), el miembro izquierdo se transforma exactamente en la derivada (μ(x)·y)', por lo que basta integrar ambos lados respecto a x: y(x) = (∫ μ(x)Q(x) dx + C) / μ(x)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo se construye la solución homogénea de una EDO lineal de 2º orden?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Se plantea la ecuación característica a·r² + b·r + c = 0. Si tiene dos raíces reales distintas r1 y r2, yh(x) = C1·e^{r1x} + C2·e^{r2x}. Si tiene una raíz doble r, yh(x) = (C1 + C2·x)e^{rx}. Si tiene raíces complejas conjugadas α ± jβ, yh(x) = e^{αx}(C1·cos(βx) + C2·sin(βx))."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuándo se deben sustituir las condiciones iniciales y(0) e y'(0) en una EDO no homogénea?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Las condiciones iniciales del Problema de Valor Inicial (PVI) deben evaluarse siempre sobre la solución general completa y(x) = yh(x) + yp(x), nunca sobre la solución homogénea por separado, ya que la solución particular yp(x) aporta valor en x = 0."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo identificar si una ecuación diferencial de primer orden es de variables separables?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Una EDO de primer orden es separable si puede factorizarse como dy/dx = f(x)·g(y). En ese caso se agrupan todos los términos con y junto al diferencial dy (dy/g(y)) y los términos con x junto a dx (f(x)dx), integrando ambos miembros de forma independiente."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX Math Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="/" data-route="/" class="flex items-center gap-2.5 group focus:outline-none">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">&Sigma;</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-serif font-bold text-xl tracking-tight text-slate-900 dark:text-white">CalcWeb</span>
+              <span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Motor Simbólico Universitario &bull; 100% Client-Side</p>
+          </div>
+        </a>
+      </div>
+
+      <nav aria-label="Navegación principal" class="hidden xl:flex items-center gap-0.5">
+        <a href="/" data-route="/" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Inicio</a>
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Laplace</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Transf. Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Convolución</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="nav-link active px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">EDOs</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Integrales</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Taylor</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Matrices</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Gauss-Jordan</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Fasores AC</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5">
+        <button id="engine-status-btn" type="button" title="Estado del Web Worker Pyodide + SymPy (WebAssembly)" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="font-mono text-[11px]">Cargando motor simbólico...</span>
+        </button>
+
+        <button id="theme-toggle" type="button" aria-label="Cambiar tema claro/oscuro" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="xl:hidden border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center gap-1 overflow-x-auto no-scrollbar bg-slate-50/70 dark:bg-slate-900/70">
+      <a href="/" data-route="/" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Inicio</a>
+      <a href="/transformada-fourier" data-route="/transformada-fourier" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fourier</a>
+      <a href="/transformada-laplace" data-route="/transformada-laplace" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Laplace</a>
+      <a href="/transformada-z" data-route="/transformada-z" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Transf. Z</a>
+      <a href="/convolucion" data-route="/convolucion" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Convolución</a>
+      <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="nav-link active whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">EDOs</a>
+      <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Integrales</a>
+      <a href="/series-taylor" data-route="/series-taylor" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Taylor</a>
+      <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Matrices</a>
+      <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Gauss-Jordan</a>
+      <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fasores AC</a>
+    </div>
+  </header>
+
+  <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="/" data-route="/">Inicio</a>
+      <span>/</span>
+      <span>Cálculo y Ecuaciones Diferenciales</span>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">Ecuaciones Diferenciales (EDOs)</span>
+    </nav>
+    <header class="mb-7">
+      <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+        Ecuaciones Diferenciales Ordinarias (1º y 2º Orden)
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+        Resolución analítica paso a paso de EDOs de variables separables, lineales de 1º orden con factor integrante μ(x) y lineales de 2º orden homogéneas/no homogéneas con problema de valor inicial.
+      </p>
+    </header>
+    <section id="solution-container" class="mb-12"></section>
+    <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+      <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
+        Guía Rápida y Fórmulas Clave: Ecuaciones Diferenciales Ordinarias (EDOs)
+      </h2>
+      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        Las Ecuaciones Diferenciales Ordinarias modelan sistemas dinámicos físicos, circuitos eléctricos RLC y procesos térmicos. En cursos universitarios de Cálculo e Ingeniería, la resolución analítica se clasifica según el orden y la linealidad de la ecuación.
+      </p>
+      <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
+        <li>No apliques las condiciones iniciales y(0), y'(0) sobre la solución homogénea y_h(x): debes sumar primero la solución particular y(x) = y_h(x) + y_p(x) y evaluar sobre la solución completa.</li><li>En el método de coeficientes indeterminados, si el término forzante e^{kx} coincide con una raíz característica r = k de multiplicidad m, debes multiplicar la propuesta particular por x^m.</li><li>En una EDO lineal de primer orden a(x)y' + b(x)y = c(x), divide primero entre a(x) para dejar y' con coeficiente 1 antes de identificar P(x).</li>
+      </ul>
+    </section>
+    
+    <section aria-labelledby="faq-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
+      <h2 id="faq-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5">
+        Preguntas Frecuentes sobre Ecuaciones Diferenciales (EDOs)
+      </h2>
+      <div class="space-y-3.5">
+        
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cómo resolver una ecuación diferencial lineal de primer orden con factor integrante?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Primero se escribe la ecuación en forma normalizada y' + P(x)y = Q(x). Luego se calcula el factor integrante μ(x) = e^{∫ P(x) dx}. Al multiplicar toda la ecuación por μ(x), el miembro izquierdo se transforma exactamente en la derivada (μ(x)·y)', por lo que basta integrar ambos lados respecto a x: y(x) = (∫ μ(x)Q(x) dx + C) / μ(x).
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cómo se construye la solución homogénea de una EDO lineal de 2º orden?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Se plantea la ecuación característica a·r² + b·r + c = 0. Si tiene dos raíces reales distintas r1 y r2, yh(x) = C1·e^{r1x} + C2·e^{r2x}. Si tiene una raíz doble r, yh(x) = (C1 + C2·x)e^{rx}. Si tiene raíces complejas conjugadas α ± jβ, yh(x) = e^{αx}(C1·cos(βx) + C2·sin(βx)).
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cuándo se deben sustituir las condiciones iniciales y(0) e y'(0) en una EDO no homogénea?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Las condiciones iniciales del Problema de Valor Inicial (PVI) deben evaluarse siempre sobre la solución general completa y(x) = yh(x) + yp(x), nunca sobre la solución homogénea por separado, ya que la solución particular yp(x) aporta valor en x = 0.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cómo identificar si una ecuación diferencial de primer orden es de variables separables?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Una EDO de primer orden es separable si puede factorizarse como dy/dx = f(x)·g(y). En ese caso se agrupan todos los términos con y junto al diferencial dy (dy/g(y)) y los términos con x junto a dx (f(x)dx), integrando ambos miembros de forma independiente.
+            </p>
+          </details>
+      </div>
+    </section>
+    
+    <section aria-labelledby="related-heading" class="mt-8">
+      <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
+        Calculadoras Relacionadas de Cálculo y Ecuaciones Diferenciales
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+          <a href="/transformada-laplace" data-route="/transformada-laplace" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Transformada de Laplace</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Resolución simbólica en el plano complejo s con factorización explícita del denominador, cálculo de polos y descomposición en fracciones simples.</p>
+          </a>
+          <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Integrales Paso a Paso</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Desglose pedagógico del árbol de integración simbólica: integración por partes (identificando u y dv), sustitución u = g(x), fracciones parciales, identidades trigonométricas y Regla de Barrow.</p>
+          </a>
+          <a href="/series-taylor" data-route="/series-taylor" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Series de Taylor y Maclaurin</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Cálculo sistemático de todas las derivadas sucesivas f⁽ᵏ⁾(x), su evaluación en el centro de desarrollo x₀ y ensamblaje término a término del polinomio Pₙ(x).</p>
+          </a>
+      </div>
+    </section>
+  
+  </main>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+          <span>&bull;</span>
+          <span>Arquitectura 0€ Servidor (Pyodide WebAssembly + SymPy + Motor Híbrido Instantáneo)</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/sobre-nosotros" data-route="/sobre-nosotros" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Sobre Nosotros</a>
+          <a href="/privacidad" data-route="/privacidad" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Privacidad y Cookies (RGPD)</a>
+          <a href="/aviso-legal" data-route="/aviso-legal" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Aviso Legal</a>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Laplace</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolución</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">EDOs</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Integrales</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Taylor</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalización</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Gauss-Jordan</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fasores AC</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

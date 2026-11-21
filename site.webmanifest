@@ -1,0 +1,18 @@
+{
+  "name": "CalcWeb — Calculadoras Matemáticas y de Ingeniería Paso a Paso",
+  "short_name": "CalcWeb",
+  "description": "Calculadoras universitarias paso a paso de Señales y Sistemas, Cálculo, Ecuaciones Diferenciales, Álgebra Lineal y Circuitos AC (100% Client-Side WebAssembly).",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#1d4ed8",
+  "lang": "es-ES",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

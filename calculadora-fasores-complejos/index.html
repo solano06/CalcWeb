@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Fasores, Números Complejos y Circuitos AC Paso a Paso | CalcWeb</title>
+  <meta name="description" content="Calculadora de fasores y números complejos para Teoría de Circuitos AC. Opera mezclando forma binómica (a+bj) y polar (M∠θ°), convierte paso a paso con ajuste de cuadrante y resuelve sistemas complejos 2x2 y 3x3.">
+  <meta name="keywords" content="fasores, numeros complejos, forma polar, forma binomica, circuitos ac, impedancia, mallas, nudos, regimen permanente sinusoidal, angulo">
+  <link rel="canonical" href="https://matespasoapaso.vercel.app/calculadora-fasores-complejos">
+
+  <!-- Favicon & Mobile PWA Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="CalcWeb">
+  <meta property="og:title" content="Calculadora de Fasores, Números Complejos y Circuitos AC Paso a Paso | CalcWeb">
+  <meta property="og:description" content="Calculadora de fasores y números complejos para Teoría de Circuitos AC. Opera mezclando forma binómica (a+bj) y polar (M∠θ°), convierte paso a paso con ajuste de cuadrante y resuelve sistemas complejos 2x2 y 3x3.">
+  <meta property="og:url" content="https://matespasoapaso.vercel.app/calculadora-fasores-complejos">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculadora de Fasores, Números Complejos y Circuitos AC Paso a Paso | CalcWeb">
+  <meta name="twitter:description" content="Calculadora de fasores y números complejos para Teoría de Circuitos AC. Opera mezclando forma binómica (a+bj) y polar (M∠θ°), convierte paso a paso con ajuste de cuadrante y resuelve sistemas complejos 2x2 y 3x3.">
+
+  <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js">
+  <link rel="modulepreload" href="/js/catalog.js">
+  <link rel="modulepreload" href="/js/hybrid-engine.js">
+
+  <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
+  <script id="json-ld-seo" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebApplication",
+        "SoftwareApplication"
+      ],
+      "name": "Calculadora de Fasores, Números Complejos y Circuitos AC Paso a Paso | CalcWeb",
+      "url": "https://matespasoapaso.vercel.app/calculadora-fasores-complejos",
+      "description": "Calculadora de fasores y números complejos para Teoría de Circuitos AC. Opera mezclando forma binómica (a+bj) y polar (M∠θ°), convierte paso a paso con ajuste de cuadrante y resuelve sistemas complejos 2x2 y 3x3.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All (100% Client-Side WebAssembly)",
+      "inLanguage": "es-ES",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://matespasoapaso.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Álgebra Lineal y Circuitos",
+          "item": "https://matespasoapaso.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Fasores y Circuitos AC",
+          "item": "https://matespasoapaso.vercel.app/calculadora-fasores-complejos"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Cómo pasar un número complejo de forma binómica (a + bj) a forma polar (M∠θ°)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El módulo se calcula siempre con Pitágoras: M = √(a² + b²). El ángulo θ se calcula con arctan(b/a), teniendo cuidado con el cuadrante: si la parte real 'a' es positiva (1º y 4º cuadrante), el ángulo es directamente arctan(b/a); pero si 'a' es negativa (2º y 3º cuadrante), hay que sumar 180° (si b ≥ 0) o restar 180° (si b < 0)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo pasar un fasor de forma polar (M∠θ°) a forma binómica?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Aplicando la fórmula de Euler M·e^{jθ} = M·cos(θ) + j·M·sin(θ). La parte real es a = M·cos(θ) y la parte imaginaria es b = M·sin(θ), asegurándose de que la calculadora esté configurada en grados sexagesimales."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué forma es mejor para sumar, restar, multiplicar o dividir fasores?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Para sumar y restar fasores es obligatorio utilizar la forma binómica (a + bj), sumando parte real con parte real y parte imaginaria con parte imaginaria. Para multiplicar y dividir fasores es mucho más rápido usar la forma polar (M∠θ°), donde se multiplican/dividen los módulos y se suman/restan los ángulos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo se resuelven las ecuaciones de mallas o nudos en corriente alterna (AC)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Se plantea el sistema matricial Z·I = V con las impedancias complejas de resistencias (R), bobinas (jωL) y condensadores (-j/(ωC)). Luego se resuelve mediante la Regla de Cramer compleja o eliminación de Gauss, expresando las corrientes resultantes en forma polar I_m∠φ° para leer su amplitud y desfase."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX Math Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="/" data-route="/" class="flex items-center gap-2.5 group focus:outline-none">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">&Sigma;</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-serif font-bold text-xl tracking-tight text-slate-900 dark:text-white">CalcWeb</span>
+              <span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Motor Simbólico Universitario &bull; 100% Client-Side</p>
+          </div>
+        </a>
+      </div>
+
+      <nav aria-label="Navegación principal" class="hidden xl:flex items-center gap-0.5">
+        <a href="/" data-route="/" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Inicio</a>
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Laplace</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Transf. Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Convolución</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">EDOs</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Integrales</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Taylor</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Matrices</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="nav-link px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Gauss-Jordan</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="nav-link active px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">Fasores AC</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5">
+        <button id="engine-status-btn" type="button" title="Estado del Web Worker Pyodide + SymPy (WebAssembly)" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="font-mono text-[11px]">Cargando motor simbólico...</span>
+        </button>
+
+        <button id="theme-toggle" type="button" aria-label="Cambiar tema claro/oscuro" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="xl:hidden border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center gap-1 overflow-x-auto no-scrollbar bg-slate-50/70 dark:bg-slate-900/70">
+      <a href="/" data-route="/" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Inicio</a>
+      <a href="/transformada-fourier" data-route="/transformada-fourier" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fourier</a>
+      <a href="/transformada-laplace" data-route="/transformada-laplace" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Laplace</a>
+      <a href="/transformada-z" data-route="/transformada-z" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Transf. Z</a>
+      <a href="/convolucion" data-route="/convolucion" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Convolución</a>
+      <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">EDOs</a>
+      <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Integrales</a>
+      <a href="/series-taylor" data-route="/series-taylor" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Taylor</a>
+      <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Matrices</a>
+      <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Gauss-Jordan</a>
+      <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="nav-link active whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fasores AC</a>
+    </div>
+  </header>
+
+  <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="/" data-route="/">Inicio</a>
+      <span>/</span>
+      <span>Álgebra Lineal y Circuitos</span>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">Fasores y Circuitos AC</span>
+    </nav>
+    <header class="mb-7">
+      <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+        Calculadora de Fasores, Complejos y Sistemas de Circuitos AC
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+        Operaciones mixtas en forma binómica (a + bj) y polar (M∠θ°), conversión detallada de módulo y argumento con ajuste de cuadrante y resolución de sistemas fasoriales 2×2 y 3×3 (mallas y nudos).
+      </p>
+    </header>
+    <section id="solution-container" class="mb-12"></section>
+    <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+      <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
+        Guía Rápida y Fórmulas Clave: Álgebra de Fasores y Régimen Permanente Sinusoidal
+      </h2>
+      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        En Teoría de Circuitos y Electrotecnia, el método fasorial (Transformada de Steinmetz) convierte ecuaciones integro-diferenciales temporales con excitación sinusoidal v(t) = V_m cos(ωt + φ) en sistemas algebraicos lineales sobre el cuerpo de los números complejos ℂ, donde las bobinas presentan impedancia Z_L = jωL y los condensadores Z_C = 1/(jωC) = -j/(ωC).
+      </p>
+      <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
+        <li>Para escribir un fasor en forma polar con ángulo en grados usa el símbolo '&lt;' o '∠': por ejemplo 10&lt;30 o 10∠-45.</li><li>Antes de sumar dos fasores escritos en forma polar (ej. 5&lt;30 + 4&lt;-60), conviértelos siempre a forma binómica a + bj.</li><li>En un sistema de mallas AC sin fuentes dependientes, la matriz de impedancias Z es siempre simétrica respecto a la diagonal principal.</li>
+      </ul>
+    </section>
+    
+    <section aria-labelledby="faq-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
+      <h2 id="faq-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5">
+        Preguntas Frecuentes sobre Fasores y Circuitos AC
+      </h2>
+      <div class="space-y-3.5">
+        
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cómo pasar un número complejo de forma binómica (a + bj) a forma polar (M∠θ°)?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              El módulo se calcula siempre con Pitágoras: M = √(a² + b²). El ángulo θ se calcula con arctan(b/a), teniendo cuidado con el cuadrante: si la parte real 'a' es positiva (1º y 4º cuadrante), el ángulo es directamente arctan(b/a); pero si 'a' es negativa (2º y 3º cuadrante), hay que sumar 180° (si b ≥ 0) o restar 180° (si b &lt; 0).
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cómo pasar un fasor de forma polar (M∠θ°) a forma binómica?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Aplicando la fórmula de Euler M·e^{jθ} = M·cos(θ) + j·M·sin(θ). La parte real es a = M·cos(θ) y la parte imaginaria es b = M·sin(θ), asegurándose de que la calculadora esté configurada en grados sexagesimales.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Qué forma es mejor para sumar, restar, multiplicar o dividir fasores?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Para sumar y restar fasores es obligatorio utilizar la forma binómica (a + bj), sumando parte real con parte real y parte imaginaria con parte imaginaria. Para multiplicar y dividir fasores es mucho más rápido usar la forma polar (M∠θ°), donde se multiplican/dividen los módulos y se suman/restan los ángulos.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cómo se resuelven las ecuaciones de mallas o nudos en corriente alterna (AC)?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Se plantea el sistema matricial Z·I = V con las impedancias complejas de resistencias (R), bobinas (jωL) y condensadores (-j/(ωC)). Luego se resuelve mediante la Regla de Cramer compleja o eliminación de Gauss, expresando las corrientes resultantes en forma polar I_m∠φ° para leer su amplitud y desfase.
+            </p>
+          </details>
+      </div>
+    </section>
+    
+    <section aria-labelledby="related-heading" class="mt-8">
+      <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
+        Calculadoras Relacionadas de Álgebra Lineal y Circuitos
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+          <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Sistemas Lineales (Gauss-Jordan)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Eliminación gaussiana paso a paso mostrando cada operación elemental entre filas (Fᵢ ← Fᵢ + αFⱼ) sobre la matriz ampliada (A|b), cálculo de rangos rg(A) y rg(A*) y clasificación SCD, SCI o SI.</p>
+          </a>
+          <a href="/transformada-fourier" data-route="/transformada-fourier" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Transformada de Fourier</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Análisis espectral continuo en frecuencia angular ω con desglose de la integral impropia, identidades de Euler y propiedades de tablas.</p>
+          </a>
+          <a href="/transformada-laplace" data-route="/transformada-laplace" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Transformada de Laplace</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Resolución simbólica en el plano complejo s con factorización explícita del denominador, cálculo de polos y descomposición en fracciones simples.</p>
+          </a>
+      </div>
+    </section>
+  
+  </main>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+          <span>&bull;</span>
+          <span>Arquitectura 0€ Servidor (Pyodide WebAssembly + SymPy + Motor Híbrido Instantáneo)</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/sobre-nosotros" data-route="/sobre-nosotros" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Sobre Nosotros</a>
+          <a href="/privacidad" data-route="/privacidad" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Privacidad y Cookies (RGPD)</a>
+          <a href="/aviso-legal" data-route="/aviso-legal" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Aviso Legal</a>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Laplace</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolución</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">EDOs</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Integrales</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Taylor</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalización</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Gauss-Jordan</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fasores AC</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
