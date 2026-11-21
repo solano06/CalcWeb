@@ -13,7 +13,9 @@ import {
   solveIntegralsHybrid,
   solveTaylorHybrid,
   solveGaussHybrid,
-  solvePhasorsHybrid
+  solvePhasorsHybrid,
+  solveFourierSeriesHybrid,
+  solveNumSeriesHybrid
 } from "./hybrid-engine.js";
 
 // Application State
@@ -62,7 +64,7 @@ function updateThemeIcons(isDark) {
    ========================================================================== */
 function initPyodideWorker() {
   try {
-    const worker = new Worker("/js/pyodide-worker.js?v=3");
+    const worker = new Worker("/js/pyodide-worker.js?v=4");
     state.worker = worker;
 
     worker.addEventListener("message", (event) => {
@@ -997,6 +999,8 @@ function runHybridEngine(calcId, expr, direction) {
     if (calcId === "taylor") return solveTaylorHybrid(expr);
     if (calcId === "gauss") return solveGaussHybrid(expr);
     if (calcId === "phasors") return solvePhasorsHybrid(expr, direction);
+    if (calcId === "fourierseries") return solveFourierSeriesHybrid(expr, direction);
+    if (calcId === "numseries") return solveNumSeriesHybrid(expr);
   } catch (err) {
     return { ok: false, error: err.message };
   }

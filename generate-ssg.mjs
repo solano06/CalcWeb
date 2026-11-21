@@ -33,12 +33,14 @@ function buildNavLinksHtml(activeRoute) {
   const navItems = [
     { route: "/", label: "Inicio" },
     { route: "/transformada-fourier", label: "Fourier" },
+    { route: "/series-de-fourier", label: "S. Fourier" },
     { route: "/transformada-laplace", label: "Laplace" },
     { route: "/transformada-z", label: "Transf. Z" },
     { route: "/convolucion", label: "Convolución" },
     { route: "/ecuaciones-diferenciales", label: "EDOs" },
     { route: "/integrales-paso-a-paso", label: "Integrales" },
     { route: "/series-taylor", label: "Taylor" },
+    { route: "/series-numericas", label: "Series Num." },
     { route: "/diagonalizacion-matrices", label: "Matrices" },
     { route: "/sistemas-ecuaciones-gauss", label: "Gauss-Jordan" },
     { route: "/calculadora-fasores-complejos", label: "Fasores AC" }
@@ -49,7 +51,7 @@ function buildNavLinksHtml(activeRoute) {
       (item) =>
         `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
           activeRoute === item.route ? "active " : ""
-        }px-2 py-1.5 rounded-lg text-xs font-medium transition-colors">${item.label}</a>`
+        }whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">${item.label}</a>`
     )
     .join("\n        ");
 
@@ -416,12 +418,14 @@ ${jsonLd}
 
       <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
         <a href="/transformada-fourier" data-route="/transformada-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fourier</a>
+        <a href="/series-de-fourier" data-route="/series-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series de Fourier</a>
         <a href="/transformada-laplace" data-route="/transformada-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Laplace</a>
         <a href="/transformada-z" data-route="/transformada-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada Z</a>
         <a href="/convolucion" data-route="/convolucion" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolución</a>
         <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">EDOs</a>
         <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Integrales</a>
         <a href="/series-taylor" data-route="/series-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Taylor</a>
+        <a href="/series-numericas" data-route="/series-numericas" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series Numéricas</a>
         <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalización</a>
         <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Gauss-Jordan</a>
         <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fasores AC</a>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
+  <title>Calculadora de Series Numéricas (Convergencia y Suma Exacta) Paso a Paso | CalcWeb</title>
+  <meta name="description" content="Calculadora paso a paso de convergencia y suma de Series Numéricas infinitas. Aplica condición necesaria, D'Alembert (cociente), Cauchy (raíz), p-series, Leibniz y calcula la suma exacta.">
+  <meta name="keywords" content="series numericas, convergencia de series, criterio de dalembert, criterio del cociente, criterio de cauchy, criterio de leibniz, serie geometrica, p-serie, suma de series, calculo">
+  <link rel="canonical" href="https://matespasoapaso.vercel.app/series-numericas">
+
+  <!-- Favicon & Mobile PWA Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="CalcWeb">
+  <meta property="og:title" content="Calculadora de Series Numéricas (Convergencia y Suma Exacta) Paso a Paso | CalcWeb">
+  <meta property="og:description" content="Calculadora paso a paso de convergencia y suma de Series Numéricas infinitas. Aplica condición necesaria, D'Alembert (cociente), Cauchy (raíz), p-series, Leibniz y calcula la suma exacta.">
+  <meta property="og:url" content="https://matespasoapaso.vercel.app/series-numericas">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculadora de Series Numéricas (Convergencia y Suma Exacta) Paso a Paso | CalcWeb">
+  <meta name="twitter:description" content="Calculadora paso a paso de convergencia y suma de Series Numéricas infinitas. Aplica condición necesaria, D'Alembert (cociente), Cauchy (raíz), p-series, Leibniz y calcula la suma exacta.">
+
+  <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js">
+  <link rel="modulepreload" href="/js/catalog.js">
+  <link rel="modulepreload" href="/js/hybrid-engine.js">
+
+  <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
+  <script id="json-ld-seo" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebApplication",
+        "SoftwareApplication"
+      ],
+      "name": "Calculadora de Series Numéricas (Convergencia y Suma Exacta) Paso a Paso | CalcWeb",
+      "url": "https://matespasoapaso.vercel.app/series-numericas",
+      "description": "Calculadora paso a paso de convergencia y suma de Series Numéricas infinitas. Aplica condición necesaria, D'Alembert (cociente), Cauchy (raíz), p-series, Leibniz y calcula la suma exacta.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All (100% Client-Side WebAssembly)",
+      "inLanguage": "es-ES",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://matespasoapaso.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cálculo y Ecuaciones Diferenciales",
+          "item": "https://matespasoapaso.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Series Numéricas",
+          "item": "https://matespasoapaso.vercel.app/series-numericas"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Si el límite del término general lim a_n es 0, la serie converge seguro?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Que lim_{n→∞} a_n = 0 es una condición necesaria pero NO suficiente para que la serie converja. El contraejemplo clásico es la serie armónica ∑ 1/n (o ∑ 1/√n), cuyo término general tiende a 0 pero cuya suma crece hasta infinito (diverge). En cambio, si el límite NO es 0, sí podemos asegurar al 100% que la serie diverge."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuándo elegir el Criterio de D'Alembert (cociente) y cuándo el Criterio de Cauchy (raíz)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El Criterio del Cociente de D'Alembert (lim |a_{n+1}/a_n|) es ideal cuando el término general contiene factoriales (n!, (2n)!) combinados con potencias a^n, ya que al dividir se simplifican consecutivamente. El Criterio de la Raíz n-ésima de Cauchy (lim ⁿ√|a_n|) es más directo cuando toda la expresión está elevada a una potencia de n, como ((n+1)/(2n-1))^n."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué diferencia hay entre convergencia absoluta y convergencia condicional?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Una serie ∑ a_n converge absolutamente si la serie de sus valores absolutos ∑ |a_n| también converge (por ejemplo ∑ (-1)^n / n²). En cambio, converge condicionalmente si la serie con signos alternados ∑ a_n converge (por el criterio de Leibniz), pero al tomar valores absolutos ∑ |a_n| diverge (por ejemplo la serie armónica alternada ∑ (-1)^{n+1} / n = ln 2)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo se calcula la suma exacta de una serie geométrica o telescópica?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Para una serie geométrica convergente de razón |r| < 1 que empieza en n = n0, la suma exacta es siempre S = (primer término) / (1 - r) = r^{n0} / (1 - r). Para una serie racional telescópica (como ∑ 1/(n(n+1))), se descompone a_n en fracciones simples 1/n - 1/(n+1) para que los términos intermedios se cancelen en la suma parcial S_N."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX Math Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="/" data-route="/" class="flex items-center gap-2.5 group focus:outline-none">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">&Sigma;</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-serif font-bold text-xl tracking-tight text-slate-900 dark:text-white">CalcWeb</span>
+              <span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Motor Simbólico Universitario &bull; 100% Client-Side</p>
+          </div>
+        </a>
+      </div>
+
+      <nav aria-label="Navegación principal" class="hidden xl:flex items-center gap-0.5">
+        <a href="/" data-route="/" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Inicio</a>
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Fourier</a>
+        <a href="/series-de-fourier" data-route="/series-de-fourier" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">S. Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Laplace</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Transf. Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Convolución</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">EDOs</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Integrales</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Taylor</a>
+        <a href="/series-numericas" data-route="/series-numericas" class="nav-link active whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Series Num.</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Matrices</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Gauss-Jordan</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="nav-link whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">Fasores AC</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5">
+        <button id="engine-status-btn" type="button" title="Estado del Web Worker Pyodide + SymPy (WebAssembly)" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="font-mono text-[11px]">Cargando motor simbólico...</span>
+        </button>
+
+        <button id="theme-toggle" type="button" aria-label="Cambiar tema claro/oscuro" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="xl:hidden border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center gap-1 overflow-x-auto no-scrollbar bg-slate-50/70 dark:bg-slate-900/70">
+      <a href="/" data-route="/" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Inicio</a>
+      <a href="/transformada-fourier" data-route="/transformada-fourier" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fourier</a>
+      <a href="/series-de-fourier" data-route="/series-de-fourier" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">S. Fourier</a>
+      <a href="/transformada-laplace" data-route="/transformada-laplace" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Laplace</a>
+      <a href="/transformada-z" data-route="/transformada-z" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Transf. Z</a>
+      <a href="/convolucion" data-route="/convolucion" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Convolución</a>
+      <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">EDOs</a>
+      <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Integrales</a>
+      <a href="/series-taylor" data-route="/series-taylor" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Taylor</a>
+      <a href="/series-numericas" data-route="/series-numericas" class="nav-link active whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Series Num.</a>
+      <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Matrices</a>
+      <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Gauss-Jordan</a>
+      <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="nav-link whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">Fasores AC</a>
+    </div>
+  </header>
+
+  <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="/" data-route="/">Inicio</a>
+      <span>/</span>
+      <span>Cálculo y Ecuaciones Diferenciales</span>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">Series Numéricas</span>
+    </nav>
+    <header class="mb-7">
+      <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+        Series Numéricas (Criterios de Convergencia y Suma Exacta)
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+        Análisis riguroso de convergencia paso a paso: condición necesaria lim aₙ = 0, series geométricas, armónicas generalizadas (p-series), criterio del cociente de D'Alembert, raíz de Cauchy, Leibniz y suma exacta.
+      </p>
+    </header>
+    <section id="solution-container" class="mb-12"></section>
+    <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+      <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
+        Guía Rápida y Fórmulas Clave: Criterios de Convergencia y Suma de Series Infinitas
+      </h2>
+      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        Estudiar el carácter de una serie numérica ∑ aₙ consiste en determinar si la sucesión de sus sumas parciales S_N = ∑_{n=n₀}^N aₙ tiene límite finito cuando N → ∞ (serie convergente) o no (serie divergente/oscilante). El análisis comienza siempre comprobando la condición necesaria: si lim_{n→∞} aₙ ≠ 0, la serie diverge automáticamente.
+      </p>
+      <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
+        <li>Comprueba siempre en primer lugar lim_{n→∞} a_n: si da distinto de 0, el ejercicio termina en un solo paso (Divergente).</li><li>Si el término general es un cociente de polinomios P(n)/Q(n), aplica comparación por equivalencia asintótica con la p-serie 1/n^{grado(Q) - grado(P)}.</li><li>En una serie geométrica ∑ r^n, fíjate siempre en el índice inicial n₀: la suma exacta es (primer término) / (1 - razón) = r^{n₀} / (1 - r).</li>
+      </ul>
+    </section>
+    
+    <section aria-labelledby="faq-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
+      <h2 id="faq-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5">
+        Preguntas Frecuentes sobre Series Numéricas
+      </h2>
+      <div class="space-y-3.5">
+        
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Si el límite del término general lim a_n es 0, la serie converge seguro?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              No. Que lim_{n→∞} a_n = 0 es una condición necesaria pero NO suficiente para que la serie converja. El contraejemplo clásico es la serie armónica ∑ 1/n (o ∑ 1/√n), cuyo término general tiende a 0 pero cuya suma crece hasta infinito (diverge). En cambio, si el límite NO es 0, sí podemos asegurar al 100% que la serie diverge.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cuándo elegir el Criterio de D'Alembert (cociente) y cuándo el Criterio de Cauchy (raíz)?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              El Criterio del Cociente de D'Alembert (lim |a_{n+1}/a_n|) es ideal cuando el término general contiene factoriales (n!, (2n)!) combinados con potencias a^n, ya que al dividir se simplifican consecutivamente. El Criterio de la Raíz n-ésima de Cauchy (lim ⁿ√|a_n|) es más directo cuando toda la expresión está elevada a una potencia de n, como ((n+1)/(2n-1))^n.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Qué diferencia hay entre convergencia absoluta y convergencia condicional?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Una serie ∑ a_n converge absolutamente si la serie de sus valores absolutos ∑ |a_n| también converge (por ejemplo ∑ (-1)^n / n²). En cambio, converge condicionalmente si la serie con signos alternados ∑ a_n converge (por el criterio de Leibniz), pero al tomar valores absolutos ∑ |a_n| diverge (por ejemplo la serie armónica alternada ∑ (-1)^{n+1} / n = ln 2).
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cómo se calcula la suma exacta de una serie geométrica o telescópica?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Para una serie geométrica convergente de razón |r| &lt; 1 que empieza en n = n0, la suma exacta es siempre S = (primer término) / (1 - r) = r^{n0} / (1 - r). Para una serie racional telescópica (como ∑ 1/(n(n+1))), se descompone a_n en fracciones simples 1/n - 1/(n+1) para que los términos intermedios se cancelen en la suma parcial S_N.
+            </p>
+          </details>
+      </div>
+    </section>
+    
+    <section aria-labelledby="related-heading" class="mt-8">
+      <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
+        Calculadoras Relacionadas de Cálculo y Ecuaciones Diferenciales
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+          <a href="/series-taylor" data-route="/series-taylor" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Series de Taylor y Maclaurin</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Cálculo sistemático de todas las derivadas sucesivas f⁽ᵏ⁾(x), su evaluación en el centro de desarrollo x₀ y ensamblaje término a término del polinomio Pₙ(x).</p>
+          </a>
+          <a href="/series-de-fourier" data-route="/series-de-fourier" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Series de Fourier</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Descomposición armónica de señales periódicas en [-L, L] con análisis previo de simetría par/impar, cálculo explícito de integrales de coeficientes y desarrollo truncado al armónico N.</p>
+          </a>
+          <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Integrales Paso a Paso</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Desglose pedagógico del árbol de integración simbólica: integración por partes (identificando u y dv), sustitución u = g(x), fracciones parciales, identidades trigonométricas y Regla de Barrow.</p>
+          </a>
+      </div>
+    </section>
+  
+  </main>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+          <span>&bull;</span>
+          <span>Arquitectura 0€ Servidor (Pyodide WebAssembly + SymPy + Motor Híbrido Instantáneo)</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/sobre-nosotros" data-route="/sobre-nosotros" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Sobre Nosotros</a>
+          <a href="/privacidad" data-route="/privacidad" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Privacidad y Cookies (RGPD)</a>
+          <a href="/aviso-legal" data-route="/aviso-legal" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Aviso Legal</a>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fourier</a>
+        <a href="/series-de-fourier" data-route="/series-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series de Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Laplace</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolución</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">EDOs</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Integrales</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Taylor</a>
+        <a href="/series-numericas" data-route="/series-numericas" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series Numéricas</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalización</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Gauss-Jordan</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fasores AC</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

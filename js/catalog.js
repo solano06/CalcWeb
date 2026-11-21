@@ -304,6 +304,106 @@ export const CALCULATOR_CATALOG = [
     ]
   },
   {
+    id: "fourierseries",
+    route: "/series-de-fourier",
+    title: "Calculadora de Series de Fourier (Trigonométrica y Exponencial) Paso a Paso",
+    shortTitle: "Series de Fourier",
+    category: "Señales y Sistemas",
+    categoryBadge: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+    metaDescription: "Calculadora online de Series de Fourier trigonométrica (a0, an, bn) y exponencial compleja (cn) paso a paso en [-L, L]. Analiza paridad par/impar, integrales y desarrollo hasta el armónico N.",
+    h1: "Series de Fourier (Trigonométrica a₀, aₙ, bₙ y Exponencial cₙ)",
+    subtitle: "Descomposición armónica de señales periódicas en [-L, L] con análisis previo de simetría par/impar, cálculo explícito de integrales de coeficientes y desarrollo truncado al armónico N.",
+    formulaPreview: "f(x) \\sim \\frac{a_0}{2} + \\sum_{n=1}^{\\infty} \\left(a_n\\cos\\frac{n\\pi x}{L} + b_n\\sin\\frac{n\\pi x}{L}\\right) = \\sum_{n=-\\infty}^{\\infty} c_n e^{j\\frac{n\\pi x}{L}}",
+    keywords: ["series de fourier", "a0 an bn", "coeficientes de fourier", "serie exponencial compleja", "funcion par e impar", "onda cuadrada", "diente de sierra", "armonicos", "señales y sistemas"],
+    hasDirectionToggle: true,
+    directLabel: "Serie Trigonométrica (a₀, aₙ, bₙ)",
+    inverseLabel: "Serie Exponencial Compleja (cₙ)",
+    placeholderDirect: "Formato f(x) ; L ; N -> Ej: x ; pi ; 4  o  x^2 ; pi ; 3  o  abs(x) ; pi ; 3",
+    placeholderInverse: "Formato f(x) ; L ; N -> Ej: x ; pi ; 3  o  sign(x) ; pi ; 5",
+    defaultExpr: "x ; pi ; 4",
+    defaultDirection: "direct",
+    examExamples: [
+      {
+        label: "Diente de sierra f(x) = x",
+        badge: "Examen Típico 1",
+        latexLabel: "f(x) = x \\text{ en } [-\\pi, \\pi], \\; N=4",
+        expr: "x ; pi ; 4",
+        direction: "direct"
+      },
+      {
+        label: "Onda cuadrada f(x) = sgn(x)",
+        badge: "Examen Típico 2",
+        latexLabel: "f(x) = \\operatorname{sgn}(x) \\text{ en } [-\\pi, \\pi], \\; N=5",
+        expr: "sign(x) ; pi ; 5",
+        direction: "direct"
+      },
+      {
+        label: "Parábola par f(x) = x²",
+        badge: "Examen Típico 3",
+        latexLabel: "f(x) = x^2 \\text{ en } [-\\pi, \\pi], \\; N=3",
+        expr: "x^2 ; pi ; 3",
+        direction: "direct"
+      },
+      {
+        label: "Onda triangular f(x) = |x|",
+        badge: "Examen Típico 4",
+        latexLabel: "f(x) = |x| \\text{ en } [-\\pi, \\pi], \\; N=3",
+        expr: "abs(x) ; pi ; 3",
+        direction: "direct"
+      }
+    ],
+    guide: {
+      title: "Guía Rápida y Fórmulas Clave: Series de Fourier y Condiciones de Simetría",
+      intro: "Toda señal periódica de período T = 2L que cumpla las condiciones de Dirichlet puede expresarse como una superposición infinita de armónicos sinusoidales cuyas frecuencias son múltiplos enteros de la frecuencia fundamental ω₀ = π/L. Aprovechar la paridad (simetría par o impar) antes de integrar ahorra la mitad del cálculo en cualquier examen.",
+      formulas: [
+        {
+          name: "Coeficientes Trigonométricos de Euler-Fourier en [-L, L]",
+          latex: "a_0 = \\frac{1}{L}\\int_{-L}^{L} f(x)\\,dx, \\qquad a_n = \\frac{1}{L}\\int_{-L}^{L} f(x)\\cos\\!\\left(\\frac{n\\pi x}{L}\\right)dx, \\qquad b_n = \\frac{1}{L}\\int_{-L}^{L} f(x)\\sin\\!\\left(\\frac{n\\pi x}{L}\\right)dx",
+          note: "El término constante a₀/2 representa exactamente el valor medio (componente DC) de la señal en un período."
+        },
+        {
+          name: "Simplificación por Paridad (Funciones Pares e Impares)",
+          latex: "\\begin{cases} f(-x) = f(x) \\text{ (Par)} & \\implies b_n = 0, \\quad a_n = \\frac{2}{L}\\int_{0}^{L} f(x)\\cos\\!\\left(\\frac{n\\pi x}{L}\\right)dx \\\\ f(-x) = -f(x) \\text{ (Impar)} & \\implies a_0 = 0, \\; a_n = 0, \\quad b_n = \\frac{2}{L}\\int_{0}^{L} f(x)\\sin\\!\\left(\\frac{n\\pi x}{L}\\right)dx \\end{cases}",
+          note: "El producto de una función par por una impar es impar, y su integral sobre un intervalo simétrico [-L, L] es idénticamente cero."
+        },
+        {
+          name: "Serie de Fourier Exponencial Compleja y Relación con (aₙ, bₙ)",
+          latex: "c_n = \\frac{1}{2L}\\int_{-L}^{L} f(x)e^{-j\\frac{n\\pi x}{L}}\\,dx = \\frac{a_n - j b_n}{2} \\; (n > 0), \\qquad c_{-n} = c_n^*, \\qquad c_0 = \\frac{a_0}{2}",
+          note: "Los coeficientes complejos c_n determinan el espectro discreto bilateral de amplitud |c_n| y fase arg(c_n)."
+        },
+        {
+          name: "Teorema de Parseval (Potencia Media de la Señal Periódica)",
+          latex: "P = \\frac{1}{2L}\\int_{-L}^{L} |f(x)|^2\\,dx = \\left(\\frac{a_0}{2}\\right)^2 + \\frac{1}{2}\\sum_{n=1}^{\\infty} (a_n^2 + b_n^2) = \\sum_{n=-\\infty}^{\\infty} |c_n|^2",
+          note: "Muy utilizado en exámenes para deducir sumas de series numéricas como ∑ 1/n² = π²/6 o ∑ 1/n⁴ = π⁴/90."
+        }
+      ],
+      tips: [
+        "Antes de plantear ninguna integral por partes, comprueba siempre si f(-x) = f(x) (Par, luego b_n = 0) o si f(-x) = -f(x) (Impar, luego a_0 = a_n = 0).",
+        "Al evaluar tras integrar en [-π, π], utiliza las identidades cos(nπ) = (-1)^n y sin(nπ) = 0 para todo entero n.",
+        "En los puntos de discontinuidad de salto de f(x), la serie de Fourier converge al promedio de los límites laterales: (f(x⁺) + f(x⁻))/2 (Teorema de Dirichlet)."
+      ]
+    },
+    relatedRoutes: ["/transformada-fourier", "/series-numericas", "/integrales-paso-a-paso"],
+    faqs: [
+      {
+        q: "¿Cómo saber si los coeficientes an o bn de una Serie de Fourier son cero sin hacer la integral?",
+        a: "Analizando la paridad de la función f(x) en un intervalo simétrico [-L, L]. Si la función es PAR (f(-x) = f(x), como x² o |x|), al multiplicarla por sin(nπx/L) resulta una función impar cuya integral entre -L y L es 0, por lo que todos los bn = 0. Si la función es IMPAR (f(-x) = -f(x), como x o una onda cuadrada sgn(x)), todos los coeficientes a0 = 0 y an = 0."
+      },
+      {
+        q: "¿Cómo pasar de los coeficientes trigonométricos (a0, an, bn) a la Serie de Fourier Exponencial Compleja (cn)?",
+        a: "Mediante las fórmulas de Euler: el término continuo es c0 = a0 / 2; para frecuencias positivas (n ≥ 1) se cumple cn = (an - j·bn) / 2; y para frecuencias negativas c_{-n} = (an + j·bn) / 2 (el complejo conjugado de cn si f(x) es real)."
+      },
+      {
+        q: "¿Por qué cos(n·π) se sustituye por (-1)^n al calcular Series de Fourier?",
+        a: "Porque para n = 1, cos(π) = -1; para n = 2, cos(2π) = 1; para n = 3, cos(3π) = -1. Esta alternancia exacta de signos se expresa algebraicamente como (-1)^n, mientras que sin(nπ) = 0 para cualquier número entero n."
+      },
+      {
+        q: "¿Cómo se usa una Serie de Fourier para calcular la suma de una serie numérica como ∑ 1/n²?",
+        a: "Se evalúa la Serie de Fourier obtenida en un punto estratégico donde la función sea continua (por ejemplo x = π o x = 0 en el desarrollo de f(x) = x²), o bien se aplica la Identidad de Parseval igualando la integral de f(x)² a la suma de los cuadrados de los coeficientes."
+      }
+    ]
+  },
+  {
     id: "laplace",
     route: "/transformada-laplace",
     title: "Calculadora de Transformada de Laplace y Fracciones Simples Paso a Paso",
@@ -698,6 +798,103 @@ export const CALCULATOR_CATALOG = [
     ]
   },
   {
+    id: "numseries",
+    route: "/series-numericas",
+    title: "Calculadora de Series Numéricas (Convergencia y Suma Exacta) Paso a Paso",
+    shortTitle: "Series Numéricas",
+    category: "Cálculo y Ecuaciones Diferenciales",
+    categoryBadge: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+    metaDescription: "Calculadora paso a paso de convergencia y suma de Series Numéricas infinitas. Aplica condición necesaria, D'Alembert (cociente), Cauchy (raíz), p-series, Leibniz y calcula la suma exacta.",
+    h1: "Series Numéricas (Criterios de Convergencia y Suma Exacta)",
+    subtitle: "Análisis riguroso de convergencia paso a paso: condición necesaria lim aₙ = 0, series geométricas, armónicas generalizadas (p-series), criterio del cociente de D'Alembert, raíz de Cauchy, Leibniz y suma exacta.",
+    formulaPreview: "S = \\sum_{n=n_0}^{\\infty} a_n, \\qquad L = \\lim_{n\\to\\infty} \\left|\\frac{a_{n+1}}{a_n}\\right| < 1 \\implies \\text{Convergente}",
+    keywords: ["series numericas", "convergencia de series", "criterio de dalembert", "criterio del cociente", "criterio de cauchy", "criterio de leibniz", "serie geometrica", "p-serie", "suma de series", "calculo"],
+    hasDirectionToggle: false,
+    placeholderDirect: "Formato a_n ; n0 -> Ej: 1/2^n ; 1  o  n/(n+1) ; 1  o  2^n/factorial(n) ; 0  o  (-1)^(n+1)/n ; 1",
+    defaultExpr: "1/2^n ; 1",
+    defaultDirection: "direct",
+    examExamples: [
+      {
+        label: "Serie Geométrica ∑ 1/2ⁿ",
+        badge: "Examen Típico 1",
+        latexLabel: "\\sum_{n=1}^{\\infty} \\frac{1}{2^n}",
+        expr: "1/2^n ; 1",
+        direction: "direct"
+      },
+      {
+        label: "Condición Necesaria (Divergente)",
+        badge: "Examen Típico 2",
+        latexLabel: "\\sum_{n=1}^{\\infty} \\frac{n}{n + 1}",
+        expr: "n/(n+1) ; 1",
+        direction: "direct"
+      },
+      {
+        label: "D'Alembert Factorial ∑ 2ⁿ/n!",
+        badge: "Examen Típico 3",
+        latexLabel: "\\sum_{n=1}^{\\infty} \\frac{2^n}{n!}",
+        expr: "2^n/factorial(n) ; 1",
+        direction: "direct"
+      },
+      {
+        label: "Alternada de Leibniz ∑ (-1)ⁿ⁺¹/n",
+        badge: "Examen Típico 4",
+        latexLabel: "\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n}",
+        expr: "(-1)^(n+1)/n ; 1",
+        direction: "direct"
+      }
+    ],
+    guide: {
+      title: "Guía Rápida y Fórmulas Clave: Criterios de Convergencia y Suma de Series Infinitas",
+      intro: "Estudiar el carácter de una serie numérica ∑ aₙ consiste en determinar si la sucesión de sus sumas parciales S_N = ∑_{n=n₀}^N aₙ tiene límite finito cuando N → ∞ (serie convergente) o no (serie divergente/oscilante). El análisis comienza siempre comprobando la condición necesaria: si lim_{n→∞} aₙ ≠ 0, la serie diverge automáticamente.",
+      formulas: [
+        {
+          name: "Condición Necesaria de Convergencia y Serie Geométrica",
+          latex: "\\lim_{n\\to\\infty} a_n \\ne 0 \\implies \\sum a_n \\text{ Diverge}, \\qquad \\sum_{n=n_0}^{\\infty} r^n = \\frac{r^{n_0}}{1 - r} \\; (|r| < 1)",
+          note: "Cuidado: que lim a_n = 0 es necesario pero NO suficiente (por ejemplo, la serie armónica ∑ 1/n cumple lim 1/n = 0 pero diverge)."
+        },
+        {
+          name: "Criterio del Cociente (D'Alembert) y de la Raíz (Cauchy)",
+          latex: "L = \\lim_{n\\to\\infty} \\left|\\frac{a_{n+1}}{a_n}\\right| = \\lim_{n\\to\\infty} \\sqrt[n]{|a_n|} \\implies \\begin{cases} L < 1 & \\text{Converge absolutamente} \\\\ L > 1 & \\text{Diverge} \\\\ L = 1 & \\text{Criterio no concluyente} \\end{cases}",
+          note: "Usa D'Alembert cuando a_n contenga factoriales (n!) o productos, y Cauchy cuando todo a_n esté elevado a la potencia n."
+        },
+        {
+          name: "Series Armónicas Generalizadas (p-Series de Riemann)",
+          latex: "\\sum_{n=1}^{\\infty} \\frac{1}{n^p} \\implies \\begin{cases} p > 1 & \\text{Convergente } (\\zeta(p), \\text{ ej. } \\sum 1/n^2 = \\pi^2/6) \\\\ p \\le 1 & \\text{Divergente} \\end{cases}",
+          note: "Sirven como series patrón para el criterio de comparación por paso al límite con cocientes de polinomios."
+        },
+        {
+          name: "Criterio de Leibniz para Series Alternadas ∑ (-1)ⁿ bₙ (bₙ > 0)",
+          latex: "\\text{Si } \\lim_{n\\to\\infty} b_n = 0 \\text{ y } b_{n+1} \\le b_n \\; \\forall n \\implies \\sum (-1)^n b_n \\text{ Converge}",
+          note: "Si ∑ |a_n| diverge pero ∑ a_n converge por Leibniz (como ∑ (-1)^{n+1}/n = ln 2), la serie es Condicionalmente Convergente."
+        }
+      ],
+      tips: [
+        "Comprueba siempre en primer lugar lim_{n→∞} a_n: si da distinto de 0, el ejercicio termina en un solo paso (Divergente).",
+        "Si el término general es un cociente de polinomios P(n)/Q(n), aplica comparación por equivalencia asintótica con la p-serie 1/n^{grado(Q) - grado(P)}.",
+        "En una serie geométrica ∑ r^n, fíjate siempre en el índice inicial n₀: la suma exacta es (primer término) / (1 - razón) = r^{n₀} / (1 - r)."
+      ]
+    },
+    relatedRoutes: ["/series-taylor", "/series-de-fourier", "/integrales-paso-a-paso"],
+    faqs: [
+      {
+        q: "¿Si el límite del término general lim a_n es 0, la serie converge seguro?",
+        a: "No. Que lim_{n→∞} a_n = 0 es una condición necesaria pero NO suficiente para que la serie converja. El contraejemplo clásico es la serie armónica ∑ 1/n (o ∑ 1/√n), cuyo término general tiende a 0 pero cuya suma crece hasta infinito (diverge). En cambio, si el límite NO es 0, sí podemos asegurar al 100% que la serie diverge."
+      },
+      {
+        q: "¿Cuándo elegir el Criterio de D'Alembert (cociente) y cuándo el Criterio de Cauchy (raíz)?",
+        a: "El Criterio del Cociente de D'Alembert (lim |a_{n+1}/a_n|) es ideal cuando el término general contiene factoriales (n!, (2n)!) combinados con potencias a^n, ya que al dividir se simplifican consecutivamente. El Criterio de la Raíz n-ésima de Cauchy (lim ⁿ√|a_n|) es más directo cuando toda la expresión está elevada a una potencia de n, como ((n+1)/(2n-1))^n."
+      },
+      {
+        q: "¿Qué diferencia hay entre convergencia absoluta y convergencia condicional?",
+        a: "Una serie ∑ a_n converge absolutamente si la serie de sus valores absolutos ∑ |a_n| también converge (por ejemplo ∑ (-1)^n / n²). En cambio, converge condicionalmente si la serie con signos alternados ∑ a_n converge (por el criterio de Leibniz), pero al tomar valores absolutos ∑ |a_n| diverge (por ejemplo la serie armónica alternada ∑ (-1)^{n+1} / n = ln 2)."
+      },
+      {
+        q: "¿Cómo se calcula la suma exacta de una serie geométrica o telescópica?",
+        a: "Para una serie geométrica convergente de razón |r| < 1 que empieza en n = n0, la suma exacta es siempre S = (primer término) / (1 - r) = r^{n0} / (1 - r). Para una serie racional telescópica (como ∑ 1/(n(n+1))), se descompone a_n en fracciones simples 1/n - 1/(n+1) para que los términos intermedios se cancelen en la suma parcial S_N."
+      }
+    ]
+  },
+  {
     id: "matrix",
     route: "/diagonalizacion-matrices",
     title: "Calculadora de Diagonalización de Matrices 2x2 y 3x3 Paso a Paso",
@@ -1000,16 +1197,16 @@ export const CALCULATOR_CATALOG = [
 export const VIRTUAL_KEYBOARD_KEYS = [
   { label: "\\int f(x)dx", insert: "x*exp(2*x)", tooltip: "Integral por partes" },
   { label: "\\int_{a}^{b}", insert: "x*exp(x) ; 0, 1", tooltip: "Integral definida con límites a, b" },
+  { label: "a_0, a_n, b_n", insert: "x ; pi ; 4", tooltip: "Serie de Fourier en [-L, L] hasta armónico N" },
+  { label: "\\sum_{n=1}^{\\infty} a_n", insert: "2^n/factorial(n) ; 1", tooltip: "Serie numérica infinita a_n ; n0" },
   { label: "y' + Py = Q", insert: "y' + 2*y = exp(x) ; y(0)=2", tooltip: "EDO lineal 1º orden con PVI" },
-  { label: "y'' + ay' + by", insert: "y'' - 3*y' + 2*y = 4*exp(3*x)", tooltip: "EDO lineal 2º orden" },
   { label: "P_n(x)", insert: "ln(x) ; 1 ; 4", tooltip: "Serie de Taylor f(x) ; x0 ; n" },
   { label: "(A\\,|\\,b)", insert: "1, 1, 1, 6; 2, -1, 1, 3; 1, 2, -1, 2", tooltip: "Matriz aumentada Gauss-Jordan (A|b)" },
   { label: "M\\angle\\theta^\\circ", insert: "10<30", tooltip: "Fasor en forma polar M∠θ°" },
   { label: "\\angle", insert: "<", tooltip: "Símbolo de ángulo fasorial (grados)" },
   { label: "a + bj", insert: "(3 + 4j)", tooltip: "Complejo en forma binómica" },
-  { label: "j", insert: "j", tooltip: "Unidad imaginaria j (√-1)" },
+  { label: "n!", insert: "factorial(n)", tooltip: "Factorial n!" },
   { label: "u(t)", insert: "u(t)", tooltip: "Escalón continuo de Heaviside u(t)" },
-  { label: "\\delta(t)", insert: "delta(t)", tooltip: "Delta de Dirac δ(t)" },
   { label: "a^n u[n]", insert: "(0.5)^n*u[n]", tooltip: "Secuencia geométrica causal (Transformada Z)" },
   { label: "\\frac{z}{z-a}", insert: "z/((z-1)*(z-2))", tooltip: "Función racional en Z" },
   { label: "x * h", insert: "exp(-2*t)*u(t) ; exp(-3*t)*u(t)", tooltip: "Convolución (;)" },

@@ -2254,5 +2254,353 @@ export function solvePhasorsHybrid(rawExpr, direction = "direct") {
   return null;
 }
 
+/* ==========================================================================
+   11. FOURIER SERIES (TRIGONOMETRIC a0, an, bn & COMPLEX EXPONENTIAL cn) SOLVER
+   ========================================================================== */
+export function solveFourierSeriesHybrid(rawExpr, direction = "direct") {
+  const parts = rawExpr.split(";").map((s) => s.trim());
+  const fnNorm = normalizeExpr(parts[0] || "x");
+  const lNorm = normalizeExpr(parts[1] || "pi");
+  const nHarm = parts[2] ? Math.max(1, Math.min(10, parseInt(parts[2], 10) || 4)) : 4;
+
+  if (lNorm !== "pi") return null; // Delegate arbitrary L != pi to Pyodide SymPy Worker
+
+  // Exam Preset 1: Sawtooth wave f(x) = x on [-pi, pi]
+  if (fnNorm === "x" || fnNorm === "t") {
+    const v = fnNorm;
+    const harmTerms = [];
+    for (let k = 1; k <= nHarm; k++) {
+      const sign = k % 2 === 1 ? "+" : "-";
+      const coeff = k === 1 ? "2" : `\\frac{2}{${k}}`;
+      harmTerms.push(`${k === 1 ? "" : sign + " "}${coeff}\\sin(${k === 1 ? v : k + v})`);
+    }
+    const truncTrig = harmTerms.join(" ");
+
+    if (direction === "direct") {
+      return {
+        ok: true,
+        final_latex: `f(${v}) \\sim 2\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n}\\sin(n${v}) \\approx ${truncTrig}`,
+        steps: [
+          {
+            titulo_paso: "Análisis de paridad de f(" + v + ") = " + v + " en el intervalo simétrico [-\\pi, \\pi]",
+            explicacion: `Comprobamos que f(-${v}) = -${v} = -f(${v}). Al ser una función IMPAR, su valor medio y todos los coeficientes cosenoidales se anulan idénticamente: a_0 = 0 y a_n = 0.`,
+            latex: `f(-${v}) = -f(${v}) \\implies \\text{Función Impar} \\implies a_0 = 0, \\quad a_n = 0 \\quad (\\forall n \\ge 1)`
+          },
+          {
+            titulo_paso: "Planteamiento e integración por partes del coeficiente sinusoidal b_n",
+            explicacion: "Por simetría par del integrando x\\sin(nx), duplicamos la integral sobre [0, \\pi] y aplicamos integración por partes (u = x, dv = \\sin(nx)dx).",
+            latex: `b_n = \\frac{2}{\\pi}\\int_{0}^{\\pi} ${v}\\sin(n${v})\\,d${v} = \\frac{2}{\\pi}\\left[ -\\frac{${v}\\cos(n${v})}{n} + \\frac{\\sin(n${v})}{n^2} \\right]_{0}^{\\pi}`
+          },
+          {
+            titulo_paso: "Evaluación mediante las identidades \\sin(n\\pi) = 0 y \\cos(n\\pi) = (-1)^n",
+            explicacion: "El término en seno se anula en ambos extremos y \\cos(n\\pi) = (-1)^n genera la alternancia de signos (-1)^{n+1}.",
+            latex: `b_n = \\frac{2}{\\pi}\\left( -\\frac{\\pi(-1)^n}{n} + 0 \\right) = \\frac{2(-1)^{n+1}}{n}`
+          },
+          {
+            titulo_paso: `Expresión general de la Serie de Fourier y desarrollo hasta N = ${nHarm}`,
+            explicacion: `Sustituimos b_n en la serie trigonométrica y desarrollamos explícitamente los primeros ${nHarm} armónicos.`,
+            latex: `f(${v}) \\sim 2\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n}\\sin(n${v}) = ${truncTrig} + \\cdots`
+          }
+        ]
+      };
+    } else {
+      // Complex Exponential mode (c_n)
+      return {
+        ok: true,
+        final_latex: `c_0 = 0, \\quad c_n = \\frac{j(-1)^n}{n} \\; (n \\ne 0) \\implies f(${v}) \\sim \\sum_{\\substack{n=-\\infty \\\\ n \\ne 0}}^{\\infty} \\frac{j(-1)^n}{n}e^{jn${v}}`,
+        steps: [
+          {
+            titulo_paso: "Cálculo del coeficiente continuo c_0 (valor medio)",
+            explicacion: "Por ser f(" + v + ") = " + v + " una función impar en [-\\pi, \\pi], la integral en un período completo es cero.",
+            latex: `c_0 = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} ${v}\\,d${v} = 0`
+          },
+          {
+            titulo_paso: "Cálculo de los coeficientes exponenciales complejos c_n (n \\ne 0)",
+            explicacion: "Integramos por partes con u = " + v + " y dv = e^{-jn" + v + "}d" + v + ", recordando que e^{\\pm jn\\pi} = \\cos(n\\pi) = (-1)^n.",
+            latex: `c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} ${v}e^{-jn${v}}\\,d${v} = \\frac{1}{2\\pi}\\left[ \\frac{${v}e^{-jn${v}}}{-jn} \\right]_{-\\pi}^{\\pi} = \\frac{(-1)^n}{-jn} = \\frac{j(-1)^n}{n}`
+          },
+          {
+            titulo_paso: `Síntesis de la Serie Exponencial Compleja (truncada a |n| \\le ${nHarm})`,
+            explicacion: "Observamos que c_n es imaginario puro y antisimétrico (c_{-n} = -c_n), confirmando la simetría impar de la señal.",
+            latex: `f(${v}) \\sim \\sum_{\\substack{n=-\\infty \\\\ n \\ne 0}}^{\\infty} \\frac{j(-1)^n}{n}e^{jn${v}}`
+          }
+        ]
+      };
+    }
+  }
+
+  // Exam Preset 2: Square wave f(x) = sign(x) on [-pi, pi]
+  if (fnNorm === "sign(x)" || fnNorm === "sgn(x)" || fnNorm === "sign(t)") {
+    const oddTerms = [];
+    for (let k = 1; k <= nHarm; k += 2) {
+      oddTerms.push(k === 1 ? `\\frac{4}{\\pi}\\sin(x)` : `\\frac{4}{${k}\\pi}\\sin(${k}x)`);
+    }
+    const truncSq = oddTerms.join(" + ");
+
+    if (direction === "direct") {
+      return {
+        ok: true,
+        final_latex: `f(x) \\sim \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\sin((2k-1)x)}{2k-1} \\approx ${truncSq}`,
+        steps: [
+          {
+            titulo_paso: "Análisis de paridad de la onda cuadrada bipolar f(x) = \\operatorname{sgn}(x)",
+            explicacion: "La onda cuadrada vale -1 en (-\\pi, 0) y +1 en (0, \\pi). Al ser una función IMPAR, se cumple inmediatamente que a_0 = 0 y a_n = 0.",
+            latex: `f(-x) = -f(x) \\implies a_0 = 0, \\qquad a_n = 0 \\quad (\\forall n \\ge 1)`
+          },
+          {
+            titulo_paso: "Integración directa del coeficiente sinusoidal b_n en el semiperíodo [0, \\pi]",
+            explicacion: "En [0, \\pi] la función vale constante 1. Integramos \\sin(nx) y evaluamos en los extremos.",
+            latex: `b_n = \\frac{2}{\\pi}\\int_{0}^{\\pi} 1\\cdot \\sin(nx)\\,dx = \\frac{2}{\\pi}\\left[ -\\frac{\\cos(nx)}{n} \\right]_{0}^{\\pi} = \\frac{2\\left(1 - (-1)^n\\right)}{n\\pi}`
+          },
+          {
+            titulo_paso: "Distinción entre armónicos pares (n = 2k) e impares (n = 2k - 1)",
+            explicacion: "Para n par, 1 - (-1)^n = 0; para n impar, 1 - (-1)^n = 2. La onda cuadrada con simetría de media onda solo contiene armónicos impares.",
+            latex: `b_n = \\begin{cases} \\frac{4}{n\\pi}, & n \\text{ impar} \\\\ 0, & n \\text{ par} \\end{cases}`
+          },
+          {
+            titulo_paso: `Desarrollo de la Serie de Fourier hasta N = ${nHarm}`,
+            explicacion: "Escribimos la suma de los armónicos impares activos.",
+            latex: `f(x) \\sim ${truncSq} + \\cdots`
+          }
+        ]
+      };
+    } else {
+      return {
+        ok: true,
+        final_latex: `c_0 = 0, \\quad c_n = \\frac{1 - (-1)^n}{j n \\pi} \\implies f(x) \\sim \\sum_{k=-\\infty}^{\\infty} \\frac{2}{j(2k-1)\\pi}e^{j(2k-1)x}`,
+        steps: [
+          {
+            titulo_paso: "Relación entre coeficientes exponenciales c_n y trigonométricos b_n",
+            explicacion: "Como a_0 = a_n = 0 por simetría impar, aplicamos c_n = -j b_n / 2 para todo n \\ne 0.",
+            latex: `c_0 = 0, \\qquad c_n = \\frac{a_n - j b_n}{2} = \\frac{1 - (-1)^n}{j n \\pi} = \\begin{cases} \\frac{2}{j n \\pi}, & n \\text{ impar} \\\\ 0, & n \\text{ par} \\end{cases}`
+          },
+          {
+            titulo_paso: "Serie Exponencial Compleja de la onda cuadrada",
+            explicacion: "Agrupamos los fasores complejos de orden impar positivo y negativo.",
+            latex: `f(x) \\sim \\sum_{k=-\\infty}^{\\infty} \\frac{2}{j(2k-1)\\pi}e^{j(2k-1)x}`
+          }
+        ]
+      };
+    }
+  }
+
+  // Exam Preset 3: Parabola f(x) = x^2 on [-pi, pi]
+  if (fnNorm === "x^2" || fnNorm === "t^2") {
+    const v = fnNorm[0];
+    const cosTerms = [];
+    for (let k = 1; k <= nHarm; k++) {
+      const sign = k % 2 === 1 ? "-" : "+";
+      const den = k * k;
+      cosTerms.push(`${sign} \\frac{4}{${den === 1 ? "" : den}}\\cos(${k === 1 ? v : k + v})`.replace("\\frac{4}{}", "4"));
+    }
+    const truncPar = `\\frac{\\pi^2}{3} ${cosTerms.join(" ")}`;
+
+    if (direction === "direct") {
+      return {
+        ok: true,
+        final_latex: `f(${v}) \\sim \\frac{\\pi^2}{3} + 4\\sum_{n=1}^{\\infty} \\frac{(-1)^n}{n^2}\\cos(n${v}) \\approx ${truncPar}`,
+        steps: [
+          {
+            titulo_paso: `Análisis de paridad de f(${v}) = ${v}^2 en [-\\pi, \\pi]`,
+            explicacion: `Como f(-${v}) = (-${v})^2 = ${v}^2 = f(${v}), la función es PAR. Por tanto, todos los coeficientes sinusoidales son nulos: b_n = 0.`,
+            latex: `f(-${v}) = f(${v}) \\implies \\text{Función Par} \\implies b_n = 0 \\quad (\\forall n \\ge 1)`
+          },
+          {
+            titulo_paso: "Cálculo del coeficiente continuo a_0 y componente media a_0 / 2",
+            explicacion: "Integramos " + v + "^2 sobre [0, \\pi] multiplicando por 2/\\pi.",
+            latex: `a_0 = \\frac{2}{\\pi}\\int_{0}^{\\pi} ${v}^2\\,d${v} = \\frac{2}{\\pi}\\left[\\frac{${v}^3}{3}\\right]_{0}^{\\pi} = \\frac{2\\pi^2}{3} \\implies \\frac{a_0}{2} = \\frac{\\pi^2}{3}`
+          },
+          {
+            titulo_paso: "Cálculo de a_n mediante doble integración por partes",
+            explicacion: "Aplicamos integración por partes dos veces a " + v + "^2\\cos(n" + v + ") y evaluamos en [0, \\pi] usando \\sin(n\\pi) = 0 y \\cos(n\\pi) = (-1)^n.",
+            latex: `a_n = \\frac{2}{\\pi}\\int_{0}^{\\pi} ${v}^2\\cos(n${v})\\,d${v} = \\frac{2}{\\pi}\\left[ \\frac{${v}^2\\sin(n${v})}{n} + \\frac{2${v}\\cos(n${v})}{n^2} - \\frac{2\\sin(n${v})}{n^3} \\right]_{0}^{\\pi} = \\frac{4(-1)^n}{n^2}`
+          },
+          {
+            titulo_paso: `Ensamblaje de la Serie de Fourier y desarrollo hasta N = ${nHarm}`,
+            explicacion: "Reunimos el valor medio \\pi^2/3 y los armónicos cosenoidales (cuya amplitud decae cuadráticamente como 1/n^2).",
+            latex: `f(${v}) \\sim \\frac{\\pi^2}{3} + 4\\sum_{n=1}^{\\infty} \\frac{(-1)^n}{n^2}\\cos(n${v}) = ${truncPar} + \\cdots`
+          }
+        ]
+      };
+    } else {
+      return {
+        ok: true,
+        final_latex: `c_0 = \\frac{\\pi^2}{3}, \\quad c_n = \\frac{2(-1)^n}{n^2} \\; (n \\ne 0) \\implies f(${v}) \\sim \\frac{\\pi^2}{3} + \\sum_{\\substack{n=-\\infty \\\\ n \\ne 0}}^{\\infty} \\frac{2(-1)^n}{n^2}e^{jn${v}}`,
+        steps: [
+          {
+            titulo_paso: "Conversión a coeficientes exponenciales complejos c_n = a_n / 2",
+            explicacion: "Al ser una función real y par (b_n = 0), los coeficientes complejos c_n son reales puros y simétricos (c_n = c_{-n} = a_n / 2).",
+            latex: `c_0 = \\frac{a_0}{2} = \\frac{\\pi^2}{3}, \\qquad c_n = \\frac{a_n}{2} = \\frac{2(-1)^n}{n^2} \\quad (n \\ne 0)`
+          },
+          {
+            titulo_paso: "Serie Exponencial Compleja resultante",
+            explicacion: "Expresamos f(" + v + ") como suma bilateral de exponenciales complejas.",
+            latex: `f(${v}) \\sim \\frac{\\pi^2}{3} + \\sum_{\\substack{n=-\\infty \\\\ n \\ne 0}}^{\\infty} \\frac{2(-1)^n}{n^2}e^{jn${v}}`
+          }
+        ]
+      };
+    }
+  }
+
+  // Exam Preset 4: Triangular wave f(x) = |x| on [-pi, pi]
+  if (fnNorm === "abs(x)" || fnNorm === "|x|" || fnNorm === "abs(t)") {
+    const oddCos = [];
+    for (let k = 1; k <= nHarm; k += 2) {
+      oddCos.push(k === 1 ? `\\frac{4}{\\pi}\\cos(x)` : `\\frac{4}{${k * k}\\pi}\\cos(${k}x)`);
+    }
+    const truncTri = `\\frac{\\pi}{2} - \\left(${oddCos.join(" + ")}\\right)`;
+
+    return {
+      ok: true,
+      final_latex: `f(x) \\sim \\frac{\\pi}{2} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos((2k-1)x)}{(2k-1)^2} \\approx ${truncTri}`,
+      steps: [
+        {
+          titulo_paso: "Análisis de paridad de la onda triangular f(x) = |x| en [-\\pi, \\pi]",
+          explicacion: "Dado que |-x| = |x|, la función es PAR y todos los coeficientes sinusoidales se anulan: b_n = 0.",
+          latex: `f(-x) = f(x) \\implies b_n = 0 \\quad (\\forall n \\ge 1)`
+        },
+        {
+          titulo_paso: "Cálculo del valor medio a_0 / 2",
+          explicacion: "En el intervalo [0, \\pi] se cumple |x| = x. Integramos para hallar la componente continua.",
+          latex: `a_0 = \\frac{2}{\\pi}\\int_{0}^{\\pi} x\\,dx = \\frac{2}{\\pi}\\left[\\frac{x^2}{2}\\right]_{0}^{\\pi} = \\pi \\implies \\frac{a_0}{2} = \\frac{\\pi}{2}`
+        },
+        {
+          titulo_paso: "Cálculo de los coeficientes cosenoidales a_n por partes",
+          explicacion: "Integramos x\\cos(nx) en [0, \\pi] y distinguimos entre n par (a_n = 0) y n impar (a_n = -4/(n^2\\pi)).",
+          latex: `a_n = \\frac{2}{\\pi}\\int_{0}^{\\pi} x\\cos(nx)\\,dx = \\frac{2}{\\pi}\\left[\\frac{\\cos(nx)}{n^2}\\right]_{0}^{\\pi} = \\frac{2((-1)^n - 1)}{n^2\\pi} = \\begin{cases} -\\frac{4}{n^2\\pi}, & n \\text{ impar} \\\\ 0, & n \\text{ par} \\end{cases}`
+        },
+        {
+          titulo_paso: `Desarrollo de la Serie de Fourier hasta N = ${nHarm}`,
+          explicacion: "Ensamblamos la serie con los armónicos cosenoidales impares.",
+          latex: `f(x) \\sim ${truncTri} - \\cdots`
+        }
+      ]
+    };
+  }
+
+  return null;
+}
+
+/* ==========================================================================
+   12. NUMERICAL SERIES (CONVERGENCE TESTS & EXACT SUM) STEP-BY-STEP SOLVER
+   ========================================================================== */
+export function solveNumSeriesHybrid(rawExpr) {
+  const parts = rawExpr.split(";").map((s) => s.trim());
+  const anNorm = normalizeExpr(parts[0] || "");
+  const n0 = parts[1] !== undefined && parts[1] !== "" ? parseInt(parts[1], 10) : 1;
+
+  // Exam Preset 1: Geometric Series 1/2^n or (1/2)^n or r^n
+  const geomMatch = anNorm.match(/^(?:1\/(\d+)\^n|\(1\/(\d+)\)\^n)$/);
+  if (geomMatch) {
+    const b = parseFloat(geomMatch[1] || geomMatch[2]);
+    const rTex = `\\frac{1}{${fmtNum(b)}}`;
+    const sumVal = Math.pow(1 / b, n0) / (1 - 1 / b);
+    const sumTex = fmtNum(sumVal);
+
+    return {
+      ok: true,
+      final_latex: `\\text{CONVERGENTE (Serie Geométrica } |r| = ${rTex} < 1\\text{)} \\implies S = \\sum_{n=${n0}}^{\\infty} \\frac{1}{${fmtNum(b)}^n} = ${sumTex}`,
+      steps: [
+        {
+          titulo_paso: "Comprobación de la condición necesaria de convergencia (\\lim_{n\\to\\infty} a_n = 0)",
+          explicacion: `Calculamos el límite del término general a_n = 1/${fmtNum(b)}^n cuando n \\to \\infty. Como tiende a 0, supera el filtro necesario.`,
+          latex: `\\lim_{n\\to\\infty} a_n = \\lim_{n\\to\\infty} \\frac{1}{${fmtNum(b)}^n} = 0 \\quad (\\text{Cumple la condición necesaria})`
+        },
+        {
+          titulo_paso: "Identificación de Serie Geométrica y criterio de la razón |r| < 1",
+          explicacion: `El cociente entre términos consecutivos es constante e igual a la razón r = a_{n+1}/a_n = 1/${fmtNum(b)}. Como |r| < 1, la serie es absolutamente convergente.`,
+          latex: `r = \\frac{a_{n+1}}{a_n} = ${rTex} \\implies |r| = ${rTex} < 1 \\implies \\text{Serie Convergente}`
+        },
+        {
+          titulo_paso: `Cálculo de la suma exacta desde n = ${n0} hasta \\infty`,
+          explicacion: `Aplicamos la fórmula de la suma geométrica infinita S = \\frac{a_{n_0}}{1 - r} con primer término a_{${n0}} = (1/${fmtNum(b)})^{${n0}}.`,
+          latex: `S = \\sum_{n=${n0}}^{\\infty} \\left(${rTex}\\right)^n = \\frac{\\left(${rTex}\\right)^{${n0}}}{1 - ${rTex}} = ${sumTex}`
+        }
+      ]
+    };
+  }
+
+  // Exam Preset 2: Divergence by Necessary Condition: n / (n + 1)
+  if (anNorm === "n/(n+1)") {
+    return {
+      ok: true,
+      final_latex: `\\text{DIVERGENTE (No cumple la condición necesaria: } \\lim_{n\\to\\infty} a_n = 1 \\ne 0\\text{)}`,
+      steps: [
+        {
+          titulo_paso: "Comprobación de la Condición Necesaria de Convergencia",
+          explicacion: "Toda serie convergente debe cumplir obligatoriamente que su término general tienda a cero: \\lim_{n\\to\\infty} a_n = 0.",
+          latex: `L = \\lim_{n\\to\\infty} a_n = \\lim_{n\\to\\infty} \\frac{n}{n + 1} = \\lim_{n\\to\\infty} \\frac{1}{1 + 1/n} = 1`
+        },
+        {
+          titulo_paso: "Veredicto inmediato por violación de la condición necesaria",
+          explicacion: "Como el límite del término general es 1 \\ne 0, los sumandos no se hacen infinitesimales y la suma parcial crece indefinidamente.",
+          latex: `\\lim_{n\\to\\infty} a_n = 1 \\ne 0 \\implies \\sum_{n=${n0}}^{\\infty} \\frac{n}{n + 1} \\text{ es DIVERGENTE.}`
+        }
+      ]
+    };
+  }
+
+  // Exam Preset 3: D'Alembert Ratio Test with Factorial: k^n / factorial(n)
+  const factMatch = anNorm.match(/^(\d+)\^n\/(?:factorial\(n\)|n!)$/);
+  if (factMatch) {
+    const k = parseFloat(factMatch[1]);
+    const sumExact = n0 === 0 ? `e^{${fmtNum(k)}}` : n0 === 1 ? `e^{${fmtNum(k)}} - 1` : `e^{${fmtNum(k)}} - \\sum_{m=0}^{${n0 - 1}} \\frac{${fmtNum(k)}^m}{m!}`;
+
+    return {
+      ok: true,
+      final_latex: `\\text{CONVERGENTE (Criterio de D'Alembert } L = 0 < 1\\text{)} \\implies S = \\sum_{n=${n0}}^{\\infty} \\frac{${fmtNum(k)}^n}{n!} = ${sumExact}`,
+      steps: [
+        {
+          titulo_paso: "Condición necesaria de convergencia (Escala de órdenes de infinito)",
+          explicacion: `El crecimiento factorial n! domina asintóticamente a cualquier exponencial ${fmtNum(k)}^n (n! \\gg ${fmtNum(k)}^n), por lo que el término general tiende a 0.`,
+          latex: `\\lim_{n\\to\\infty} \\frac{${fmtNum(k)}^n}{n!} = 0 \\quad (\\text{Cumple la condición necesaria})`
+        },
+        {
+          titulo_paso: "Aplicación del Criterio del Cociente de D'Alembert",
+          explicacion: "Al contener un factorial n!, formamos el cociente a_{n+1}/a_n y simplificamos (n+1)! = (n+1)\\cdot n!.",
+          latex: `L = \\lim_{n\\to\\infty} \\frac{a_{n+1}}{a_n} = \\lim_{n\\to\\infty} \\frac{${fmtNum(k)}^{n+1}}{(n+1)!} \\cdot \\frac{n!}{${fmtNum(k)}^n} = \\lim_{n\\to\\infty} \\frac{${fmtNum(k)}}{n + 1} = 0`
+        },
+        {
+          titulo_paso: "Veredicto de convergencia y suma exacta mediante la serie de Maclaurin de e^x",
+          explicacion: `Como L = 0 < 1, la serie converge absolutamente. Reconocemos el desarrollo de Taylor e^x = \\sum_{n=0}^{\\infty} x^n / n! evaluado en x = ${fmtNum(k)}.`,
+          latex: `L = 0 < 1 \\implies \\text{CONVERGENTE}, \\qquad S = \\sum_{n=${n0}}^{\\infty} \\frac{${fmtNum(k)}^n}{n!} = ${sumExact}`
+        }
+      ]
+    };
+  }
+
+  // Exam Preset 4: Alternating Harmonic Series (Leibniz): (-1)^(n+1)/n or (-1)^n/n
+  if (anNorm === "(-1)^(n+1)/n" || anNorm === "(-1)^n/n") {
+    const isPlus1 = anNorm.includes("n+1");
+    const sumTex = isPlus1 ? "\\ln(2)" : "-\\ln(2)";
+    const signPow = isPlus1 ? "n+1" : "n";
+
+    return {
+      ok: true,
+      final_latex: `\\text{CONDICIONALMENTE CONVERGENTE (Criterio de Leibniz)} \\implies S = \\sum_{n=1}^{\\infty} \\frac{(-1)^{${signPow}}}{n} = ${sumTex}`,
+      steps: [
+        {
+          titulo_paso: "Análisis de Convergencia Absoluta (\\sum |a_n|)",
+          explicacion: "Al tomar valor absoluto obtenemos la serie armónica \\sum 1/n (p-serie con p = 1 \\le 1), la cual es divergente. Por tanto, la serie NO converge absolutamente.",
+          latex: `\\sum_{n=1}^{\\infty} |a_n| = \\sum_{n=1}^{\\infty} \\frac{1}{n} \\longrightarrow \\text{Divergente } (p = 1 \\le 1)`
+        },
+        {
+          titulo_paso: "Aplicación del Criterio de Leibniz para series alternadas",
+          explicacion: "Verificamos las dos hipótesis de Leibniz sobre b_n = 1/n > 0: 1) \\lim_{n\\to\\infty} b_n = 0 y 2) la sucesión b_n es monótonamente decreciente (b_{n+1} < b_n).",
+          latex: `\\begin{cases} 1)\\; \\lim_{n\\to\\infty} \\frac{1}{n} = 0 \\\\ 2)\\; \\frac{1}{n + 1} < \\frac{1}{n} \\; (\\forall n \\ge 1) \\end{cases} \\implies \\text{Converge por el Criterio de Leibniz}`
+        },
+        {
+          titulo_paso: "Veredicto final y suma exacta mediante la serie de Taylor de \\ln(1 + x)",
+          explicacion: "La serie es Condicionalmente Convergente. Evaluando el desarrollo \\ln(1+x) = \\sum_{n=1}^{\\infty} (-1)^{n+1}x^n/n en x = 1 (Teorema de Abel) obtenemos la suma exacta.",
+          latex: `S = \\sum_{n=1}^{\\infty} \\frac{(-1)^{${signPow}}}{n} = ${sumTex}`
+        }
+      ]
+    };
+  }
+
+  return null;
+}
+
+
 
 

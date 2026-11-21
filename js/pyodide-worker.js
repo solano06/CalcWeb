@@ -70,6 +70,12 @@ def parse_engineering_expr(raw_str):
         'sin': sp.sin,
         'sinh': sp.sinh,
         'cosh': sp.cosh,
+        'abs': sp.Abs,
+        'Abs': sp.Abs,
+        'sign': sp.sign,
+        'sgn': sp.sign,
+        'factorial': sp.factorial,
+        'oo': sp.oo,
         'pi': sp.pi,
         'I': sp.I,
         'j': sp.I
@@ -1153,6 +1159,180 @@ def solve_phasors(expr_str, direction="direct"):
         return {"ok": True, "steps": steps, "final_latex": final_tex}
 
 
+def solve_fourier_series(expr_str, direction="direct"):
+    steps = []
+    parts = [p.strip() for p in expr_str.split(';') if p.strip()]
+    fn_expr = parse_engineering_expr(parts[0])
+    L_val = parse_engineering_expr(parts[1]) if len(parts) > 1 else sp.pi
+    N_harm = int(parts[2]) if len(parts) > 2 else 4
+    N_harm = max(1, min(N_harm, 8))
+
+    var = t if fn_expr.has(t) and not fn_expr.has(x) else x
+    f_neg = sp.simplify(fn_expr.subs(var, -var))
+    is_even = sp.simplify(fn_expr - f_neg) == 0
+    is_odd = sp.simplify(fn_expr + f_neg) == 0
+
+    if is_even:
+        parity_title = f"Análisis de paridad en [-{sp.latex(L_val)}, {sp.latex(L_val)}]: Función PAR"
+        parity_exp = "Se verifica que f(-x) = f(x). Por simetría par, todos los coeficientes sinusoidales se anulan idénticamente: b_n = 0."
+        parity_tex = rf"f(-{sp.latex(var)}) = f({sp.latex(var)}) \\implies b_n = 0 \\quad (\\forall n \\ge 1)"
+    elif is_odd:
+        parity_title = f"Análisis de paridad en [-{sp.latex(L_val)}, {sp.latex(L_val)}]: Función IMPAR"
+        parity_exp = "Se verifica que f(-x) = -f(x). Por simetría impar, la componente media y todos los coeficientes cosenoidales se anulan: a_0 = 0 y a_n = 0."
+        parity_tex = rf"f(-{sp.latex(var)}) = -f({sp.latex(var)}) \\implies a_0 = 0, \\quad a_n = 0 \\quad (\\forall n \\ge 1)"
+    else:
+        parity_title = f"Análisis de paridad en [-{sp.latex(L_val)}, {sp.latex(L_val)}]: Sin simetría par/impar"
+        parity_exp = "La función no es par ni impar en el intervalo simétrico, por lo que calculamos las integrales completas de a_0, a_n y b_n."
+        parity_tex = rf"f(-{sp.latex(var)}) \\ne \\pm f({sp.latex(var)}) \\implies \\text{{Se calculan }} a_0, a_n, b_n"
+
+    steps.append({
+        "titulo_paso": parity_title,
+        "explicacion": parity_exp,
+        "latex": parity_tex
+    })
+
+    fs_obj = sp.fourier_series(fn_expr, (var, -L_val, L_val))
+    a0_half = sp.simplify(fs_obj.a0)
+    a0_full = sp.simplify(2 * a0_half)
+
+    steps.append({
+        "titulo_paso": "Cálculo del coeficiente continuo a_0 y valor medio a_0 / 2",
+        "explicacion": "Calculamos la integral de promedio sobre el período T = 2L.",
+        "latex": rf"a_0 = \\frac{{1}}{{{sp.latex(L_val)}}}\\int_{{-{sp.latex(L_val)}}}^{{{sp.latex(L_val)}}} \\left({sp.latex(fn_expr)}\\right)\\,d{sp.latex(var)} = {sp.latex(a0_full)} \\implies \\frac{{a_0}}{{2}} = {sp.latex(a0_half)}"
+    })
+
+    if direction == "direct":
+        an_list = []
+        bn_list = []
+        for k_idx in range(1, min(N_harm, 4) + 1):
+            ak_term = sp.simplify(fs_obj.an.coeff(k_idx))
+            bk_term = sp.simplify(fs_obj.bn.coeff(k_idx))
+            if ak_term != 0:
+                an_list.append(rf"n={k_idx}: \\; {sp.latex(ak_term)}")
+            if bk_term != 0:
+                bn_list.append(rf"n={k_idx}: \\; {sp.latex(bk_term)}")
+
+        steps.append({
+            "titulo_paso": "Cálculo de las integrales de los armónicos cosenoidales a_n y sinusoidales b_n",
+            "explicacion": "Proyectamos f(x) sobre la base ortogonal de cosenos y senos de frecuencia n\\pi / L.",
+            "latex": rf"a_n \\to \\left\\{{ {', \\; '.join(an_list) if an_list else '0'} \\right\\}}, \\qquad b_n \\to \\left\\{{ {', \\; '.join(bn_list) if bn_list else '0'} \\right\\}}"
+        })
+
+        trunc_expr = fs_obj.truncate(n=N_harm + 1)
+        final_tex = rf"f({sp.latex(var)}) \\approx {sp.latex(trunc_expr)}"
+        steps.append({
+            "titulo_paso": f"Desarrollo de la Serie Trigonométrica de Fourier hasta N = {N_harm}",
+            "explicacion": "Ensamblamos la suma parcial de Fourier con los primeros armónicos no nulos.",
+            "latex": final_tex
+        })
+        return {"ok": True, "steps": steps, "final_latex": final_tex}
+
+    else:
+        # Complex Exponential Mode (c_n)
+        c0_val = a0_half
+        cn_samples = [rf"c_0 = {sp.latex(c0_val)}"]
+        for k_idx in range(1, min(N_harm, 4) + 1):
+            # Extract a_k and b_k values at x=0 / derivative or integral
+            ck_pos = sp.simplify((sp.Integer(1) / (2 * L_val)) * sp.integrate(fn_expr * sp.exp(-sp.I * k_idx * sp.pi * var / L_val), (var, -L_val, L_val)))
+            cn_samples.append(rf"c_{{{k_idx}}} = {sp.latex(ck_pos)}")
+
+        steps.append({
+            "titulo_paso": "Cálculo de los coeficientes exponenciales complejos c_n",
+            "explicacion": "Evaluamos la integral compleja c_n = \\frac{1}{2L}\\int_{-L}^{L} f(x)e^{-j n\\pi x / L}\\,dx = (a_n - j b_n)/2.",
+            "latex": r", \\quad ".join(cn_samples)
+        })
+
+        trunc_expr = fs_obj.truncate(n=N_harm + 1)
+        final_tex = rf"f({sp.latex(var)}) \\sim \\sum_{{n=-{N_harm}}}^{{{N_harm}}} c_n e^{{j\\frac{{n\\pi {sp.latex(var)}}}{{{sp.latex(L_val)}}}}} = {sp.latex(trunc_expr)}"
+        steps.append({
+            "titulo_paso": f"Síntesis de la Serie Exponencial Compleja hasta |n| = {N_harm}",
+            "explicacion": "Agrupamos los fasores conjugados c_n e^{jn\\omega_0 x} + c_{-n} e^{-jn\\omega_0 x}.",
+            "latex": final_tex
+        })
+        return {"ok": True, "steps": steps, "final_latex": final_tex}
+
+
+def solve_num_series(expr_str):
+    steps = []
+    parts = [p.strip() for p in expr_str.split(';') if p.strip()]
+    an_expr = parse_engineering_expr(parts[0])
+    n0_val = int(parts[1]) if len(parts) > 1 else 1
+
+    steps.append({
+        "titulo_paso": f"Planteamiento de la Serie Numérica desde n = {n0_val} hasta \\infty",
+        "explicacion": "Identificamos el término general a_n de la serie infinita cuyo carácter y suma queremos determinar.",
+        "latex": rf"S = \\sum_{{n={n0_val}}}^{{\\infty}} \\left({sp.latex(an_expr)}\\right)"
+    })
+
+    # 1. Necessary condition: lim_{n -> oo} a_n
+    try:
+        lim_an = sp.limit(an_expr, n, sp.oo)
+    except Exception:
+        lim_an = sp.Symbol('?')
+
+    if lim_an != 0 and lim_an != sp.Symbol('?') and not lim_an.has(sp.AccumBounds):
+        final_tex = rf"\\text{{DIVERGENTE }} (\\lim_{{n\\to\\infty}} a_n = {sp.latex(lim_an)} \\ne 0)"
+        steps.append({
+            "titulo_paso": "Condición Necesaria de Convergencia: VIOLADA",
+            "explicacion": "El límite del término general cuando n \\to \\infty es distinto de cero, por lo que la serie diverge automáticamente.",
+            "latex": rf"\\lim_{{n\\to\\infty}} a_n = {sp.latex(lim_an)} \\ne 0 \\implies \\text{{La serie DIVERGE}}"
+        })
+        return {"ok": True, "steps": steps, "final_latex": final_tex}
+
+    steps.append({
+        "titulo_paso": "Comprobación de la Condición Necesaria de Convergencia",
+        "explicacion": "Verificamos que el término general tiende a cero cuando n \\to \\infty (condición necesaria pero no suficiente).",
+        "latex": rf"\\lim_{{n\\to\\infty}} a_n = 0 \\quad (\\text{{Supera la condición necesaria}})"
+    })
+
+    # 2. D'Alembert Ratio Test: lim |a_{n+1} / a_n|
+    an_next = an_expr.subs(n, n + 1)
+    try:
+        ratio_expr = sp.simplify(sp.Abs(an_next / an_expr))
+        ratio_lim = sp.limit(ratio_expr, n, sp.oo)
+    except Exception:
+        ratio_lim = sp.Integer(1)
+
+    if ratio_lim.is_number and ratio_lim != 1:
+        verdict = "CONVERGENTE" if ratio_lim < 1 else "DIVERGENTE"
+        ineq = "< 1" if ratio_lim < 1 else "> 1"
+        steps.append({
+            "titulo_paso": "Aplicación del Criterio del Cociente de D'Alembert",
+            "explicacion": f"Calculamos el límite del cociente |a_{{n+1}}/a_n|. Al ser L = {sp.latex(ratio_lim)} {ineq}, el criterio decide de forma concluyente.",
+            "latex": rf"L = \\lim_{{n\\to\\infty}} \\left|\\frac{{a_{{n+1}}}}{{a_n}}\\right| = {sp.latex(ratio_lim)} {ineq} \\implies \\text{{Serie {verdict}}}"
+        })
+    else:
+        steps.append({
+            "titulo_paso": "Análisis por Criterios de Comparación / p-Series / Leibniz",
+            "explicacion": "Como el límite del cociente de D'Alembert es L = 1, analizamos el orden asintótico de decrecimiento o la alternancia de signos.",
+            "latex": rf"L_{{\\text{{cociente}}}} = 1 \\implies \\text{{Análisis de orden asintótico / suma simbólica}}"
+        })
+
+    # 3. Symbolic Summation via SymPy
+    sum_res = sp.summation(an_expr, (n, n0_val, sp.oo))
+    sum_simplified = sp.simplify(sum_res)
+
+    if not sum_simplified.has(sp.oo) and not sum_simplified.has(sp.zoo) and not sum_simplified.has(sp.nan):
+        if sum_simplified.has(sp.Sum):
+            final_tex = rf"\\text{{Serie analizada: }} S = {sp.latex(sum_simplified)}"
+        else:
+            final_tex = rf"\\text{{CONVERGENTE}} \\implies S = \\sum_{{n={n0_val}}}^{{\\infty}} {sp.latex(an_expr)} = {sp.latex(sum_simplified)}"
+        steps.append({
+            "titulo_paso": "Veredicto de Convergencia y Suma Exacta Simbólica",
+            "explicacion": "Evaluamos la suma infinita cerrada mediante sp.summation(a_n, (n, n0, oo)).",
+            "latex": final_tex
+        })
+    else:
+        final_tex = rf"\\text{{DIVERGENTE}} \\implies \\sum_{{n={n0_val}}}^{{\\infty}} {sp.latex(an_expr)} = \\infty"
+        steps.append({
+            "titulo_paso": "Veredicto Final: Serie Divergente",
+            "explicacion": "La suma parcial crece sin cota finita cuando N \\to \\infty.",
+            "latex": final_tex
+        })
+
+    return {"ok": True, "steps": steps, "final_latex": final_tex}
+
+
 def dispatch_calculation(tool, expr_str, direction="direct"):
     try:
         if tool == "fourier":
@@ -1175,6 +1355,10 @@ def dispatch_calculation(tool, expr_str, direction="direct"):
             res = solve_gauss(expr_str)
         elif tool == "phasors":
             res = solve_phasors(expr_str, direction)
+        elif tool == "fourierseries":
+            res = solve_fourier_series(expr_str, direction)
+        elif tool == "numseries":
+            res = solve_num_series(expr_str)
         else:
             res = {"ok": False, "error": f"Herramienta desconocida: {tool}"}
         return json.dumps(res)
