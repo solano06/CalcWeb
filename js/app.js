@@ -71,7 +71,7 @@ function updateThemeIcons(isDark) {
 function initPyodideWorker() {
   const ui = getUI();
   try {
-    const worker = new Worker("/js/pyodide-worker.js?v=5");
+    const worker = new Worker("/js/pyodide-worker.js?v=6");
     state.worker = worker;
 
     worker.addEventListener("message", (event) => {
@@ -124,22 +124,27 @@ function updateEngineBadgeUI(status, text) {
   const btn = document.getElementById("engine-status-btn");
   const dot = document.getElementById("engine-status-dot");
   const label = document.getElementById("engine-status-text");
-  if (!btn || !dot || !label) return;
+  if (!btn || !dot) return;
 
-  label.textContent = text;
+  btn.setAttribute("title", text);
+  btn.setAttribute("aria-label", text);
+  if (label) {
+    label.textContent = text;
+    label.className = "sr-only";
+  }
 
   if (status === "ready") {
     btn.className =
-      "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-emerald-50/90 border-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:border-emerald-800/80 dark:text-emerald-300";
-    dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+      "flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium border transition-all bg-emerald-50/90 border-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:border-emerald-800/80 dark:text-emerald-300";
+    dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
   } else if (status === "loading") {
     btn.className =
-      "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300";
-    dot.className = "w-2 h-2 rounded-full bg-amber-500 animate-ping";
+      "flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300";
+    dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping";
   } else {
     btn.className =
-      "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-blue-50/90 border-blue-200 text-blue-800 dark:bg-blue-950/60 dark:border-blue-800/80 dark:text-blue-300";
-    dot.className = "w-2 h-2 rounded-full bg-blue-500";
+      "flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium border transition-all bg-blue-50/90 border-blue-200 text-blue-800 dark:bg-blue-950/60 dark:border-blue-800/80 dark:text-blue-300";
+    dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500";
   }
 }
 
@@ -236,22 +241,67 @@ function normalizePathname(pathname) {
   return clean;
 }
 
+function getNavCategoryGroups(lang) {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const r = ROUTE_MAP;
+  return [
+    {
+      title: ui.navGroups.calculus,
+      items: [
+        { route: r.integrals[lang], label: ui.nav.integrals },
+        { route: r.ode[lang], label: ui.nav.ode },
+        { route: r.taylor[lang], label: ui.nav.taylor },
+        { route: r.fourierseries[lang], label: ui.nav.fourierseries },
+        { route: r.numseries[lang], label: ui.nav.numseries }
+      ]
+    },
+    {
+      title: ui.navGroups.transforms,
+      items: [
+        { route: r.laplace[lang], label: ui.nav.laplace },
+        { route: r.fourier[lang], label: ui.nav.fourier },
+        { route: r.ztransform[lang], label: ui.nav.ztransform },
+        { route: r.convolution[lang], label: ui.nav.convolution }
+      ]
+    },
+    {
+      title: ui.navGroups.algebra,
+      items: [
+        { route: r.matrix[lang], label: ui.nav.matrix },
+        { route: r.gauss[lang], label: ui.nav.gauss },
+        { route: r.phasors[lang], label: ui.nav.phasors }
+      ]
+    }
+  ];
+}
+
 function updateShellNavigationUI(activeRoute, lang) {
   const ui = UI_STRINGS[lang] || UI_STRINGS.es;
   const routes = ROUTE_MAP;
+  const homeRoute = routes.home[lang];
+  const groups = getNavCategoryGroups(lang);
 
   document.documentElement.lang = lang;
 
   // Update Brand link & subtitle
   const brandLink = document.querySelector("header a[data-route]");
   if (brandLink) {
-    brandLink.setAttribute("href", routes.home[lang]);
-    brandLink.setAttribute("data-route", routes.home[lang]);
+    brandLink.setAttribute("href", homeRoute);
+    brandLink.setAttribute("data-route", homeRoute);
     const subP = brandLink.querySelector("p");
     if (subP) subP.innerHTML = ui.brandSubtitle;
   }
 
-  // Update Engine Status Badge text to current language
+  // Update Left Home Link if present
+  const homeNavLink = document.getElementById("nav-home-link");
+  if (homeNavLink) {
+    homeNavLink.setAttribute("href", homeRoute);
+    homeNavLink.setAttribute("data-route", homeRoute);
+    homeNavLink.textContent = ui.nav.home;
+    homeNavLink.classList.toggle("active", activeRoute === homeRoute);
+  }
+
+  // Update Engine Status Badge tooltip to current language
   const statusMsg =
     state.pyodideStatus === "ready"
       ? ui.engineStatusReady
@@ -260,74 +310,137 @@ function updateShellNavigationUI(activeRoute, lang) {
       : ui.engineStatusFallback;
   updateEngineBadgeUI(state.pyodideStatus, statusMsg);
 
-  // Build localized nav items
-  const navItems = [
-    { id: "home", route: routes.home[lang], label: ui.nav.home },
-    { id: "fourier", route: routes.fourier[lang], label: ui.nav.fourier },
-    { id: "fourierseries", route: routes.fourierseries[lang], label: ui.nav.fourierseries },
-    { id: "laplace", route: routes.laplace[lang], label: ui.nav.laplace },
-    { id: "ztransform", route: routes.ztransform[lang], label: ui.nav.ztransform },
-    { id: "convolution", route: routes.convolution[lang], label: ui.nav.convolution },
-    { id: "ode", route: routes.ode[lang], label: ui.nav.ode },
-    { id: "integrals", route: routes.integrals[lang], label: ui.nav.integrals },
-    { id: "taylor", route: routes.taylor[lang], label: ui.nav.taylor },
-    { id: "numseries", route: routes.numseries[lang], label: ui.nav.numseries },
-    { id: "matrix", route: routes.matrix[lang], label: ui.nav.matrix },
-    { id: "gauss", route: routes.gauss[lang], label: ui.nav.gauss },
-    { id: "phasors", route: routes.phasors[lang], label: ui.nav.phasors }
-  ];
-
+  // Update Center Desktop Mega-Dropdown ("Calculadoras ▾")
   const desktopNav = document.querySelector("header nav[aria-label]");
   if (desktopNav) {
-    desktopNav.innerHTML = navItems
-      .map(
-        (item) =>
-          `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
-            activeRoute === item.route ? "active " : ""
-          }whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">${escapeHtml(
-            item.label
-          )}</a>`
-      )
-      .join("");
+    const isCalcActive = groups.some((g) => g.items.some((it) => it.route === activeRoute));
+    desktopNav.className = "hidden md:flex items-center gap-2 relative";
+    desktopNav.innerHTML = `
+      <div class="relative" id="calc-dropdown-wrapper">
+        <button
+          type="button"
+          id="calc-dropdown-btn"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium border transition-all ${
+            isCalcActive
+              ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800"
+              : "bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }"
+        >
+          <span>${escapeHtml(ui.navCalculatorsBtn)}</span>
+          <svg id="calc-dropdown-chevron" class="w-4 h-4 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          id="calc-dropdown-menu"
+          class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-[640px] max-w-[92vw] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-5 z-50"
+        >
+          <div class="grid grid-cols-3 gap-5">
+            ${groups
+              .map(
+                (group) => `
+              <div>
+                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
+                  ${escapeHtml(group.title)}
+                </div>
+                <ul class="space-y-1">
+                  ${group.items
+                    .map(
+                      (item) => `
+                    <li>
+                      <a
+                        href="${item.route}"
+                        data-route="${item.route}"
+                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          activeRoute === item.route
+                            ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        }"
+                      >${escapeHtml(item.label)}</a>
+                    </li>
+                  `
+                    )
+                    .join("")}
+                </ul>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>
+    `;
   }
 
-  const mobileNav = document.querySelector("header div.xl\\:hidden");
-  if (mobileNav) {
-    mobileNav.innerHTML = navItems
-      .map(
-        (item) =>
-          `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
-            activeRoute === item.route ? "active " : ""
-          }whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">${escapeHtml(
-            item.label
-          )}</a>`
-      )
-      .join("");
+  // Update Mobile Drawer (#mobile-nav-drawer)
+  const mobileDrawer = document.getElementById("mobile-nav-drawer");
+  if (mobileDrawer) {
+    mobileDrawer.innerHTML = `
+      <div class="space-y-4">
+        <a
+          href="${homeRoute}"
+          data-route="${homeRoute}"
+          class="nav-link block px-3 py-2 rounded-xl text-sm font-semibold ${
+            activeRoute === homeRoute
+              ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300"
+              : "text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }"
+        >${escapeHtml(ui.nav.home)}</a>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          ${groups
+            .map(
+              (group) => `
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                ${escapeHtml(group.title)}
+              </div>
+              <div class="space-y-1">
+                ${group.items
+                  .map(
+                    (item) => `
+                  <a
+                    href="${item.route}"
+                    data-route="${item.route}"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium ${
+                      activeRoute === item.route
+                        ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    }"
+                  >${escapeHtml(item.label)}</a>
+                `
+                  )
+                  .join("")}
+              </div>
+            </div>
+          `
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
   }
 
-  // Ensure or update Language Switcher (ES | EN | FR) in Header
-  let langSwitcher = document.getElementById("lang-switcher");
-  if (!langSwitcher) {
-    const rightControls = document.getElementById("engine-status-btn")?.parentElement;
-    if (rightControls) {
-      langSwitcher = document.createElement("div");
-      langSwitcher.id = "lang-switcher";
-      langSwitcher.className =
-        "flex items-center gap-0.5 p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[11px] font-mono font-semibold";
-      rightControls.insertBefore(langSwitcher, rightControls.firstChild);
-    }
-  }
-
+  // Update Language Switcher (ES | EN | FR) as REAL <a href="..."> links (no data-route interception)
+  const langSwitcher = document.getElementById("lang-switcher");
   if (langSwitcher) {
     langSwitcher.innerHTML = SUPPORTED_LANGS.map((l) => {
       const targetUrl = getEquivalentRoute(activeRoute, l);
       const isCurrent = l === lang;
-      return `<a href="${targetUrl}" data-route="${targetUrl}" data-lang-switch="${l}" class="px-2 py-0.5 rounded transition-colors ${
+      return `<a href="${targetUrl}" data-lang-switch="${l}" class="px-2 py-0.5 rounded transition-colors ${
         isCurrent
           ? "bg-blue-700 text-white shadow-2xs"
           : "text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400"
       }">${l.toUpperCase()}</a>`;
     }).join("");
+  }
+
+  // Update Mobile Menu Toggle aria-label
+  const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+  if (mobileMenuBtn) {
+    mobileMenuBtn.setAttribute("aria-label", ui.navMenuToggle);
   }
 
   // Update Footer Links and Tagline
@@ -1527,16 +1640,82 @@ function renderLegalView(legal) {
 /* ==========================================================================
    8. GLOBAL LINK INTERCEPTION & BOOTSTRAP
    ========================================================================== */
+function closeNavMenus() {
+  const menu = document.getElementById("calc-dropdown-menu");
+  const btn = document.getElementById("calc-dropdown-btn");
+  const chevron = document.getElementById("calc-dropdown-chevron");
+  if (menu) menu.classList.add("hidden");
+  if (btn) btn.setAttribute("aria-expanded", "false");
+  if (chevron) chevron.classList.remove("rotate-180");
+
+  const mobileDrawer = document.getElementById("mobile-nav-drawer");
+  const mobileBtn = document.getElementById("mobile-menu-btn");
+  if (mobileDrawer) mobileDrawer.classList.add("hidden");
+  if (mobileBtn) mobileBtn.setAttribute("aria-expanded", "false");
+}
+
 function initRouterEvents() {
   document.body.addEventListener("click", (e) => {
+    // 1. Desktop "Calculadoras" dropdown toggle
+    const dropdownBtn = e.target.closest("#calc-dropdown-btn");
+    if (dropdownBtn) {
+      const menu = document.getElementById("calc-dropdown-menu");
+      const chevron = document.getElementById("calc-dropdown-chevron");
+      if (menu) {
+        const isOpen = !menu.classList.contains("hidden");
+        menu.classList.toggle("hidden", isOpen);
+        dropdownBtn.setAttribute("aria-expanded", String(!isOpen));
+        if (chevron) chevron.classList.toggle("rotate-180", !isOpen);
+      }
+      return;
+    }
+
+    // 2. Mobile hamburger menu toggle
+    const mobileBtn = e.target.closest("#mobile-menu-btn");
+    if (mobileBtn) {
+      const mobileDrawer = document.getElementById("mobile-nav-drawer");
+      if (mobileDrawer) {
+        const isOpen = !mobileDrawer.classList.contains("hidden");
+        mobileDrawer.classList.toggle("hidden", isOpen);
+        mobileBtn.setAttribute("aria-expanded", String(!isOpen));
+      }
+      return;
+    }
+
+    // 3. Close desktop dropdown when clicking outside
+    if (!e.target.closest("#calc-dropdown-wrapper")) {
+      const menu = document.getElementById("calc-dropdown-menu");
+      const btn = document.getElementById("calc-dropdown-btn");
+      const chevron = document.getElementById("calc-dropdown-chevron");
+      if (menu && !menu.classList.contains("hidden")) {
+        menu.classList.add("hidden");
+        if (btn) btn.setAttribute("aria-expanded", "false");
+        if (chevron) chevron.classList.remove("rotate-180");
+      }
+    }
+
+    // 4. Language switcher links (<a data-lang-switch>) use native full navigation
+    if (e.target.closest("a[data-lang-switch]")) {
+      return;
+    }
+
+    // 5. SPA internal route links
     const link = e.target.closest("a[data-route]");
     if (!link) return;
     e.preventDefault();
+    closeNavMenus();
     const targetRoute = link.getAttribute("data-route");
     navigateTo(targetRoute, true);
   });
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeNavMenus();
+    }
+  });
+
   window.addEventListener("popstate", () => {
+    closeNavMenus();
     navigateTo(window.location.pathname, false);
   });
 }

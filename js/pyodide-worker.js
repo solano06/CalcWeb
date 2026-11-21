@@ -11,6 +11,8 @@ let pyodideInstance = null;
 
 // Python Step-by-Step Pedagogical Solvers using SymPy
 const PYTHON_SOLVER_SCRIPT = `
+import warnings
+warnings.filterwarnings("ignore", category=SyntaxWarning)
 import json
 import re
 import sympy as sp
@@ -1514,6 +1516,7 @@ async function initPyodideEngine() {
     });
     self.postMessage({ type: "STATUS", status: "loading", message: "Inicializando paquetes CAS (SymPy)..." });
     await pyodideInstance.loadPackage(["sympy"]);
+    await pyodideInstance.runPythonAsync('import warnings\\nwarnings.filterwarnings("ignore", category=SyntaxWarning)');
     await pyodideInstance.runPythonAsync(PYTHON_SOLVER_SCRIPT);
     self.postMessage({ type: "STATUS", status: "ready", message: "Motor SymPy (WASM) activo" });
     return pyodideInstance;

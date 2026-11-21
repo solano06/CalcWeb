@@ -98,6 +98,13 @@ export const UI_STRINGS = {
     brandSubtitle: "Motor Simbólico Universitario &bull; 100% Client-Side",
     navHome: "Inicio",
     breadcrumbHome: "Inicio",
+    navCalculatorsBtn: "Calculadoras",
+    navMenuToggle: "Abrir menú de navegación",
+    navGroups: {
+      calculus: "Cálculo y Series",
+      transforms: "Transformadas y Señales",
+      algebra: "Álgebra y Circuitos"
+    },
     nav: {
       home: "Inicio",
       fourier: "Fourier",
@@ -247,6 +254,13 @@ export const UI_STRINGS = {
     brandSubtitle: "University Symbolic CAS Engine &bull; 100% Client-Side",
     navHome: "Home",
     breadcrumbHome: "Home",
+    navCalculatorsBtn: "Calculators",
+    navMenuToggle: "Toggle navigation menu",
+    navGroups: {
+      calculus: "Calculus & Series",
+      transforms: "Transforms & Signals",
+      algebra: "Linear Algebra & Circuits"
+    },
     nav: {
       home: "Home",
       fourier: "Fourier",
@@ -396,6 +410,13 @@ export const UI_STRINGS = {
     brandSubtitle: "Moteur Symbolique Universitaire &bull; 100% Client-Side",
     navHome: "Accueil",
     breadcrumbHome: "Accueil",
+    navCalculatorsBtn: "Calculateurs",
+    navMenuToggle: "Ouvrir le menu de navigation",
+    navGroups: {
+      calculus: "Calcul et Séries",
+      transforms: "Transformées et Signaux",
+      algebra: "Algèbre et Circuits"
+    },
     nav: {
       home: "Accueil",
       fourier: "Fourier",
@@ -540,14 +561,14 @@ export const UI_STRINGS = {
 };
 
 export function detectLangFromPath(pathname) {
-  const clean = pathname.replace(/\/+$/, "") || "/";
+  const clean = (pathname || "/").replace(/\/index\.html$/, "").replace(/\/+$/, "") || "/";
   if (clean === "/en" || clean.startsWith("/en/")) return "en";
   if (clean === "/fr" || clean.startsWith("/fr/")) return "fr";
   return "es";
 }
 
 export function resolvePageIdFromPath(pathname) {
-  const clean = pathname.replace(/\/+$/, "") || "/";
+  const clean = (pathname || "/").replace(/\/index\.html$/, "").replace(/\/+$/, "") || "/";
   for (const [id, routes] of Object.entries(ROUTE_MAP)) {
     if (routes.es === clean || routes.en === clean || routes.fr === clean) {
       return id;

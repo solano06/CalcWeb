@@ -37,50 +37,142 @@ function escapeHtml(str) {
 
 function buildNavLinksHtml(activeRoute, lang = "es") {
   const ui = UI_STRINGS[lang] || UI_STRINGS.es;
-  const routes = ROUTE_MAP;
+  const r = ROUTE_MAP;
+  const homeRoute = r.home[lang];
 
-  const navItems = [
-    { route: routes.home[lang], label: ui.nav.home },
-    { route: routes.fourier[lang], label: ui.nav.fourier },
-    { route: routes.fourierseries[lang], label: ui.nav.fourierseries },
-    { route: routes.laplace[lang], label: ui.nav.laplace },
-    { route: routes.ztransform[lang], label: ui.nav.ztransform },
-    { route: routes.convolution[lang], label: ui.nav.convolution },
-    { route: routes.ode[lang], label: ui.nav.ode },
-    { route: routes.integrals[lang], label: ui.nav.integrals },
-    { route: routes.taylor[lang], label: ui.nav.taylor },
-    { route: routes.numseries[lang], label: ui.nav.numseries },
-    { route: routes.matrix[lang], label: ui.nav.matrix },
-    { route: routes.gauss[lang], label: ui.nav.gauss },
-    { route: routes.phasors[lang], label: ui.nav.phasors }
+  const groups = [
+    {
+      title: ui.navGroups.calculus,
+      items: [
+        { route: r.integrals[lang], label: ui.nav.integrals },
+        { route: r.ode[lang], label: ui.nav.ode },
+        { route: r.taylor[lang], label: ui.nav.taylor },
+        { route: r.fourierseries[lang], label: ui.nav.fourierseries },
+        { route: r.numseries[lang], label: ui.nav.numseries }
+      ]
+    },
+    {
+      title: ui.navGroups.transforms,
+      items: [
+        { route: r.laplace[lang], label: ui.nav.laplace },
+        { route: r.fourier[lang], label: ui.nav.fourier },
+        { route: r.ztransform[lang], label: ui.nav.ztransform },
+        { route: r.convolution[lang], label: ui.nav.convolution }
+      ]
+    },
+    {
+      title: ui.navGroups.algebra,
+      items: [
+        { route: r.matrix[lang], label: ui.nav.matrix },
+        { route: r.gauss[lang], label: ui.nav.gauss },
+        { route: r.phasors[lang], label: ui.nav.phasors }
+      ]
+    }
   ];
 
-  const desktop = navItems
-    .map(
-      (item) =>
-        `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
-          activeRoute === item.route ? "active " : ""
-        }whitespace-nowrap px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors">${escapeHtml(
-          item.label
-        )}</a>`
-    )
-    .join("\n        ");
+  const isCalcActive = groups.some((g) => g.items.some((it) => it.route === activeRoute));
 
-  const mobile = navItems
-    .map(
-      (item) =>
-        `<a href="${item.route}" data-route="${item.route}" class="nav-link ${
-          activeRoute === item.route ? "active " : ""
-        }whitespace-nowrap px-2.5 py-1.5 rounded-md text-xs font-medium">${escapeHtml(
-          item.label
-        )}</a>`
-    )
-    .join("\n      ");
+  const desktop = `
+      <div class="relative" id="calc-dropdown-wrapper">
+        <button
+          type="button"
+          id="calc-dropdown-btn"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium border transition-all ${
+            isCalcActive
+              ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800"
+              : "bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }"
+        >
+          <span>${escapeHtml(ui.navCalculatorsBtn)}</span>
+          <svg id="calc-dropdown-chevron" class="w-4 h-4 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          id="calc-dropdown-menu"
+          class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-[640px] max-w-[92vw] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-5 z-50"
+        >
+          <div class="grid grid-cols-3 gap-5">
+            ${groups
+              .map(
+                (group) => `
+              <div>
+                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
+                  ${escapeHtml(group.title)}
+                </div>
+                <ul class="space-y-1">
+                  ${group.items
+                    .map(
+                      (item) => `
+                    <li>
+                      <a
+                        href="${item.route}"
+                        data-route="${item.route}"
+                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          activeRoute === item.route
+                            ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        }"
+                      >${escapeHtml(item.label)}</a>
+                    </li>`
+                    )
+                    .join("")}
+                </ul>
+              </div>`
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>`;
+
+  const mobile = `
+      <div class="space-y-4">
+        <a
+          href="${homeRoute}"
+          data-route="${homeRoute}"
+          class="nav-link block px-3 py-2 rounded-xl text-sm font-semibold ${
+            activeRoute === homeRoute
+              ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300"
+              : "text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }"
+        >${escapeHtml(ui.nav.home)}</a>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          ${groups
+            .map(
+              (group) => `
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                ${escapeHtml(group.title)}
+              </div>
+              <div class="space-y-1">
+                ${group.items
+                  .map(
+                    (item) => `
+                  <a
+                    href="${item.route}"
+                    data-route="${item.route}"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium ${
+                      activeRoute === item.route
+                        ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    }"
+                  >${escapeHtml(item.label)}</a>`
+                  )
+                  .join("")}
+              </div>
+            </div>`
+            )
+            .join("")}
+        </div>
+      </div>`;
 
   const langSwitcher = SUPPORTED_LANGS.map((l) => {
     const targetUrl = getEquivalentRoute(activeRoute, l);
     const isCurrent = l === lang;
-    return `<a href="${targetUrl}" data-route="${targetUrl}" data-lang-switch="${l}" class="px-2 py-0.5 rounded transition-colors ${
+    return `<a href="${targetUrl}" data-lang-switch="${l}" class="px-2 py-0.5 rounded transition-colors ${
       isCurrent
         ? "bg-blue-700 text-white shadow-2xs"
         : "text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400"
@@ -426,7 +518,8 @@ ${jsonLd}
 
   <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
+      <!-- Left: Logo + Home Link -->
+      <div class="flex items-center gap-4">
         <a href="${homeRoute}" data-route="${homeRoute}" class="flex items-center gap-2.5 group focus:outline-none">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">&Sigma;</div>
           <div>
@@ -434,34 +527,47 @@ ${jsonLd}
               <span class="font-serif font-bold text-xl tracking-tight text-slate-900 dark:text-white">CalcWeb</span>
               <span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">${ui.brandSubtitle}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden lg:block">${ui.brandSubtitle}</p>
           </div>
         </a>
+        <a id="nav-home-link" href="${homeRoute}" data-route="${homeRoute}" class="nav-link ${
+          route === homeRoute ? "active " : ""
+        }hidden md:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">${escapeHtml(
+          ui.nav.home
+        )}</a>
       </div>
 
-      <nav aria-label="Main Navigation" class="hidden xl:flex items-center gap-0.5">
+      <!-- Center: 3-Column Calculators Dropdown -->
+      <nav aria-label="Main Navigation" class="hidden md:flex items-center gap-2 relative">
         ${nav.desktop}
       </nav>
 
+      <!-- Right: Language Switcher + Compact Engine Status + Dark Mode + Mobile Hamburger -->
       <div class="flex items-center gap-2">
-        <!-- Language Switcher (ES | EN | FR) -->
         <div id="lang-switcher" class="flex items-center gap-0.5 p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[11px] font-mono font-semibold">
           ${nav.langSwitcher}
         </div>
 
-        <button id="engine-status-btn" type="button" title="${escapeHtml(ui.engineStatusTooltip)}" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
-          <span id="engine-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
-          <span id="engine-status-text" class="font-mono text-[11px] hidden sm:inline">${escapeHtml(ui.engineStatusLoading)}</span>
+        <button id="engine-status-btn" type="button" title="${escapeHtml(ui.engineStatusLoading)}" aria-label="${escapeHtml(ui.engineStatusLoading)}" class="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="sr-only">${escapeHtml(ui.engineStatusLoading)}</span>
         </button>
 
         <button id="theme-toggle" type="button" aria-label="${escapeHtml(ui.themeToggleLabel)}" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
         </button>
+
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="${escapeHtml(ui.navMenuToggle)}" class="md:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
       </div>
     </div>
 
-    <div class="xl:hidden border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center gap-1 overflow-x-auto no-scrollbar bg-slate-50/70 dark:bg-slate-900/70">
+    <!-- Mobile Hamburger Drawer -->
+    <div id="mobile-nav-drawer" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
       ${nav.mobile}
     </div>
   </header>
