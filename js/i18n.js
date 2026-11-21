@@ -259,7 +259,7 @@ export const UI_STRINGS = {
     navGroups: {
       calculus: "Calculus & Series",
       transforms: "Transforms & Signals",
-      algebra: "Linear Algebra & Circuits"
+      algebra: "Algebra & Circuits"
     },
     nav: {
       home: "Home",
@@ -413,9 +413,9 @@ export const UI_STRINGS = {
     navCalculatorsBtn: "Calculateurs",
     navMenuToggle: "Ouvrir le menu de navigation",
     navGroups: {
-      calculus: "Calcul et Séries",
-      transforms: "Transformées et Signaux",
-      algebra: "Algèbre et Circuits"
+      calculus: "Calcul & Séries",
+      transforms: "Transformées & Signaux",
+      algebra: "Algèbre & Circuits"
     },
     nav: {
       home: "Accueil",

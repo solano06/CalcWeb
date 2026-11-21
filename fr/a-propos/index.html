@@ -109,138 +109,160 @@
         <a id="nav-home-link" href="/fr" data-route="/fr" class="nav-link hidden md:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Accueil</a>
       </div>
 
-      <!-- Center: 3-Column Calculators Dropdown -->
-      <nav aria-label="Main Navigation" class="hidden md:flex items-center gap-2 relative">
+      <!-- Center: 3-Category Dropdowns -->
+      <nav aria-label="Main Navigation" class="hidden lg:flex items-center gap-1.5 relative">
         
-      <div class="relative" id="calc-dropdown-wrapper">
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="calculus">
         <button
           type="button"
-          id="calc-dropdown-btn"
+          data-cat-toggle="calculus"
           aria-expanded="false"
           aria-haspopup="true"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium border transition-all bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
         >
-          <span>Calculateurs</span>
-          <svg id="calc-dropdown-chevron" class="w-4 h-4 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span>Calcul &amp; Séries</span>
+          <svg data-cat-chevron="calculus" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
 
         <div
-          id="calc-dropdown-menu"
-          class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-[640px] max-w-[92vw] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-5 z-50"
+          data-cat-menu="calculus"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
         >
-          <div class="grid grid-cols-3 gap-5">
+          <ul class="space-y-0.5">
             
-              <div>
-                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                  Calcul et Séries
-                </div>
-                <ul class="space-y-1">
-                  
-                    <li>
-                      <a
-                        href="/fr/integrales-etape-par-etape"
-                        data-route="/fr/integrales-etape-par-etape"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Intégrales</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/equations-differentielles"
-                        data-route="/fr/equations-differentielles"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >EDO</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/series-de-taylor"
-                        data-route="/fr/series-de-taylor"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Taylor</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/series-de-fourier"
-                        data-route="/fr/series-de-fourier"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >S. Fourier</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/series-numeriques"
-                        data-route="/fr/series-numeriques"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Séries Num.</a>
-                    </li>
-                </ul>
-              </div>
-              <div>
-                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                  Transformées et Signaux
-                </div>
-                <ul class="space-y-1">
-                  
-                    <li>
-                      <a
-                        href="/fr/transformee-de-laplace"
-                        data-route="/fr/transformee-de-laplace"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Laplace</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/transformee-de-fourier"
-                        data-route="/fr/transformee-de-fourier"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Fourier</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/transformee-en-z"
-                        data-route="/fr/transformee-en-z"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Transf. Z</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/convolution"
-                        data-route="/fr/convolution"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Convolution</a>
-                    </li>
-                </ul>
-              </div>
-              <div>
-                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                  Algèbre et Circuits
-                </div>
-                <ul class="space-y-1">
-                  
-                    <li>
-                      <a
-                        href="/fr/diagonalisation-matrices"
-                        data-route="/fr/diagonalisation-matrices"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Matrices</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/pivot-de-gauss"
-                        data-route="/fr/pivot-de-gauss"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Pivot Gauss</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fr/calculateur-phaseurs"
-                        data-route="/fr/calculateur-phaseurs"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Phaseurs AC</a>
-                    </li>
-                </ul>
-              </div>
-          </div>
+              <li>
+                <a
+                  href="/fr/integrales-etape-par-etape"
+                  data-route="/fr/integrales-etape-par-etape"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Intégrales</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/equations-differentielles"
+                  data-route="/fr/equations-differentielles"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >EDO</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-de-taylor"
+                  data-route="/fr/series-de-taylor"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Taylor</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-de-fourier"
+                  data-route="/fr/series-de-fourier"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >S. Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-numeriques"
+                  data-route="/fr/series-numeriques"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Séries Num.</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="transforms">
+        <button
+          type="button"
+          data-cat-toggle="transforms"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Transformées &amp; Signaux</span>
+          <svg data-cat-chevron="transforms" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="transforms"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/fr/transformee-de-laplace"
+                  data-route="/fr/transformee-de-laplace"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Laplace</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/transformee-de-fourier"
+                  data-route="/fr/transformee-de-fourier"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/transformee-en-z"
+                  data-route="/fr/transformee-en-z"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Transf. Z</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/convolution"
+                  data-route="/fr/convolution"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Convolution</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="algebra">
+        <button
+          type="button"
+          data-cat-toggle="algebra"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Algèbre &amp; Circuits</span>
+          <svg data-cat-chevron="algebra" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="algebra"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/fr/diagonalisation-matrices"
+                  data-route="/fr/diagonalisation-matrices"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Matrices</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/pivot-de-gauss"
+                  data-route="/fr/pivot-de-gauss"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Pivot Gauss</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/calculateur-phaseurs"
+                  data-route="/fr/calculateur-phaseurs"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Phaseurs AC</a>
+              </li>
+          </ul>
         </div>
       </div>
       </nav>
@@ -261,7 +283,7 @@
           <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
         </button>
 
-        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Ouvrir le menu de navigation" class="md:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Ouvrir le menu de navigation" class="lg:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
@@ -270,7 +292,7 @@
     </div>
 
     <!-- Mobile Hamburger Drawer -->
-    <div id="mobile-nav-drawer" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
       
       <div class="space-y-4">
         <a
@@ -282,7 +304,7 @@
           
             <div>
               <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
-                Calcul et Séries
+                Calcul &amp; Séries
               </div>
               <div class="space-y-1">
                 
@@ -315,7 +337,7 @@
             </div>
             <div>
               <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
-                Transformées et Signaux
+                Transformées &amp; Signaux
               </div>
               <div class="space-y-1">
                 
@@ -343,7 +365,7 @@
             </div>
             <div>
               <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
-                Algèbre et Circuits
+                Algèbre &amp; Circuits
               </div>
               <div class="space-y-1">
                 

@@ -109,138 +109,160 @@
         <a id="nav-home-link" href="/en" data-route="/en" class="nav-link active hidden md:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Home</a>
       </div>
 
-      <!-- Center: 3-Column Calculators Dropdown -->
-      <nav aria-label="Main Navigation" class="hidden md:flex items-center gap-2 relative">
+      <!-- Center: 3-Category Dropdowns -->
+      <nav aria-label="Main Navigation" class="hidden lg:flex items-center gap-1.5 relative">
         
-      <div class="relative" id="calc-dropdown-wrapper">
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="calculus">
         <button
           type="button"
-          id="calc-dropdown-btn"
+          data-cat-toggle="calculus"
           aria-expanded="false"
           aria-haspopup="true"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium border transition-all bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
         >
-          <span>Calculators</span>
-          <svg id="calc-dropdown-chevron" class="w-4 h-4 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span>Calculus &amp; Series</span>
+          <svg data-cat-chevron="calculus" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
 
         <div
-          id="calc-dropdown-menu"
-          class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-[640px] max-w-[92vw] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-5 z-50"
+          data-cat-menu="calculus"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
         >
-          <div class="grid grid-cols-3 gap-5">
+          <ul class="space-y-0.5">
             
-              <div>
-                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                  Calculus &amp; Series
-                </div>
-                <ul class="space-y-1">
-                  
-                    <li>
-                      <a
-                        href="/en/step-by-step-integrals"
-                        data-route="/en/step-by-step-integrals"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Integrals</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/differential-equations"
-                        data-route="/en/differential-equations"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >ODEs</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/taylor-series"
-                        data-route="/en/taylor-series"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Taylor</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/fourier-series"
-                        data-route="/en/fourier-series"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Fourier Series</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/numerical-series"
-                        data-route="/en/numerical-series"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Num. Series</a>
-                    </li>
-                </ul>
-              </div>
-              <div>
-                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                  Transforms &amp; Signals
-                </div>
-                <ul class="space-y-1">
-                  
-                    <li>
-                      <a
-                        href="/en/laplace-transform"
-                        data-route="/en/laplace-transform"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Laplace</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/fourier-transform"
-                        data-route="/en/fourier-transform"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Fourier</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/z-transform"
-                        data-route="/en/z-transform"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Z-Transform</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/convolution"
-                        data-route="/en/convolution"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Convolution</a>
-                    </li>
-                </ul>
-              </div>
-              <div>
-                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                  Linear Algebra &amp; Circuits
-                </div>
-                <ul class="space-y-1">
-                  
-                    <li>
-                      <a
-                        href="/en/matrix-diagonalization"
-                        data-route="/en/matrix-diagonalization"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Matrices</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/gauss-jordan-solver"
-                        data-route="/en/gauss-jordan-solver"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >Gauss-Jordan</a>
-                    </li>
-                    <li>
-                      <a
-                        href="/en/phasor-calculator"
-                        data-route="/en/phasor-calculator"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      >AC Phasors</a>
-                    </li>
-                </ul>
-              </div>
-          </div>
+              <li>
+                <a
+                  href="/en/step-by-step-integrals"
+                  data-route="/en/step-by-step-integrals"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Integrals</a>
+              </li>
+              <li>
+                <a
+                  href="/en/differential-equations"
+                  data-route="/en/differential-equations"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >ODEs</a>
+              </li>
+              <li>
+                <a
+                  href="/en/taylor-series"
+                  data-route="/en/taylor-series"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Taylor</a>
+              </li>
+              <li>
+                <a
+                  href="/en/fourier-series"
+                  data-route="/en/fourier-series"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Fourier Series</a>
+              </li>
+              <li>
+                <a
+                  href="/en/numerical-series"
+                  data-route="/en/numerical-series"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Num. Series</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="transforms">
+        <button
+          type="button"
+          data-cat-toggle="transforms"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Transforms &amp; Signals</span>
+          <svg data-cat-chevron="transforms" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="transforms"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/en/laplace-transform"
+                  data-route="/en/laplace-transform"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Laplace</a>
+              </li>
+              <li>
+                <a
+                  href="/en/fourier-transform"
+                  data-route="/en/fourier-transform"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/en/z-transform"
+                  data-route="/en/z-transform"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Z-Transform</a>
+              </li>
+              <li>
+                <a
+                  href="/en/convolution"
+                  data-route="/en/convolution"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Convolution</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="algebra">
+        <button
+          type="button"
+          data-cat-toggle="algebra"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Algebra &amp; Circuits</span>
+          <svg data-cat-chevron="algebra" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="algebra"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/en/matrix-diagonalization"
+                  data-route="/en/matrix-diagonalization"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Matrices</a>
+              </li>
+              <li>
+                <a
+                  href="/en/gauss-jordan-solver"
+                  data-route="/en/gauss-jordan-solver"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Gauss-Jordan</a>
+              </li>
+              <li>
+                <a
+                  href="/en/phasor-calculator"
+                  data-route="/en/phasor-calculator"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >AC Phasors</a>
+              </li>
+          </ul>
         </div>
       </div>
       </nav>
@@ -261,7 +283,7 @@
           <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
         </button>
 
-        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Toggle navigation menu" class="md:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Toggle navigation menu" class="lg:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
@@ -270,7 +292,7 @@
     </div>
 
     <!-- Mobile Hamburger Drawer -->
-    <div id="mobile-nav-drawer" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
       
       <div class="space-y-4">
         <a
@@ -343,7 +365,7 @@
             </div>
             <div>
               <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
-                Linear Algebra &amp; Circuits
+                Algebra &amp; Circuits
               </div>
               <div class="space-y-1">
                 
@@ -379,80 +401,104 @@
         Rigorous symbolic derivations with theoretical explanations at every step. All computations run <strong>100% in your browser</strong> via a dedicated Web Worker with zero server latency.
       </p>
     </section>
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+    <section class="space-y-10 mb-14">
       
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/fourier-transform" data-route="/en/fourier-transform">Fourier Transform</a>
+        <div>
+          <h2 class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2.5 mb-5">
+            Calculus &amp; Series
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Continuous spectral analysis in angular frequency ω with improper integral breakdown, Euler's identities, and table properties.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/z-transform" data-route="/en/z-transform">Z-Transform</a>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/step-by-step-integrals" data-route="/en/step-by-step-integrals">Step-by-Step Integrals</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Pedagogical symbolic integration tree breakdown: integration by parts (identifying u and dv), substitution u = g(x), partial fractions, trigonometric identities, and definite evaluation.</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/differential-equations" data-route="/en/differential-equations">Differential Equations (ODEs)</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Analytical step-by-step resolution of separable ODEs, 1st-order linear ODEs via integrating factor μ(x), and 2nd-order constant-coefficient ODEs with Initial Value Problems (IVP).</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/taylor-series" data-route="/en/taylor-series">Taylor &amp; Maclaurin Series</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Systematic computation of successive derivatives f⁽ᵏ⁾(x), evaluation at the expansion center x₀, and term-by-term assembly of the Taylor polynomial Pₙ(x).</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/fourier-series" data-route="/en/fourier-series">Fourier Series</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Harmonic decomposition of periodic signals on [-L, L] with automatic even/odd symmetry detection, explicit coefficient integrals, and N-harmonic partial sum.</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/numerical-series" data-route="/en/numerical-series">Numerical Series</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Rigorous step-by-step convergence analysis: necessary condition lim aₙ = 0, geometric series, p-series, D'Alembert's ratio test, Cauchy's root test, Leibniz alternating test, and exact sum.</p>
+              </article>
+          </div>
+        </div>
+        <div>
+          <h2 class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2.5 mb-5">
+            Transforms &amp; Signals
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Discrete-time signal and system analysis featuring explicit X(z)/z division, partial fraction decomposition, and causal table lookup.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/convolution" data-route="/en/convolution">Convolution (Continuous &amp; Discrete)</a>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/laplace-transform" data-route="/en/laplace-transform">Laplace Transform</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Symbolic resolution in the complex s-plane featuring explicit denominator factorization, pole analysis, and partial fraction decomposition.</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/fourier-transform" data-route="/en/fourier-transform">Fourier Transform</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Continuous spectral analysis in angular frequency ω with improper integral breakdown, Euler's identities, and table properties.</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/z-transform" data-route="/en/z-transform">Z-Transform</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Discrete-time signal and system analysis featuring explicit X(z)/z division, partial fraction decomposition, and causal table lookup.</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/convolution" data-route="/en/convolution">Convolution (Continuous &amp; Discrete)</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Analytical LTI system response via convolution integral or summation, detailing time folding, shifting, and active integration limits bounded by unit steps.</p>
+              </article>
+          </div>
+        </div>
+        <div>
+          <h2 class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2.5 mb-5">
+            Algebra &amp; Circuits
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Analytical LTI system response via convolution integral or summation, detailing time folding, shifting, and active integration limits bounded by unit steps.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/fourier-series" data-route="/en/fourier-series">Fourier Series</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Harmonic decomposition of periodic signals on [-L, L] with automatic even/odd symmetry detection, explicit coefficient integrals, and N-harmonic partial sum.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/laplace-transform" data-route="/en/laplace-transform">Laplace Transform</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Symbolic resolution in the complex s-plane featuring explicit denominator factorization, pole analysis, and partial fraction decomposition.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/differential-equations" data-route="/en/differential-equations">Differential Equations (ODEs)</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Analytical step-by-step resolution of separable ODEs, 1st-order linear ODEs via integrating factor μ(x), and 2nd-order constant-coefficient ODEs with Initial Value Problems (IVP).</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/step-by-step-integrals" data-route="/en/step-by-step-integrals">Step-by-Step Integrals</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Pedagogical symbolic integration tree breakdown: integration by parts (identifying u and dv), substitution u = g(x), partial fractions, trigonometric identities, and definite evaluation.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/taylor-series" data-route="/en/taylor-series">Taylor &amp; Maclaurin Series</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Systematic computation of successive derivatives f⁽ᵏ⁾(x), evaluation at the expansion center x₀, and term-by-term assembly of the Taylor polynomial Pₙ(x).</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/numerical-series" data-route="/en/numerical-series">Numerical Series</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Rigorous step-by-step convergence analysis: necessary condition lim aₙ = 0, geometric series, p-series, D'Alembert's ratio test, Cauchy's root test, Leibniz alternating test, and exact sum.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/matrix-diagonalization" data-route="/en/matrix-diagonalization">Matrix Diagonalization</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Detailed computation of the characteristic equation |A - λI| = 0, eigenvalue spectrum, homogeneous linear systems for each eigenspace, modal matrix P, and diagonal matrix D.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/gauss-jordan-solver" data-route="/en/gauss-jordan-solver">Linear Systems (Gauss-Jordan)</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Step-by-step Gaussian elimination showing every elementary row operation (Fᵢ ← Fᵢ + αFⱼ) on the augmented matrix (A|b), rank calculation, and consistency classification.</p>
-        </article>
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="/en/phasor-calculator" data-route="/en/phasor-calculator">Phasors &amp; AC Circuits</a>
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Mixed arithmetic in rectangular (a + bj) and polar (M∠θ°) form, detailed magnitude and quadrant-aware angle conversion, and 2×2 / 3×3 AC mesh/nodal linear systems.</p>
-        </article>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/matrix-diagonalization" data-route="/en/matrix-diagonalization">Matrix Diagonalization</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Detailed computation of the characteristic equation |A - λI| = 0, eigenvalue spectrum, homogeneous linear systems for each eigenspace, modal matrix P, and diagonal matrix D.</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/gauss-jordan-solver" data-route="/en/gauss-jordan-solver">Linear Systems (Gauss-Jordan)</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Step-by-step Gaussian elimination showing every elementary row operation (Fᵢ ← Fᵢ + αFⱼ) on the augmented matrix (A|b), rank calculation, and consistency classification.</p>
+              </article>
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="/en/phasor-calculator" data-route="/en/phasor-calculator">Phasors &amp; AC Circuits</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Mixed arithmetic in rectangular (a + bj) and polar (M∠θ°) form, detailed magnitude and quadrant-aware angle conversion, and 2×2 / 3×3 AC mesh/nodal linear systems.</p>
+              </article>
+          </div>
+        </div>
     </section>
   
   </main>

@@ -35,98 +35,100 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
+function getNavCategoryGroups(lang = "es") {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const r = ROUTE_MAP;
+  return [
+    {
+      key: "calculus",
+      title: ui.navGroups.calculus,
+      ids: ["integrals", "ode", "taylor", "fourierseries", "numseries"],
+      items: [
+        { id: "integrals", route: r.integrals[lang], label: ui.nav.integrals },
+        { id: "ode", route: r.ode[lang], label: ui.nav.ode },
+        { id: "taylor", route: r.taylor[lang], label: ui.nav.taylor },
+        { id: "fourierseries", route: r.fourierseries[lang], label: ui.nav.fourierseries },
+        { id: "numseries", route: r.numseries[lang], label: ui.nav.numseries }
+      ]
+    },
+    {
+      key: "transforms",
+      title: ui.navGroups.transforms,
+      ids: ["laplace", "fourier", "ztransform", "convolution"],
+      items: [
+        { id: "laplace", route: r.laplace[lang], label: ui.nav.laplace },
+        { id: "fourier", route: r.fourier[lang], label: ui.nav.fourier },
+        { id: "ztransform", route: r.ztransform[lang], label: ui.nav.ztransform },
+        { id: "convolution", route: r.convolution[lang], label: ui.nav.convolution }
+      ]
+    },
+    {
+      key: "algebra",
+      title: ui.navGroups.algebra,
+      ids: ["matrix", "gauss", "phasors"],
+      items: [
+        { id: "matrix", route: r.matrix[lang], label: ui.nav.matrix },
+        { id: "gauss", route: r.gauss[lang], label: ui.nav.gauss },
+        { id: "phasors", route: r.phasors[lang], label: ui.nav.phasors }
+      ]
+    }
+  ];
+}
+
 function buildNavLinksHtml(activeRoute, lang = "es") {
   const ui = UI_STRINGS[lang] || UI_STRINGS.es;
   const r = ROUTE_MAP;
   const homeRoute = r.home[lang];
+  const groups = getNavCategoryGroups(lang);
 
-  const groups = [
-    {
-      title: ui.navGroups.calculus,
-      items: [
-        { route: r.integrals[lang], label: ui.nav.integrals },
-        { route: r.ode[lang], label: ui.nav.ode },
-        { route: r.taylor[lang], label: ui.nav.taylor },
-        { route: r.fourierseries[lang], label: ui.nav.fourierseries },
-        { route: r.numseries[lang], label: ui.nav.numseries }
-      ]
-    },
-    {
-      title: ui.navGroups.transforms,
-      items: [
-        { route: r.laplace[lang], label: ui.nav.laplace },
-        { route: r.fourier[lang], label: ui.nav.fourier },
-        { route: r.ztransform[lang], label: ui.nav.ztransform },
-        { route: r.convolution[lang], label: ui.nav.convolution }
-      ]
-    },
-    {
-      title: ui.navGroups.algebra,
-      items: [
-        { route: r.matrix[lang], label: ui.nav.matrix },
-        { route: r.gauss[lang], label: ui.nav.gauss },
-        { route: r.phasors[lang], label: ui.nav.phasors }
-      ]
-    }
-  ];
-
-  const isCalcActive = groups.some((g) => g.items.some((it) => it.route === activeRoute));
-
-  const desktop = `
-      <div class="relative" id="calc-dropdown-wrapper">
+  const desktop = groups
+    .map((group) => {
+      const isGroupActive = group.items.some((it) => it.route === activeRoute);
+      return `
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="${group.key}">
         <button
           type="button"
-          id="calc-dropdown-btn"
+          data-cat-toggle="${group.key}"
           aria-expanded="false"
           aria-haspopup="true"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium border transition-all ${
-            isCalcActive
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap ${
+            isGroupActive
               ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800"
               : "bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
           }"
         >
-          <span>${escapeHtml(ui.navCalculatorsBtn)}</span>
-          <svg id="calc-dropdown-chevron" class="w-4 h-4 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span>${escapeHtml(group.title)}</span>
+          <svg data-cat-chevron="${group.key}" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
 
         <div
-          id="calc-dropdown-menu"
-          class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-[640px] max-w-[92vw] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-5 z-50"
+          data-cat-menu="${group.key}"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
         >
-          <div class="grid grid-cols-3 gap-5">
-            ${groups
+          <ul class="space-y-0.5">
+            ${group.items
               .map(
-                (group) => `
-              <div>
-                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                  ${escapeHtml(group.title)}
-                </div>
-                <ul class="space-y-1">
-                  ${group.items
-                    .map(
-                      (item) => `
-                    <li>
-                      <a
-                        href="${item.route}"
-                        data-route="${item.route}"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          activeRoute === item.route
-                            ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
-                            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                        }"
-                      >${escapeHtml(item.label)}</a>
-                    </li>`
-                    )
-                    .join("")}
-                </ul>
-              </div>`
+                (item) => `
+              <li>
+                <a
+                  href="${item.route}"
+                  data-route="${item.route}"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                    activeRoute === item.route
+                      ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }"
+                >${escapeHtml(item.label)}</a>
+              </li>`
               )
               .join("")}
-          </div>
+          </ul>
         </div>
       </div>`;
+    })
+    .join("");
 
   const mobile = `
       <div class="space-y-4">
@@ -394,6 +396,7 @@ function buildStaticLegalMainHtml(legal, lang = "es") {
 function buildStaticHomeMainHtml(lang = "es") {
   const ui = UI_STRINGS[lang] || UI_STRINGS.es;
   const catalog = getLocalizedCatalog(lang);
+  const groups = getNavCategoryGroups(lang);
 
   return `
     <section class="rounded-3xl bg-gradient-to-b from-white to-slate-100/80 dark:from-slate-900 dark:to-slate-900/60 border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 mb-10 shadow-sm">
@@ -404,17 +407,32 @@ function buildStaticHomeMainHtml(lang = "es") {
         ${ui.heroDescription}
       </p>
     </section>
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
-      ${catalog
-        .map(
-          (c) => `
-        <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
-          <h2 class="font-serif text-xl font-bold mb-2">
-            <a href="${c.route}" data-route="${c.route}">${escapeHtml(c.shortTitle)}</a>
+    <section class="space-y-10 mb-14">
+      ${groups
+        .map((group) => {
+          const groupCalcs = group.ids
+            .map((id) => catalog.find((c) => c.id === id))
+            .filter(Boolean);
+          return `
+        <div>
+          <h2 class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2.5 mb-5">
+            ${escapeHtml(group.title)}
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">${escapeHtml(c.subtitle)}</p>
-        </article>`
-        )
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            ${groupCalcs
+              .map(
+                (c) => `
+              <article class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-serif text-xl font-bold mb-2">
+                  <a href="${c.route}" data-route="${c.route}">${escapeHtml(c.shortTitle)}</a>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">${escapeHtml(c.subtitle)}</p>
+              </article>`
+              )
+              .join("")}
+          </div>
+        </div>`;
+        })
         .join("")}
     </section>
   `;
@@ -537,8 +555,8 @@ ${jsonLd}
         )}</a>
       </div>
 
-      <!-- Center: 3-Column Calculators Dropdown -->
-      <nav aria-label="Main Navigation" class="hidden md:flex items-center gap-2 relative">
+      <!-- Center: 3-Category Dropdowns -->
+      <nav aria-label="Main Navigation" class="hidden lg:flex items-center gap-1.5 relative">
         ${nav.desktop}
       </nav>
 
@@ -558,7 +576,7 @@ ${jsonLd}
           <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
         </button>
 
-        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="${escapeHtml(ui.navMenuToggle)}" class="md:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="${escapeHtml(ui.navMenuToggle)}" class="lg:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
@@ -567,7 +585,7 @@ ${jsonLd}
     </div>
 
     <!-- Mobile Hamburger Drawer -->
-    <div id="mobile-nav-drawer" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
       ${nav.mobile}
     </div>
   </header>

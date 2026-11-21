@@ -246,30 +246,36 @@ function getNavCategoryGroups(lang) {
   const r = ROUTE_MAP;
   return [
     {
+      key: "calculus",
       title: ui.navGroups.calculus,
+      ids: ["integrals", "ode", "taylor", "fourierseries", "numseries"],
       items: [
-        { route: r.integrals[lang], label: ui.nav.integrals },
-        { route: r.ode[lang], label: ui.nav.ode },
-        { route: r.taylor[lang], label: ui.nav.taylor },
-        { route: r.fourierseries[lang], label: ui.nav.fourierseries },
-        { route: r.numseries[lang], label: ui.nav.numseries }
+        { id: "integrals", route: r.integrals[lang], label: ui.nav.integrals },
+        { id: "ode", route: r.ode[lang], label: ui.nav.ode },
+        { id: "taylor", route: r.taylor[lang], label: ui.nav.taylor },
+        { id: "fourierseries", route: r.fourierseries[lang], label: ui.nav.fourierseries },
+        { id: "numseries", route: r.numseries[lang], label: ui.nav.numseries }
       ]
     },
     {
+      key: "transforms",
       title: ui.navGroups.transforms,
+      ids: ["laplace", "fourier", "ztransform", "convolution"],
       items: [
-        { route: r.laplace[lang], label: ui.nav.laplace },
-        { route: r.fourier[lang], label: ui.nav.fourier },
-        { route: r.ztransform[lang], label: ui.nav.ztransform },
-        { route: r.convolution[lang], label: ui.nav.convolution }
+        { id: "laplace", route: r.laplace[lang], label: ui.nav.laplace },
+        { id: "fourier", route: r.fourier[lang], label: ui.nav.fourier },
+        { id: "ztransform", route: r.ztransform[lang], label: ui.nav.ztransform },
+        { id: "convolution", route: r.convolution[lang], label: ui.nav.convolution }
       ]
     },
     {
+      key: "algebra",
       title: ui.navGroups.algebra,
+      ids: ["matrix", "gauss", "phasors"],
       items: [
-        { route: r.matrix[lang], label: ui.nav.matrix },
-        { route: r.gauss[lang], label: ui.nav.gauss },
-        { route: r.phasors[lang], label: ui.nav.phasors }
+        { id: "matrix", route: r.matrix[lang], label: ui.nav.matrix },
+        { id: "gauss", route: r.gauss[lang], label: ui.nav.gauss },
+        { id: "phasors", route: r.phasors[lang], label: ui.nav.phasors }
       ]
     }
   ];
@@ -310,69 +316,58 @@ function updateShellNavigationUI(activeRoute, lang) {
       : ui.engineStatusFallback;
   updateEngineBadgeUI(state.pyodideStatus, statusMsg);
 
-  // Update Center Desktop Mega-Dropdown ("Calculadoras ▾")
+  // Update Center Desktop 3-Category Dropdowns
   const desktopNav = document.querySelector("header nav[aria-label]");
   if (desktopNav) {
-    const isCalcActive = groups.some((g) => g.items.some((it) => it.route === activeRoute));
-    desktopNav.className = "hidden md:flex items-center gap-2 relative";
-    desktopNav.innerHTML = `
-      <div class="relative" id="calc-dropdown-wrapper">
+    desktopNav.className = "hidden lg:flex items-center gap-1.5 relative";
+    desktopNav.innerHTML = groups
+      .map((group) => {
+        const isGroupActive = group.items.some((it) => it.route === activeRoute);
+        return `
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="${group.key}">
         <button
           type="button"
-          id="calc-dropdown-btn"
+          data-cat-toggle="${group.key}"
           aria-expanded="false"
           aria-haspopup="true"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium border transition-all ${
-            isCalcActive
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap ${
+            isGroupActive
               ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800"
               : "bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
           }"
         >
-          <span>${escapeHtml(ui.navCalculatorsBtn)}</span>
-          <svg id="calc-dropdown-chevron" class="w-4 h-4 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span>${escapeHtml(group.title)}</span>
+          <svg data-cat-chevron="${group.key}" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
 
         <div
-          id="calc-dropdown-menu"
-          class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-[640px] max-w-[92vw] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-5 z-50"
+          data-cat-menu="${group.key}"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
         >
-          <div class="grid grid-cols-3 gap-5">
-            ${groups
+          <ul class="space-y-0.5">
+            ${group.items
               .map(
-                (group) => `
-              <div>
-                <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-2.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                  ${escapeHtml(group.title)}
-                </div>
-                <ul class="space-y-1">
-                  ${group.items
-                    .map(
-                      (item) => `
-                    <li>
-                      <a
-                        href="${item.route}"
-                        data-route="${item.route}"
-                        class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          activeRoute === item.route
-                            ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
-                            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                        }"
-                      >${escapeHtml(item.label)}</a>
-                    </li>
-                  `
-                    )
-                    .join("")}
-                </ul>
-              </div>
-            `
+                (item) => `
+              <li>
+                <a
+                  href="${item.route}"
+                  data-route="${item.route}"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                    activeRoute === item.route
+                      ? "active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }"
+                >${escapeHtml(item.label)}</a>
+              </li>`
               )
               .join("")}
-          </div>
+          </ul>
         </div>
-      </div>
-    `;
+      </div>`;
+      })
+      .join("");
   }
 
   // Update Mobile Drawer (#mobile-nav-drawer)
@@ -720,9 +715,9 @@ function renderHomeDashboard() {
       </span>
     </section>
 
-    <!-- Calculators Grid -->
-    <section id="calculators-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
-      ${catalog.map((calc) => renderCalculatorCardHTML(calc)).join("")}
+    <!-- Calculators Grouped by 3 Categories -->
+    <section id="calculators-grid" class="space-y-10 mb-14">
+      ${renderGroupedCatalogSections(catalog, state.lang)}
     </section>
 
     <!-- Architecture & Pedagogical Guarantees Section -->
@@ -778,12 +773,12 @@ function renderHomeDashboard() {
 
     if (filtered.length === 0) {
       grid.innerHTML = `
-        <div class="col-span-full text-center py-12 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
+        <div class="text-center py-12 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
           <p class="text-sm text-slate-500 dark:text-slate-400">${escapeHtml(ui.noResultsFor)} "<strong>${escapeHtml(q)}</strong>".</p>
         </div>
       `;
     } else {
-      grid.innerHTML = filtered.map((c) => renderCalculatorCardHTML(c)).join("");
+      grid.innerHTML = renderGroupedCatalogSections(filtered, state.lang);
     }
     if (countEl) {
       countEl.textContent = `${filtered.length} ${
@@ -810,6 +805,31 @@ function renderHomeDashboard() {
       filterCards();
     });
   });
+}
+
+function renderGroupedCatalogSections(items, lang) {
+  const groups = getNavCategoryGroups(lang);
+  return groups
+    .map((group) => {
+      const groupCalcs = group.ids
+        .map((id) => items.find((c) => c.id === id))
+        .filter(Boolean);
+      if (groupCalcs.length === 0) return "";
+      return `
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5 mb-5">
+            <h2 class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+              ${escapeHtml(group.title)}
+            </h2>
+            <span class="text-xs font-mono text-slate-400">${groupCalcs.length}</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            ${groupCalcs.map((calc) => renderCalculatorCardHTML(calc)).join("")}
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 function renderCalculatorCardHTML(calc) {
@@ -1640,14 +1660,26 @@ function renderLegalView(legal) {
 /* ==========================================================================
    8. GLOBAL LINK INTERCEPTION & BOOTSTRAP
    ========================================================================== */
-function closeNavMenus() {
-  const menu = document.getElementById("calc-dropdown-menu");
-  const btn = document.getElementById("calc-dropdown-btn");
-  const chevron = document.getElementById("calc-dropdown-chevron");
-  if (menu) menu.classList.add("hidden");
-  if (btn) btn.setAttribute("aria-expanded", "false");
-  if (chevron) chevron.classList.remove("rotate-180");
+function closeAllCategoryDropdowns(exceptKey = null) {
+  document.querySelectorAll("[data-cat-menu]").forEach((menu) => {
+    const key = menu.getAttribute("data-cat-menu");
+    if (exceptKey && key === exceptKey) return;
+    menu.classList.add("hidden");
+  });
+  document.querySelectorAll("[data-cat-toggle]").forEach((btn) => {
+    const key = btn.getAttribute("data-cat-toggle");
+    if (exceptKey && key === exceptKey) return;
+    btn.setAttribute("aria-expanded", "false");
+  });
+  document.querySelectorAll("[data-cat-chevron]").forEach((chev) => {
+    const key = chev.getAttribute("data-cat-chevron");
+    if (exceptKey && key === exceptKey) return;
+    chev.classList.remove("rotate-180");
+  });
+}
 
+function closeNavMenus() {
+  closeAllCategoryDropdowns(null);
   const mobileDrawer = document.getElementById("mobile-nav-drawer");
   const mobileBtn = document.getElementById("mobile-menu-btn");
   if (mobileDrawer) mobileDrawer.classList.add("hidden");
@@ -1655,17 +1687,21 @@ function closeNavMenus() {
 }
 
 function initRouterEvents() {
-  document.body.addEventListener("click", (e) => {
-    // 1. Desktop "Calculadoras" dropdown toggle
-    const dropdownBtn = e.target.closest("#calc-dropdown-btn");
-    if (dropdownBtn) {
-      const menu = document.getElementById("calc-dropdown-menu");
-      const chevron = document.getElementById("calc-dropdown-chevron");
+  document.addEventListener("click", (e) => {
+    // 1. Desktop 3-Category Dropdown Toggle (opens one, closes others)
+    const toggleBtn = e.target.closest("[data-cat-toggle]");
+    if (toggleBtn) {
+      const key = toggleBtn.getAttribute("data-cat-toggle");
+      const menu = document.querySelector(`[data-cat-menu="${key}"]`);
+      const chevron = document.querySelector(`[data-cat-chevron="${key}"]`);
       if (menu) {
-        const isOpen = !menu.classList.contains("hidden");
-        menu.classList.toggle("hidden", isOpen);
-        dropdownBtn.setAttribute("aria-expanded", String(!isOpen));
-        if (chevron) chevron.classList.toggle("rotate-180", !isOpen);
+        const isCurrentlyOpen = !menu.classList.contains("hidden");
+        closeAllCategoryDropdowns(null);
+        if (!isCurrentlyOpen) {
+          menu.classList.remove("hidden");
+          toggleBtn.setAttribute("aria-expanded", "true");
+          if (chevron) chevron.classList.add("rotate-180");
+        }
       }
       return;
     }
@@ -1682,16 +1718,9 @@ function initRouterEvents() {
       return;
     }
 
-    // 3. Close desktop dropdown when clicking outside
-    if (!e.target.closest("#calc-dropdown-wrapper")) {
-      const menu = document.getElementById("calc-dropdown-menu");
-      const btn = document.getElementById("calc-dropdown-btn");
-      const chevron = document.getElementById("calc-dropdown-chevron");
-      if (menu && !menu.classList.contains("hidden")) {
-        menu.classList.add("hidden");
-        if (btn) btn.setAttribute("aria-expanded", "false");
-        if (chevron) chevron.classList.remove("rotate-180");
-      }
+    // 3. Close desktop dropdowns when clicking outside any dropdown wrapper
+    if (!e.target.closest("[data-cat-wrapper]")) {
+      closeAllCategoryDropdowns(null);
     }
 
     // 4. Language switcher links (<a data-lang-switch>) use native full navigation
