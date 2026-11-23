@@ -14,6 +14,8 @@ const PYTHON_SOLVER_SCRIPT = `
 import warnings
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 import json
+import math
+import cmath
 import re
 import sympy as sp
 from sympy.parsing.sympy_parser import (
@@ -91,6 +93,92 @@ def format_engineering_latex(expr):
     tex = tex.replace(r'\\operatorname{Heaviside}\\left(', r'u\\left(')
     tex = tex.replace(r'\\operatorname{rect}\\left(', r'\\text{rect}\\left(')
     return tex
+
+def _heaviside_num(u):
+    return 1.0 if u >= 0 else 0.0
+
+def _sample_real_expr(expr, var_sym, x_min, x_max, count=240):
+    try:
+        if expr.free_symbols - {var_sym}:
+            return []
+        fn = sp.lambdify(var_sym, expr, modules=[{"Heaviside": _heaviside_num, "Abs": abs, "sign": lambda u: 1.0 if u > 0 else (-1.0 if u < 0 else 0.0)}, "math"])
+        pts = []
+        step = (x_max - x_min) / max(1, count - 1)
+        for i in range(count):
+            xv = x_min + i * step
+            try:
+                yv = fn(xv)
+                if isinstance(yv, complex):
+                    if abs(yv.imag) > 1e-6:
+                        continue
+                    yv = yv.real
+                yv = float(yv)
+                if math.isfinite(yv) and abs(yv) < 1e6:
+                    pts.append([round(xv, 5), round(yv, 6)])
+            except Exception:
+                continue
+        return pts
+    except Exception:
+        return []
+
+def _sample_fourier_spectrum(expr, x_min=-15.0, x_max=15.0, count=240):
+    try:
+        if expr.free_symbols - {w}:
+            return None
+        if expr.has(sp.DiracDelta):
+            impulses = []
+            max_w = 10.0
+            for tm in sp.Add.make_args(expr):
+                if tm.has(sp.DiracDelta):
+                    c_val = sp.Integer(1)
+                    w0_val = sp.Integer(0)
+                    for fac in sp.Mul.make_args(tm):
+                        if isinstance(fac, sp.DiracDelta):
+                            sol = sp.solve(fac.args[0], w)
+                            w0_val = sol[0] if sol else sp.Integer(0)
+                        else:
+                            c_val *= fac
+                    w0_f = float(sp.N(w0_val))
+                    amp_f = abs(complex(sp.N(c_val)))
+                    max_w = max(max_w, abs(w0_f) * 1.5)
+                    impulses.append({"x": round(w0_f, 4), "amp": round(amp_f, 4), "label": f"δ(ω-{round(w0_f, 2)})" if w0_f >= 0 else f"δ(ω+{round(abs(w0_f), 2)})"})
+            if impulses:
+                return {"title": "|F(ω)|", "xLabel": "ω (rad/s)", "yLabel": "|F(ω)|", "xRange": [-max_w, max_w], "series": [], "impulses": impulses}
+            return None
+
+        fn = sp.lambdify(w, expr, modules=[{"sinc": lambda u: 1.0 if abs(u) < 1e-9 else cmath.sin(u) / u}, "cmath"])
+        mag_pts = []
+        phase_pts = []
+        step = (x_max - x_min) / max(1, count - 1)
+        for i in range(count):
+            wv = x_min + i * step
+            try:
+                zv = complex(fn(wv))
+                mag = abs(zv)
+                ph = math.degrees(cmath.phase(zv))
+                if math.isfinite(mag) and mag < 1e6:
+                    mag_pts.append([round(wv, 5), round(mag, 6)])
+                if math.isfinite(ph):
+                    phase_pts.append([round(wv, 5), round(ph, 4)])
+            except Exception:
+                continue
+        if not mag_pts:
+            return None
+        return {
+            "title": "|F(ω)|",
+            "xLabel": "ω (rad/s)",
+            "yLabel": "|F(ω)|",
+            "xRange": [x_min, x_max],
+            "series": [{"label": "|F(ω)|", "points": mag_pts, "style": "primary"}],
+            "altView": {
+                "toggleLabelA": "|F(ω)|",
+                "toggleLabelB": "arg(F(ω)) (°)",
+                "yLabelB": "arg(F(ω)) (°)",
+                "seriesB": [{"label": "arg(F(ω)) (°)", "points": phase_pts, "style": "accent"}]
+            }
+        }
+    except Exception:
+        return None
 
 def fourier_single_term(term, steps, idx_label=""):
     """Computes Fourier Transform F(w) = int_{-oo}^{oo} f(t) e^{-j w t} dt of a term with pedagogical breakdown."""
@@ -233,13 +321,15 @@ def solve_fourier(expr_str, direction="direct"):
             lbl = f"(Término {i+1})" if len(terms) > 1 else ""
             total_res += fourier_single_term(tm, steps, lbl)
 
-        final_tex = sp.latex(sp.simplify(total_res))
+        final_expr = sp.simplify(total_res)
+        final_tex = sp.latex(final_expr)
         steps.append({
             "titulo_paso": "Expresión espectral resultante F(\\omega)",
             "explicacion": "Agrupamos y simplificamos los términos espectrales obtenidos para expresar la Transformada de Fourier final en función de \\omega.",
             "latex": rf"F(\\omega) = {final_tex}"
         })
-        return {"ok": True, "steps": steps, "final_latex": rf"F(\\omega) = {final_tex}"}
+        plot_data = _sample_fourier_spectrum(final_expr)
+        return {"ok": True, "steps": steps, "final_latex": rf"F(\\omega) = {final_tex}", "plot": plot_data}
 
     else:
         # Inverse Fourier Transform
@@ -278,15 +368,17 @@ def solve_fourier(expr_str, direction="direct"):
                 "explicacion": "Identificamos los polos del espectro expresando F(\\omega) en términos de j\\omega y descomponiendo en fracciones simples.",
                 "latex": rf"F(\\omega)\\Big|_{{j\\omega \\to s}} = {sp.latex(apart_s)}"
             })
-            inv_lap = sp.inverse_laplace_transform(apart_s, s, t)
-            final_tex = format_engineering_latex(sp.simplify(inv_lap))
+            inv_lap = sp.simplify(sp.inverse_laplace_transform(apart_s, s, t))
+            final_tex = format_engineering_latex(inv_lap)
             steps.append({
                 "titulo_paso": "Antitransformación término a término mediante el Teorema de los Residuos",
                 "explicacion": "Cada polo en el semiplano izquierdo Re(s) < 0 genera una exponencial causal decreciente multiplicada por el escalón u(t).",
                 "latex": rf"f(t) = {final_tex}"
             })
+            pts = _sample_real_expr(inv_lap, t, -2.0, 10.0)
+            plot_data = {"title": "f(t) = ℱ⁻¹{F(ω)}", "xLabel": "t", "yLabel": "f(t)", "xRange": [-2.0, 10.0], "series": [{"label": "f(t)", "points": pts, "style": "primary"}]} if pts else None
 
-        return {"ok": True, "steps": steps, "final_latex": rf"f(t) = {final_tex}"}
+        return {"ok": True, "steps": steps, "final_latex": rf"f(t) = {final_tex}", "plot": plot_data if 'plot_data' in locals() else None}
 
 
 def solve_laplace(expr_str, direction="direct"):
@@ -376,13 +468,16 @@ def solve_laplace(expr_str, direction="direct"):
             "latex": r" \\\\ ".join(term_results)
         })
 
-        final_ft = format_engineering_latex(sp.simplify(total_ft))
+        final_ft_expr = sp.simplify(total_ft)
+        final_ft = format_engineering_latex(final_ft_expr)
         steps.append({
             "titulo_paso": "Reconstrucción de la respuesta temporal causal f(t)",
             "explicacion": "Sumamos las contribuciones temporales de cada modo natural multiplicadas por el escalón unitario u(t) para t \\ge 0.",
             "latex": rf"f(t) = {final_ft}"
         })
-        return {"ok": True, "steps": steps, "final_latex": rf"f(t) = {final_ft}"}
+        pts = _sample_real_expr(final_ft_expr.subs(sp.Heaviside(t), 1), t, 0.0, 10.0)
+        plot_data = {"title": "f(t) = ℒ⁻¹{F(s)}", "xLabel": "t", "yLabel": "f(t)", "xRange": [0.0, 10.0], "series": [{"label": "f(t)", "points": pts, "style": "primary"}]} if pts else None
+        return {"ok": True, "steps": steps, "final_latex": rf"f(t) = {final_ft}", "plot": plot_data}
 
 
 def parse_matrix_input(raw_str):
@@ -763,6 +858,7 @@ def solve_ode(expr_str):
     })
 
     final_tex = sp.latex(gen_sol)
+    plot_data = None
 
     if ics_part:
         ics_dict = {}
@@ -787,8 +883,12 @@ def solve_ode(expr_str):
                 "latex": sp.latex(ivp_sol)
             })
             final_tex = sp.latex(ivp_sol)
+            if ivp_sol.rhs.free_symbols <= {x}:
+                pts = _sample_real_expr(ivp_sol.rhs, x, -2.0, 6.0)
+                if pts:
+                    plot_data = {"title": "y(x) (PVI)", "xLabel": "x", "yLabel": "y(x)", "xRange": [-2.0, 6.0], "series": [{"label": "y(x)", "points": pts, "style": "primary"}]}
 
-    return {"ok": True, "steps": steps, "final_latex": final_tex}
+    return {"ok": True, "steps": steps, "final_latex": final_tex, "plot": plot_data}
 
 
 def translate_manualintegrate_rule(rule, steps):
@@ -936,7 +1036,27 @@ def solve_integrals(expr_str, direction="direct"):
         })
 
         final_tex = rf"\\int_{{{sp.latex(lim_a)}}}^{{{sp.latex(lim_b)}}} {sp.latex(fn_expr)}\\,dx = {sp.latex(def_res)}"
-        return {"ok": True, "steps": steps, "final_latex": final_tex}
+        plot_data = None
+        try:
+            a_f = float(sp.N(lim_a))
+            b_f = float(sp.N(lim_b))
+            if math.isfinite(a_f) and math.isfinite(b_f):
+                lo_f = min(a_f, b_f)
+                hi_f = max(a_f, b_f)
+                pad_f = max(0.5, (hi_f - lo_f) * 0.35)
+                pts = _sample_real_expr(fn_expr, x, lo_f - pad_f, hi_f + pad_f)
+                if pts:
+                    plot_data = {
+                        "title": "f(x)",
+                        "xLabel": "x",
+                        "yLabel": "f(x)",
+                        "xRange": [lo_f - pad_f, hi_f + pad_f],
+                        "series": [{"label": "f(x)", "points": pts, "style": "primary"}],
+                        "shadedArea": {"xMin": lo_f, "xMax": hi_f, "seriesIndex": 0}
+                    }
+        except Exception:
+            plot_data = None
+        return {"ok": True, "steps": steps, "final_latex": final_tex, "plot": plot_data}
 
 
 def solve_taylor(expr_str):
@@ -986,7 +1106,40 @@ def solve_taylor(expr_str):
         "latex": final_tex
     })
 
-    return {"ok": True, "steps": steps, "final_latex": final_tex}
+    plot_data = None
+    try:
+        x0_f = float(sp.N(x0_val))
+        x_lo = max(0.05, x0_f - 2.0) if fn_expr.has(sp.log) else (x0_f - 3.0)
+        x_hi = x0_f + 3.0
+        f_pts = _sample_real_expr(fn_expr, x, x_lo, x_hi)
+        frames = {}
+        curr_p = sp.Integer(0)
+        d_curr = fn_expr
+        for ord_k in range(n_ord + 1):
+            if ord_k > 0:
+                d_curr = sp.diff(d_curr, x)
+            c_k = sp.simplify(d_curr.subs(x, x0_val) / sp.factorial(ord_k))
+            curr_p += c_k * (x - x0_val)**ord_k
+            if ord_k >= 1:
+                p_pts = _sample_real_expr(curr_p, x, x_lo, x_hi)
+                if p_pts:
+                    frames[ord_k] = {"label": f"P_{ord_k}(x)", "points": p_pts}
+        if f_pts and n_ord in frames:
+            plot_data = {
+                "title": f"Taylor P_k(x) vs f(x)",
+                "xLabel": "x",
+                "yLabel": "y",
+                "xRange": [x_lo, x_hi],
+                "series": [
+                    {"label": "f(x)", "points": f_pts, "style": "secondary", "dashed": True},
+                    {"label": f"P_{n_ord}(x)", "points": frames[n_ord]["points"], "style": "primary"}
+                ],
+                "slider": {"label": "Orden n", "min": 1, "max": n_ord, "initial": n_ord, "frames": frames}
+            }
+    except Exception:
+        plot_data = None
+
+    return {"ok": True, "steps": steps, "final_latex": final_tex, "plot": plot_data}
 
 
 def aug_matrix_latex(M, n_vars):
@@ -1242,7 +1395,44 @@ def solve_fourier_series(expr_str, direction="direct"):
             "explicacion": "Ensamblamos la suma parcial de Fourier con los primeros armónicos no nulos.",
             "latex": final_tex
         })
-        return {"ok": True, "steps": steps, "final_latex": final_tex}
+        plot_data = None
+        try:
+            L_f = float(sp.N(L_val))
+            x_lo = -2.0 * L_f
+            x_hi = 2.0 * L_f
+            fn_num = sp.lambdify(var, fn_expr, modules=[{"Abs": abs, "sign": lambda u: 1.0 if u > 0 else (-1.0 if u < 0 else 0.0)}, "math"])
+            f_pts = []
+            step_f = (x_hi - x_lo) / 239.0
+            for i in range(240):
+                xv = x_lo + i * step_f
+                xw = ((xv + L_f) % (2.0 * L_f)) - L_f
+                try:
+                    yv = float(fn_num(xw))
+                    if math.isfinite(yv) and abs(yv) < 1e6:
+                        f_pts.append([round(xv, 5), round(yv, 6)])
+                except Exception:
+                    continue
+            frames = {}
+            for ord_k in range(1, N_harm + 1):
+                sk_expr = fs_obj.truncate(n=ord_k + 1)
+                sk_pts = _sample_real_expr(sk_expr, var, x_lo, x_hi)
+                if sk_pts:
+                    frames[ord_k] = {"label": f"S_{ord_k}({var})", "points": sk_pts}
+            if f_pts and N_harm in frames:
+                plot_data = {
+                    "title": f"Serie de Fourier S_k({var}) vs f({var})",
+                    "xLabel": str(var),
+                    "yLabel": f"f({var})",
+                    "xRange": [x_lo, x_hi],
+                    "series": [
+                        {"label": f"f({var})", "points": f_pts, "style": "secondary", "dashed": True},
+                        {"label": f"S_{N_harm}({var})", "points": frames[N_harm]["points"], "style": "primary"}
+                    ],
+                    "slider": {"label": "Armónicos N", "min": 1, "max": N_harm, "initial": N_harm, "frames": frames}
+                }
+        except Exception:
+            plot_data = None
+        return {"ok": True, "steps": steps, "final_latex": final_tex, "plot": plot_data}
 
     else:
         # Complex Exponential Mode (c_n)

@@ -501,9 +501,10 @@ function buildFullHtmlDocument({
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="modulepreload" href="/js/app.js?v=${BUILD_VERSION}">
-  <link rel="modulepreload" href="/js/i18n.js">
-  <link rel="modulepreload" href="/js/catalog.js">
-  <link rel="modulepreload" href="/js/hybrid-engine.js">
+  <link rel="modulepreload" href="/js/i18n.js?v=${BUILD_VERSION}">
+  <link rel="modulepreload" href="/js/catalog.js?v=${BUILD_VERSION}">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=${BUILD_VERSION}">
+  <link rel="modulepreload" href="/js/plotter.js?v=${BUILD_VERSION}">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">

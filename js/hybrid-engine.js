@@ -51,6 +51,23 @@ function fmtNum(n) {
   return n.toFixed(3).replace(/\.?0+$/, "");
 }
 
+function sampleCurve(fn, xMin, xMax, count = 240) {
+  const pts = [];
+  const step = (xMax - xMin) / Math.max(1, count - 1);
+  for (let i = 0; i < count; i++) {
+    const x = xMin + i * step;
+    try {
+      const y = fn(x);
+      if (typeof y === "number" && Number.isFinite(y) && Math.abs(y) < 1e6) {
+        pts.push([Number(x.toFixed(5)), Number(y.toFixed(6))]);
+      }
+    } catch (e) {
+      // skip non-finite evaluation
+    }
+  }
+  return pts;
+}
+
 /* ==========================================================================
    1. FOURIER TRANSFORM (DIRECT & INVERSE) STEP-BY-STEP SOLVER
    ========================================================================== */
@@ -67,6 +84,31 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
       return {
         ok: true,
         final_latex: `F(\\omega) = \\frac{${K}}{${a} + j\\omega}`,
+        plot: {
+          title: `|F(ω)| — ${rawExpr}`,
+          xLabel: "ω (rad/s)",
+          yLabel: "|F(ω)|",
+          xRange: [-15, 15],
+          series: [
+            {
+              label: "|F(ω)|",
+              points: sampleCurve((w) => K / Math.sqrt(a * a + w * w), -15, 15),
+              style: "primary"
+            }
+          ],
+          altView: {
+            toggleLabelA: "|F(ω)|",
+            toggleLabelB: "arg(F(ω)) (°)",
+            yLabelB: "arg(F(ω)) (°)",
+            seriesB: [
+              {
+                label: "arg(F(ω)) (°)",
+                points: sampleCurve((w) => (-Math.atan2(w, a) * 180) / Math.PI, -15, 15),
+                style: "accent"
+              }
+            ]
+          }
+        },
         steps: [
           {
             titulo_paso: "Planteamiento de la integral de Transformada de Fourier",
@@ -101,6 +143,31 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
       return {
         ok: true,
         final_latex: `F(\\omega) = \\frac{${K}}{(${a} + j\\omega)^2}`,
+        plot: {
+          title: `|F(ω)| — ${rawExpr}`,
+          xLabel: "ω (rad/s)",
+          yLabel: "|F(ω)|",
+          xRange: [-15, 15],
+          series: [
+            {
+              label: "|F(ω)|",
+              points: sampleCurve((w) => K / (a * a + w * w), -15, 15),
+              style: "primary"
+            }
+          ],
+          altView: {
+            toggleLabelA: "|F(ω)|",
+            toggleLabelB: "arg(F(ω)) (°)",
+            yLabelB: "arg(F(ω)) (°)",
+            seriesB: [
+              {
+                label: "arg(F(ω)) (°)",
+                points: sampleCurve((w) => (-2 * Math.atan2(w, a) * 180) / Math.PI, -15, 15),
+                style: "accent"
+              }
+            ]
+          }
+        },
         steps: [
           {
             titulo_paso: "Definición de la Transformada y acotación causal por u(t)",
@@ -135,6 +202,39 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
       return {
         ok: true,
         final_latex: `F(\\omega) = ${ampT}\\,\\text{sinc}\\left(\\frac{${T === 1 ? "\\omega" : T + "\\omega"}}{2}\\right) = \\frac{${ fmtNum(2 * A) }\\sin\\left(${halfTLatex}\\omega\\right)}{\\omega}`,
+        plot: {
+          title: `|F(ω)| — ${rawExpr}`,
+          xLabel: "ω (rad/s)",
+          yLabel: "|F(ω)|",
+          xRange: [-15, 15],
+          series: [
+            {
+              label: "|F(ω)|",
+              points: sampleCurve((w) => {
+                const arg = (w * T) / 2;
+                const val = Math.abs(arg) < 1e-7 ? A * T : (A * T * Math.sin(arg)) / arg;
+                return Math.abs(val);
+              }, -15, 15),
+              style: "primary"
+            }
+          ],
+          altView: {
+            toggleLabelA: "|F(ω)|",
+            toggleLabelB: "arg(F(ω)) (°)",
+            yLabelB: "arg(F(ω)) (°)",
+            seriesB: [
+              {
+                label: "arg(F(ω)) (°)",
+                points: sampleCurve((w) => {
+                  const arg = (w * T) / 2;
+                  const val = Math.abs(arg) < 1e-7 ? A * T : (A * T * Math.sin(arg)) / arg;
+                  return val >= 0 ? 0 : 180;
+                }, -15, 15),
+                style: "accent"
+              }
+            ]
+          }
+        },
         steps: [
           {
             titulo_paso: "Definición geométrica del pulso rectangular",
@@ -169,10 +269,22 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
       const aStr = A === 1 ? "" : `${A}`;
       const piCoeff = A === 1 ? "\\pi" : `${A}\\pi`;
 
+      const wBound = Math.max(10, Math.ceil(1.6 * w0));
       if (fn === "cos") {
         return {
           ok: true,
           final_latex: `F(\\omega) = ${piCoeff}\\left[\\delta(\\omega - ${w0}) + \\delta(\\omega + ${w0})\\right]`,
+          plot: {
+            title: `|F(ω)| — ${rawExpr}`,
+            xLabel: "ω (rad/s)",
+            yLabel: "|F(ω)|",
+            xRange: [-wBound, wBound],
+            series: [],
+            impulses: [
+              { x: -w0, amp: A * Math.PI, label: `${fmtNum(A)}π δ(ω+${w0})` },
+              { x: w0, amp: A * Math.PI, label: `${fmtNum(A)}π δ(ω-${w0})` }
+            ]
+          },
           steps: [
             {
               titulo_paso: "Descomposición de la portadora cosenoidal mediante la fórmula de Euler",
@@ -195,6 +307,17 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
         return {
           ok: true,
           final_latex: `F(\\omega) = -j${piCoeff}\\left[\\delta(\\omega - ${w0}) - \\delta(\\omega + ${w0})\\right]`,
+          plot: {
+            title: `|F(ω)| — ${rawExpr}`,
+            xLabel: "ω (rad/s)",
+            yLabel: "|F(ω)|",
+            xRange: [-wBound, wBound],
+            series: [],
+            impulses: [
+              { x: -w0, amp: A * Math.PI, label: `${fmtNum(A)}π δ(ω+${w0})` },
+              { x: w0, amp: A * Math.PI, label: `${fmtNum(A)}π δ(ω-${w0})` }
+            ]
+          },
           steps: [
             {
               titulo_paso: "Descomposición del seno mediante la identidad de Euler",
@@ -241,9 +364,55 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
 
       if (resParts.length > 0) {
         const finalExpr = resParts.join(" ");
+        const deltaTerms = terms.map((tm) => {
+          const m = tm.match(/^([+-]?(?:\d+(?:\.\d+)?)?)?\*?delta\(t([+-]\d+(?:\.\d+)?)?\)$/);
+          const c = m[1] ? (m[1] === "+" ? 1 : m[1] === "-" ? -1 : parseFloat(m[1])) : 1;
+          const shift = m[2] ? -parseFloat(m[2]) : 0;
+          return { c, shift };
+        });
+        const evalDeltaSpec = (w) => {
+          let re = 0;
+          let im = 0;
+          for (const { c, shift } of deltaTerms) {
+            re += c * Math.cos(w * shift);
+            im -= c * Math.sin(w * shift);
+          }
+          return { re, im };
+        };
         return {
           ok: true,
           final_latex: `F(\\omega) = ${finalExpr}`,
+          plot: {
+            title: `|F(ω)| — ${rawExpr}`,
+            xLabel: "ω (rad/s)",
+            yLabel: "|F(ω)|",
+            xRange: [-15, 15],
+            series: [
+              {
+                label: "|F(ω)|",
+                points: sampleCurve((w) => {
+                  const { re, im } = evalDeltaSpec(w);
+                  return Math.sqrt(re * re + im * im);
+                }, -15, 15),
+                style: "primary"
+              }
+            ],
+            altView: {
+              toggleLabelA: "|F(ω)|",
+              toggleLabelB: "arg(F(ω)) (°)",
+              yLabelB: "arg(F(ω)) (°)",
+              seriesB: [
+                {
+                  label: "arg(F(ω)) (°)",
+                  points: sampleCurve((w) => {
+                    const { re, im } = evalDeltaSpec(w);
+                    return (Math.atan2(im, re) * 180) / Math.PI;
+                  }, -15, 15),
+                  style: "accent"
+                }
+              ]
+            }
+          },
           steps: [
             {
               titulo_paso: "Planteamiento de la integral con impulsos de Dirac",
@@ -275,6 +444,19 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
       return {
         ok: true,
         final_latex: `f(t) = ${kStr}e^{-${a}t}u(t)`,
+        plot: {
+          title: `f(t) — ℱ⁻¹{${rawExpr}}`,
+          xLabel: "t",
+          yLabel: "f(t)",
+          xRange: [-2, 10],
+          series: [
+            {
+              label: "f(t)",
+              points: sampleCurve((t) => (t < 0 ? 0 : K * Math.exp(-a * t)), -2, 10),
+              style: "primary"
+            }
+          ]
+        },
         steps: [
           {
             titulo_paso: "Planteamiento de la integral de Transformada Inversa de Fourier",
@@ -308,6 +490,19 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
       return {
         ok: true,
         final_latex: `f(t) = ${scalePrefix}e^{-${a}|t|}`,
+        plot: {
+          title: `f(t) — ℱ⁻¹{${rawExpr}}`,
+          xLabel: "t",
+          yLabel: "f(t)",
+          xRange: [-6, 6],
+          series: [
+            {
+              label: "f(t)",
+              points: sampleCurve((t) => (num / (2 * a)) * Math.exp(-a * Math.abs(t)), -6, 6),
+              style: "primary"
+            }
+          ]
+        },
         steps: [
           {
             titulo_paso: "Factorización de polos conjugados imaginarios en el denominador",
@@ -479,6 +674,19 @@ function buildInverseLaplaceSteps(info) {
       return {
         ok: true,
         final_latex: `f(t) = \\left(${A_tex}${exp1} ${signB} ${absB_tex}${exp2}\\right)u(t)`,
+        plot: {
+          title: "Respuesta temporal f(t) = ℒ⁻¹{F(s)}",
+          xLabel: "t",
+          yLabel: "f(t)",
+          xRange: [0, 10],
+          series: [
+            {
+              label: "f(t)",
+              points: sampleCurve((t) => A * Math.exp(r1 * t) + B * Math.exp(r2 * t), 0, 10),
+              style: "primary"
+            }
+          ]
+        },
         steps: [
           {
             titulo_paso: "Factorización del denominador y cálculo de polos",
@@ -521,6 +729,23 @@ function buildInverseLaplaceSteps(info) {
       return {
         ok: true,
         final_latex: `f(t) = e^{-${alpha_tex}t}\\left(${p === 0 ? "" : fmtNum(p) + "\\cos(" + w0_tex + "t)"}${rem >= 0 && p !== 0 ? " + " : ""}${rem !== 0 ? sinCoeff + "\\sin(" + w0_tex + "t)" : ""}\\right)u(t)`,
+        plot: {
+          title: "Respuesta temporal f(t) = ℒ⁻¹{F(s)}",
+          xLabel: "t",
+          yLabel: "f(t)",
+          xRange: [0, 10],
+          series: [
+            {
+              label: "f(t)",
+              points: sampleCurve(
+                (t) => Math.exp(-alpha * t) * (p * Math.cos(w0 * t) + (rem / w0) * Math.sin(w0 * t)),
+                0,
+                10
+              ),
+              style: "primary"
+            }
+          ]
+        },
         steps: [
           {
             titulo_paso: "Análisis de polos complejos conjugados y completado de cuadrados",
@@ -552,6 +777,19 @@ function buildInverseLaplaceSteps(info) {
     return {
       ok: true,
       final_latex: `f(t) = \\left(${fmtNum(A)} - ${fmtNum(Math.abs(B))}e^{-${a}t} - ${fmtNum(Math.abs(C))}t e^{-${a}t}\\right)u(t)`,
+      plot: {
+        title: "Respuesta temporal f(t) = ℒ⁻¹{F(s)}",
+        xLabel: "t",
+        yLabel: "f(t)",
+        xRange: [0, 10],
+        series: [
+          {
+            label: "f(t)",
+            points: sampleCurve((t) => A + B * Math.exp(-a * t) + C * t * Math.exp(-a * t), 0, 10),
+            style: "primary"
+          }
+        ]
+      },
       steps: [
         {
           titulo_paso: "Identificación de polos simples y múltiples en el denominador",
@@ -1321,6 +1559,7 @@ export function solveOdeHybrid(rawExpr) {
       ];
 
       let finalLatex = `y(x) = C e^{-${fmtNum(p)}x} + ${ypCoeffTex}e^{${aStr}}`;
+      let plot = null;
 
       if (y0 !== null) {
         const cVal = y0 - ypCoeff;
@@ -1333,9 +1572,22 @@ export function solveOdeHybrid(rawExpr) {
           latex: `y(0) = C + ${ypCoeffTex} = ${fmtNum(y0)} \\implies C = ${cTex} \\implies y(x) = ${ypCoeffTex}e^{${aStr}} ${signC} ${absCTex}e^{-${fmtNum(p)}x}`
         });
         finalLatex = `y(x) = ${ypCoeffTex}e^{${aStr}} ${signC} ${absCTex}e^{-${fmtNum(p)}x}`;
+        plot = {
+          title: "Solución particular y(x) (PVI)",
+          xLabel: "x",
+          yLabel: "y(x)",
+          xRange: [-2, 6],
+          series: [
+            {
+              label: "y(x)",
+              points: sampleCurve((x) => ypCoeff * Math.exp(a * x) + cVal * Math.exp(-p * x), -2, 6),
+              style: "primary"
+            }
+          ]
+        };
       }
 
-      return { ok: true, steps, final_latex: finalLatex };
+      return { ok: true, steps, final_latex: finalLatex, plot };
     }
   }
 
@@ -1365,6 +1617,7 @@ export function solveOdeHybrid(rawExpr) {
     ];
 
     let finalLatex = `y(x) = C e^{${expPow}}`;
+    let plot = null;
     if (y0 !== null) {
       steps.push({
         titulo_paso: `Resolución del Problema de Valor Inicial: y(0) = ${fmtNum(y0)}`,
@@ -1372,9 +1625,22 @@ export function solveOdeHybrid(rawExpr) {
         latex: `y(0) = C e^{0} = ${fmtNum(y0)} \\implies C = ${fmtNum(y0)} \\implies y(x) = ${fmtNum(y0)}e^{${expPow}}`
       });
       finalLatex = `y(x) = ${fmtNum(y0)}e^{${expPow}}`;
+      plot = {
+        title: "Solución particular y(x) (PVI)",
+        xLabel: "x",
+        yLabel: "y(x)",
+        xRange: [-2, 2],
+        series: [
+          {
+            label: "y(x)",
+            points: sampleCurve((x) => y0 * Math.exp(halfK * x * x), -2, 2),
+            style: "primary"
+          }
+        ]
+      };
     }
 
-    return { ok: true, steps, final_latex: finalLatex };
+    return { ok: true, steps, final_latex: finalLatex, plot };
   }
 
   // Pattern 3: 2nd Order Constant-Coefficient Linear ODE: y'' + b*y' + c*y = g(x)
@@ -1454,6 +1720,7 @@ export function solveOdeHybrid(rawExpr) {
     ];
 
     let finalLatex = `y(x) = C_1 \\cos(${w0Tex}x) + C_2 \\sin(${w0Tex}x)`;
+    let plot = null;
     if (y0 !== null && dy0 !== null) {
       const c1 = y0;
       const c2 = dy0 / w0;
@@ -1465,9 +1732,22 @@ export function solveOdeHybrid(rawExpr) {
         latex: `\\begin{cases} y(0) = C_1 = ${fmtNum(c1)} \\\\ y'(0) = ${w0Tex}C_2 = ${fmtNum(dy0)} \\implies C_2 = ${fmtNum(c2)} \\end{cases} \\implies y(x) = ${fmtNum(c1)}\\cos(${w0Tex}x) ${signC2} ${absC2}\\sin(${w0Tex}x)`
       });
       finalLatex = `y(x) = ${fmtNum(c1)}\\cos(${w0Tex}x) ${signC2} ${absC2}\\sin(${w0Tex}x)`;
+      plot = {
+        title: "Solución particular y(x) (PVI)",
+        xLabel: "x",
+        yLabel: "y(x)",
+        xRange: [0, 10],
+        series: [
+          {
+            label: "y(x)",
+            points: sampleCurve((x) => c1 * Math.cos(w0 * x) + c2 * Math.sin(w0 * x), 0, 10),
+            style: "primary"
+          }
+        ]
+      };
     }
 
-    return { ok: true, steps, final_latex: finalLatex };
+    return { ok: true, steps, final_latex: finalLatex, plot };
   }
 
   return null;
@@ -1590,6 +1870,20 @@ export function solveIntegralsHybrid(rawExpr, direction = "direct") {
         return {
           ok: true,
           final_latex: `\\int_{0}^{1} x e^{x}\\,dx = 1`,
+          plot: {
+            title: "Área bajo f(x) = x e^x en [0, 1]",
+            xLabel: "x",
+            yLabel: "f(x)",
+            xRange: [-0.5, 1.5],
+            series: [
+              {
+                label: "f(x) = x e^x",
+                points: sampleCurve((x) => x * Math.exp(x), -0.5, 1.5),
+                style: "primary"
+              }
+            ],
+            shadedArea: { xMin: 0, xMax: 1, seriesIndex: 0 }
+          },
           steps: [
             {
               titulo_paso: "Planteamiento de la integral definida y cálculo de la primitiva por partes",
@@ -1640,10 +1934,36 @@ export function solveTaylorHybrid(rawExpr) {
       else polyTerms.push(`\\frac{x^{${k}}}{${fact}}`);
     }
     const polyLatex = polyTerms.join(" + ");
+    const taylorFrames = {};
+    for (let ord = 1; ord <= n; ord++) {
+      taylorFrames[ord] = {
+        label: `P_${ord}(x)`,
+        points: sampleCurve((x) => {
+          let sum = 0;
+          let fk = 1;
+          for (let k = 0; k <= ord; k++) {
+            if (k > 0) fk *= k;
+            sum += Math.pow(x, k) / fk;
+          }
+          return sum;
+        }, -3, 3)
+      };
+    }
 
     return {
       ok: true,
       final_latex: `P_{${n}}(x) = ${polyLatex}`,
+      plot: {
+        title: `Aproximación de Maclaurin: e^x vs P_k(x)`,
+        xLabel: "x",
+        yLabel: "y",
+        xRange: [-3, 3],
+        series: [
+          { label: "f(x) = e^x", points: sampleCurve((x) => Math.exp(x), -3, 3), style: "secondary", dashed: true },
+          { label: `P_${n}(x)`, points: taylorFrames[n].points, style: "primary" }
+        ],
+        slider: { label: "Orden n", min: 1, max: n, initial: n, frames: taylorFrames }
+      },
       steps: [
         {
           titulo_paso: `Fórmula del Polinomio de Maclaurin (x_0 = 0) de orden n = ${n}`,
@@ -1686,10 +2006,37 @@ export function solveTaylorHybrid(rawExpr) {
       }
     }
     const polyLatex = polyTerms.join(" ");
+    const cosFrames = {};
+    for (let ord = 1; ord <= n; ord++) {
+      cosFrames[ord] = {
+        label: `P_${ord}(x)`,
+        points: sampleCurve((x) => {
+          let sum = 0;
+          let fk = 1;
+          for (let k = 0; k <= ord; k++) {
+            if (k > 0) fk *= k;
+            const val = cycleVal[k % 4];
+            if (val !== 0) sum += (val * Math.pow(x, k)) / fk;
+          }
+          return sum;
+        }, -3, 3)
+      };
+    }
 
     return {
       ok: true,
       final_latex: `P_{${n}}(x) = ${polyLatex}`,
+      plot: {
+        title: `Aproximación de Maclaurin: cos(x) vs P_k(x)`,
+        xLabel: "x",
+        yLabel: "y",
+        xRange: [-3, 3],
+        series: [
+          { label: "f(x) = cos(x)", points: sampleCurve((x) => Math.cos(x), -3, 3), style: "secondary", dashed: true },
+          { label: `P_${n}(x)`, points: cosFrames[n].points, style: "primary" }
+        ],
+        slider: { label: "Orden n", min: 1, max: n, initial: n, frames: cosFrames }
+      },
       steps: [
         {
           titulo_paso: `Planteamiento del Polinomio de Maclaurin de f(x) = \\cos(x) hasta orden n = ${n}`,
@@ -1732,10 +2079,35 @@ export function solveTaylorHybrid(rawExpr) {
       }
     }
     const polyLatex = polyTerms.join(" ");
+    const lnFrames = {};
+    for (let ord = 1; ord <= n; ord++) {
+      lnFrames[ord] = {
+        label: `P_${ord}(x)`,
+        points: sampleCurve((x) => {
+          let sum = 0;
+          for (let k = 1; k <= ord; k++) {
+            const sign = k % 2 === 1 ? 1 : -1;
+            sum += (sign * Math.pow(x - 1, k)) / k;
+          }
+          return sum;
+        }, 0.05, 4)
+      };
+    }
 
     return {
       ok: true,
       final_latex: `P_{${n}}(x) = ${polyLatex}`,
+      plot: {
+        title: `Aproximación de Taylor en x₀ = 1: ln(x) vs P_k(x)`,
+        xLabel: "x",
+        yLabel: "y",
+        xRange: [0.05, 4],
+        series: [
+          { label: "f(x) = ln(x)", points: sampleCurve((x) => Math.log(x), 0.05, 4), style: "secondary", dashed: true },
+          { label: `P_${n}(x)`, points: lnFrames[n].points, style: "primary" }
+        ],
+        slider: { label: "Orden n", min: 1, max: n, initial: n, frames: lnFrames }
+      },
       steps: [
         {
           titulo_paso: `Fórmula del Polinomio de Taylor centrado en x_0 = 1 hasta orden n = ${n}`,
@@ -1771,10 +2143,37 @@ export function solveTaylorHybrid(rawExpr) {
       else polyTerms.push(`x^{${k}}`);
     }
     const polyLatex = polyTerms.join(" + ");
+    const geomFrames = {};
+    for (let ord = 1; ord <= n; ord++) {
+      geomFrames[ord] = {
+        label: `P_${ord}(x)`,
+        points: sampleCurve((x) => {
+          let sum = 0;
+          for (let k = 0; k <= ord; k++) sum += Math.pow(x, k);
+          return sum;
+        }, -2, 2)
+      };
+    }
 
     return {
       ok: true,
       final_latex: `P_{${n}}(x) = ${polyLatex}`,
+      plot: {
+        title: `Aproximación de Maclaurin: 1/(1 - x) vs P_k(x)`,
+        xLabel: "x",
+        yLabel: "y",
+        xRange: [-2, 2],
+        series: [
+          {
+            label: "f(x) = 1/(1 - x)",
+            points: sampleCurve((x) => (Math.abs(1 - x) < 0.03 ? NaN : 1 / (1 - x)), -2, 2),
+            style: "secondary",
+            dashed: true
+          },
+          { label: `P_${n}(x)`, points: geomFrames[n].points, style: "primary" }
+        ],
+        slider: { label: "Orden n", min: 1, max: n, initial: n, frames: geomFrames }
+      },
       steps: [
         {
           titulo_paso: `Planteamiento del desarrollo de Maclaurin de la serie geométrica f(x) = \\frac{1}{1 - x}`,
@@ -2320,6 +2719,10 @@ export function solveFourierSeriesHybrid(rawExpr, direction = "direct") {
 
   if (lNorm !== "pi") return null; // Delegate arbitrary L != pi to Pyodide SymPy Worker
 
+  const wrapPi = (x) => ((((x + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
+  const xMinFS = -2 * Math.PI;
+  const xMaxFS = 2 * Math.PI;
+
   // Exam Preset 1: Sawtooth wave f(x) = x on [-pi, pi]
   if (fnNorm === "x" || fnNorm === "t") {
     const v = fnNorm;
@@ -2330,11 +2733,36 @@ export function solveFourierSeriesHybrid(rawExpr, direction = "direct") {
       harmTerms.push(`${k === 1 ? "" : sign + " "}${coeff}\\sin(${k === 1 ? v : k + v})`);
     }
     const truncTrig = harmTerms.join(" ");
+    const fsFrames = {};
+    for (let ord = 1; ord <= nHarm; ord++) {
+      fsFrames[ord] = {
+        label: `S_${ord}(${v})`,
+        points: sampleCurve((x) => {
+          let s = 0;
+          for (let k = 1; k <= ord; k++) {
+            s += (2 * Math.pow(-1, k + 1) * Math.sin(k * x)) / k;
+          }
+          return s;
+        }, xMinFS, xMaxFS)
+      };
+    }
+    const sawPlot = {
+      title: `Serie de Fourier: f(${v}) = ${v} en [-π, π]`,
+      xLabel: v,
+      yLabel: `f(${v})`,
+      xRange: [xMinFS, xMaxFS],
+      series: [
+        { label: `f(${v}) periódica`, points: sampleCurve((x) => wrapPi(x), xMinFS, xMaxFS), style: "secondary", dashed: true },
+        { label: `S_${nHarm}(${v})`, points: fsFrames[nHarm].points, style: "primary" }
+      ],
+      slider: { label: "Armónicos N", min: 1, max: nHarm, initial: nHarm, frames: fsFrames }
+    };
 
     if (direction === "direct") {
       return {
         ok: true,
         final_latex: `f(${v}) \\sim 2\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n}\\sin(n${v}) \\approx ${truncTrig}`,
+        plot: sawPlot,
         steps: [
           {
             titulo_paso: "Análisis de paridad de f(" + v + ") = " + v + " en el intervalo simétrico [-\\pi, \\pi]",
@@ -2393,9 +2821,33 @@ export function solveFourierSeriesHybrid(rawExpr, direction = "direct") {
     const truncSq = oddTerms.join(" + ");
 
     if (direction === "direct") {
+      const sqFrames = {};
+      for (let ord = 1; ord <= nHarm; ord++) {
+        sqFrames[ord] = {
+          label: `S_${ord}(x)`,
+          points: sampleCurve((x) => {
+            let s = 0;
+            for (let k = 1; k <= ord; k += 2) {
+              s += (4 / (k * Math.PI)) * Math.sin(k * x);
+            }
+            return s;
+          }, xMinFS, xMaxFS)
+        };
+      }
       return {
         ok: true,
         final_latex: `f(x) \\sim \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\sin((2k-1)x)}{2k-1} \\approx ${truncSq}`,
+        plot: {
+          title: "Serie de Fourier: Onda cuadrada sgn(x) (Fenómeno de Gibbs)",
+          xLabel: "x",
+          yLabel: "f(x)",
+          xRange: [xMinFS, xMaxFS],
+          series: [
+            { label: "sgn(x) periódica", points: sampleCurve((x) => (wrapPi(x) >= 0 ? 1 : -1), xMinFS, xMaxFS), style: "secondary", dashed: true },
+            { label: `S_${nHarm}(x)`, points: sqFrames[nHarm].points, style: "primary" }
+          ],
+          slider: { label: "Armónicos N", min: 1, max: nHarm, initial: nHarm, frames: sqFrames }
+        },
         steps: [
           {
             titulo_paso: "Análisis de paridad de la onda cuadrada bipolar f(x) = \\operatorname{sgn}(x)",
@@ -2451,9 +2903,33 @@ export function solveFourierSeriesHybrid(rawExpr, direction = "direct") {
     const truncPar = `\\frac{\\pi^2}{3} ${cosTerms.join(" ")}`;
 
     if (direction === "direct") {
+      const parFrames = {};
+      for (let ord = 1; ord <= nHarm; ord++) {
+        parFrames[ord] = {
+          label: `S_${ord}(${v})`,
+          points: sampleCurve((x) => {
+            let s = (Math.PI * Math.PI) / 3;
+            for (let k = 1; k <= ord; k++) {
+              s += (4 * Math.pow(-1, k) * Math.cos(k * x)) / (k * k);
+            }
+            return s;
+          }, xMinFS, xMaxFS)
+        };
+      }
       return {
         ok: true,
         final_latex: `f(${v}) \\sim \\frac{\\pi^2}{3} + 4\\sum_{n=1}^{\\infty} \\frac{(-1)^n}{n^2}\\cos(n${v}) \\approx ${truncPar}`,
+        plot: {
+          title: `Serie de Fourier: f(${v}) = ${v}² en [-π, π]`,
+          xLabel: v,
+          yLabel: `f(${v})`,
+          xRange: [xMinFS, xMaxFS],
+          series: [
+            { label: `f(${v}) periódica`, points: sampleCurve((x) => { const w = wrapPi(x); return w * w; }, xMinFS, xMaxFS), style: "secondary", dashed: true },
+            { label: `S_${nHarm}(${v})`, points: parFrames[nHarm].points, style: "primary" }
+          ],
+          slider: { label: "Armónicos N", min: 1, max: nHarm, initial: nHarm, frames: parFrames }
+        },
         steps: [
           {
             titulo_paso: `Análisis de paridad de f(${v}) = ${v}^2 en [-\\pi, \\pi]`,
@@ -2505,9 +2981,34 @@ export function solveFourierSeriesHybrid(rawExpr, direction = "direct") {
     }
     const truncTri = `\\frac{\\pi}{2} - \\left(${oddCos.join(" + ")}\\right)`;
 
+    const triFrames = {};
+    for (let ord = 1; ord <= nHarm; ord++) {
+      triFrames[ord] = {
+        label: `S_${ord}(x)`,
+        points: sampleCurve((x) => {
+          let s = Math.PI / 2;
+          for (let k = 1; k <= ord; k += 2) {
+            s -= (4 / (k * k * Math.PI)) * Math.cos(k * x);
+          }
+          return s;
+        }, xMinFS, xMaxFS)
+      };
+    }
+
     return {
       ok: true,
       final_latex: `f(x) \\sim \\frac{\\pi}{2} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos((2k-1)x)}{(2k-1)^2} \\approx ${truncTri}`,
+      plot: {
+        title: "Serie de Fourier: Onda triangular |x| en [-π, π]",
+        xLabel: "x",
+        yLabel: "f(x)",
+        xRange: [xMinFS, xMaxFS],
+        series: [
+          { label: "|x| periódica", points: sampleCurve((x) => Math.abs(wrapPi(x)), xMinFS, xMaxFS), style: "secondary", dashed: true },
+          { label: `S_${nHarm}(x)`, points: triFrames[nHarm].points, style: "primary" }
+        ],
+        slider: { label: "Armónicos N", min: 1, max: nHarm, initial: nHarm, frames: triFrames }
+      },
       steps: [
         {
           titulo_paso: "Análisis de paridad de la onda triangular f(x) = |x| en [-\\pi, \\pi]",

@@ -17,6 +17,7 @@ import {
   localizeStepsResult
 } from "./i18n.js";
 import { solveWithHybridEngine } from "./hybrid-engine.js";
+import { renderMathPlot } from "./plotter.js";
 
 // Application State
 const state = {
@@ -1826,6 +1827,9 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
         </div>
       </div>
 
+      <!-- Interactive 2D Canvas Plot (only rendered if solution.plot is provided) -->
+      <div id="solution-plot-wrapper" class="hidden p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"></div>
+
       <!-- Structured Step-by-Step Pedagogical Breakdown -->
       <div class="p-5 sm:p-7 divide-y divide-slate-200/70 dark:divide-slate-800/80">
         ${solution.steps
@@ -1883,6 +1887,16 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
       </div>
     </div>
   `;
+
+  const plotWrapper = document.getElementById("solution-plot-wrapper");
+  const hasValidPlot =
+    solution.plot &&
+    ((Array.isArray(solution.plot.series) && solution.plot.series.some((s) => (s.points || []).length > 0)) ||
+      (Array.isArray(solution.plot.impulses) && solution.plot.impulses.length > 0));
+  if (plotWrapper && hasValidPlot) {
+    plotWrapper.classList.remove("hidden");
+    renderMathPlot(plotWrapper, solution.plot, state.lang);
+  }
 
   // Wire up Copy Share Link
   const copyShareBtn = document.getElementById("copy-share-link-btn");
