@@ -1263,6 +1263,105 @@ export function getLocalizedKeyboardKeys(lang = "es") {
   }));
 }
 
+const COMMON_KEYBOARD_KEYS = [
+  { label: "x^n", insert: "^", tooltip: { es: "Potencia (^)", en: "Power (^)", fr: "Puissance (^)" } },
+  { label: "( )", insert: "()", cursorOffset: -1, tooltip: { es: "Paréntesis ()", en: "Parentheses ()", fr: "Parenthèses ()" } },
+  { label: "\\pi", insert: "pi", tooltip: { es: "Constante π", en: "Constant π", fr: "Constante π" } },
+  { label: "e^{x}", insert: "exp()", cursorOffset: -1, tooltip: { es: "Exponencial exp()", en: "Exponential exp()", fr: "Exponentielle exp()" } },
+  { label: "\\sqrt{x}", insert: "sqrt()", cursorOffset: -1, tooltip: { es: "Raíz cuadrada sqrt()", en: "Square root sqrt()", fr: "Racine carrée sqrt()" } },
+  { label: "\\sin", insert: "sin()", cursorOffset: -1, tooltip: { es: "Seno sin()", en: "Sine sin()", fr: "Sinus sin()" } },
+  { label: "\\cos", insert: "cos()", cursorOffset: -1, tooltip: { es: "Coseno cos()", en: "Cosine cos()", fr: "Cosinus cos()" } },
+  { label: "\\ln", insert: "ln()", cursorOffset: -1, tooltip: { es: "Logaritmo natural ln()", en: "Natural log ln()", fr: "Logarithme népérien ln()" } }
+];
+
+const CONTEXTUAL_KEYBOARD_KEYS = {
+  fourier: [
+    { label: "u(t)", insert: "u(t)", tooltip: { es: "Escalón unitario u(t)", en: "Unit step u(t)", fr: "Échelon unitaire u(t)" } },
+    { label: "\\delta(t)", insert: "delta(t)", tooltip: { es: "Impulso Delta de Dirac", en: "Dirac Delta impulse", fr: "Impulsion de Dirac" } },
+    { label: "\\text{rect}", insert: "rect(t/2)", tooltip: { es: "Pulso rectangular rect(t/T)", en: "Rectangular pulse rect(t/T)", fr: "Porte rectangulaire rect(t/T)" } },
+    { label: "j\\omega", insert: "j*w", tooltip: { es: "Frecuencia compleja jω", en: "Complex frequency jω", fr: "Fréquence complexe jω" } },
+    { label: "e^{-at}u(t)", insert: "exp(-3*t)*u(t)", tooltip: { es: "Exponencial causal", en: "Causal exponential", fr: "Exponentielle causale" } }
+  ],
+  ztransform: [
+    { label: "u[n]", insert: "u[n]", tooltip: { es: "Escalón discreto u[n]", en: "Discrete unit step u[n]", fr: "Échelon discret u[n]" } },
+    { label: "\\delta[n-1]", insert: "delta[n-1]", tooltip: { es: "Impulso discreto desplazado", en: "Shifted discrete impulse", fr: "Impulsion discrète décalée" } },
+    { label: "\\frac{z}{z-a}", insert: "z/((z-1)*(z-2))", tooltip: { es: "Función racional en z", en: "Rational function in z", fr: "Fonction rationnelle en z" } },
+    { label: "a^n u[n]", insert: "(0.5)^n*u[n]", tooltip: { es: "Secuencia geométrica causal", en: "Causal geometric sequence", fr: "Suite géométrique causale" } }
+  ],
+  convolution: [
+    { label: ";", insert: " ; ", tooltip: { es: "Separador entre señales (;)", en: "Signal separator (;)", fr: "Séparateur de signaux (;)" } },
+    { label: "u(t)", insert: "u(t)", tooltip: { es: "Escalón continuo u(t)", en: "Continuous step u(t)", fr: "Échelon continu u(t)" } },
+    { label: "u[n]", insert: "u[n]", tooltip: { es: "Escalón discreto u[n]", en: "Discrete step u[n]", fr: "Échelon discret u[n]" } },
+    { label: "x(t)*h(t)", insert: "exp(-2*t)*u(t) ; u(t)", tooltip: { es: "Plantilla convolución continua", en: "Continuous convolution template", fr: "Modèle convolution continue" } },
+    { label: "[x]*[h]", insert: "[1, 2, 1] ; [1, -1]", tooltip: { es: "Secuencias discretas finitas", en: "Finite discrete sequences", fr: "Séquences discrètes finies" } }
+  ],
+  fourierseries: [
+    { label: ";", insert: " ; ", tooltip: { es: "Separador f(x) ; L ; N", en: "Separator f(x) ; L ; N", fr: "Séparateur f(x) ; L ; N" } },
+    { label: "|x|", insert: "abs(x)", tooltip: { es: "Valor absoluto |x|", en: "Absolute value |x|", fr: "Valeur absolue |x|" } },
+    { label: "\\text{sgn}(x)", insert: "sign(x)", tooltip: { es: "Función signo (onda cuadrada)", en: "Sign function (square wave)", fr: "Fonction signe (signal carré)" } },
+    { label: "f;L;N", insert: "x ; pi ; 4", tooltip: { es: "Plantilla en [-L, L] orden N", en: "Template on [-L, L] order N", fr: "Modèle sur [-L, L] ordre N" } }
+  ],
+  laplace: [
+    { label: "s", insert: "s", tooltip: { es: "Variable compleja s", en: "Complex variable s", fr: "Variable complexe s" } },
+    { label: "u(t)", insert: "u(t)", tooltip: { es: "Escalón unitario u(t)", en: "Unit step u(t)", fr: "Échelon unitaire u(t)" } },
+    { label: "e^{-at}\\cos", insert: "exp(-2*t)*cos(3*t)", tooltip: { es: "Oscilación amortiguada", en: "Damped oscillation", fr: "Oscillation amortie" } },
+    { label: "\\frac{N(s)}{D(s)}", insert: "(2*s + 5)/(s^2 + 5*s + 6)", tooltip: { es: "Fracción racional en s", en: "Rational fraction in s", fr: "Fraction rationnelle en s" } }
+  ],
+  ode: [
+    { label: "y'", insert: "y'", tooltip: { es: "Primera derivada y'(x)", en: "First derivative y'(x)", fr: "Dérivée première y'(x)" } },
+    { label: "y''", insert: "y''", tooltip: { es: "Segunda derivada y''(x)", en: "Second derivative y''(x)", fr: "Dérivée seconde y''(x)" } },
+    { label: ";\\,y(0)=", insert: " ; y(0)=", tooltip: { es: "Condición inicial y(0)", en: "Initial condition y(0)", fr: "Condition initiale y(0)" } },
+    { label: "\\text{PVI}", insert: "y' + 2*y = exp(x) ; y(0)=2", tooltip: { es: "Plantilla EDO 1º orden + PVI", en: "1st-order ODE + IVP template", fr: "Modèle EDO 1er ordre + Cauchy" } }
+  ],
+  integrals: [
+    { label: ";", insert: " ; ", tooltip: { es: "Separador para límites (;)", en: "Limits separator (;)", fr: "Séparateur de bornes (;)" } },
+    { label: "\\int x e^{2x}", insert: "x*exp(2*x)", tooltip: { es: "Ejemplo por partes", en: "Integration by parts example", fr: "Exemple par parties" } },
+    { label: "\\int_a^b", insert: "x*exp(x) ; 0, 1", tooltip: { es: "Plantilla integral definida", en: "Definite integral template", fr: "Modèle intégrale définie" } },
+    { label: "\\frac{1}{x^2-a^2}", insert: "1/(x^2 - 4)", tooltip: { es: "Fracción racional simple", en: "Rational partial fraction", fr: "Fraction rationnelle simple" } }
+  ],
+  taylor: [
+    { label: ";", insert: " ; ", tooltip: { es: "Separador f(x) ; x0 ; n", en: "Separator f(x) ; x0 ; n", fr: "Séparateur f(x) ; x0 ; n" } },
+    { label: "P_n(x)", insert: "ln(x) ; 1 ; 4", tooltip: { es: "Taylor centrado en x0 = 1", en: "Taylor centered at x0 = 1", fr: "Taylor centré en x0 = 1" } },
+    { label: "e^x", insert: "exp(x) ; 0 ; 4", tooltip: { es: "Maclaurin de e^x", en: "Maclaurin of e^x", fr: "Maclaurin de e^x" } },
+    { label: "\\frac{1}{1-x}", insert: "1/(1 - x) ; 0 ; 4", tooltip: { es: "Serie geométrica en x0 = 0", en: "Geometric series at x0 = 0", fr: "Série géométrique en x0 = 0" } }
+  ],
+  numseries: [
+    { label: ";", insert: " ; ", tooltip: { es: "Separador a_n ; n0", en: "Separator a_n ; n0", fr: "Séparateur a_n ; n0" } },
+    { label: "n!", insert: "factorial(n)", tooltip: { es: "Factorial n!", en: "Factorial n!", fr: "Factorielle n!" } },
+    { label: "(-1)^n", insert: "(-1)^(n+1)/n ; 1", tooltip: { es: "Serie alternada (Leibniz)", en: "Alternating series (Leibniz)", fr: "Série alternée (Leibniz)" } },
+    { label: "\\sum a_n", insert: "2^n/factorial(n) ; 1", tooltip: { es: "Plantilla D'Alembert", en: "D'Alembert test template", fr: "Modèle D'Alembert" } }
+  ],
+  matrix: [
+    { label: ",", insert: ", ", tooltip: { es: "Separador de columnas (,)", en: "Column separator (,)", fr: "Séparateur de colonnes (,)" } },
+    { label: ";", insert: "; ", tooltip: { es: "Separador de filas (;)", en: "Row separator (;)", fr: "Séparateur de lignes (;)" } },
+    { label: "2\\times 2", insert: "4, 1; 2, 3", tooltip: { es: "Plantilla matriz 2×2", en: "2×2 matrix template", fr: "Modèle matrice 2×2" } },
+    { label: "3\\times 3", insert: "2, 0, -2; 1, 3, 2; 0, 0, 3", tooltip: { es: "Plantilla matriz 3×3", en: "3×3 matrix template", fr: "Modèle matrice 3×3" } }
+  ],
+  gauss: [
+    { label: ",", insert: ", ", tooltip: { es: "Separador de columnas (,)", en: "Column separator (,)", fr: "Séparateur de colonnes (,)" } },
+    { label: ";", insert: "; ", tooltip: { es: "Separador de filas (;)", en: "Row separator (;)", fr: "Séparateur de lignes (;)" } },
+    { label: "3\\times 4", insert: "1, 1, 1, 6; 2, -1, 1, 3; 1, 2, -1, 2", tooltip: { es: "Sistema 3×3 ampliado (A|b)", en: "3×3 augmented system (A|b)", fr: "Système 3×3 augmenté (A|b)" } },
+    { label: "2\\times 3", insert: "2, 1, 5; 1, -1, 1", tooltip: { es: "Sistema 2×2 ampliado (A|b)", en: "2×2 augmented system (A|b)", fr: "Système 2×2 augmenté (A|b)" } }
+  ],
+  phasors: [
+    { label: "\\angle", insert: "<", tooltip: { es: "Ángulo polar en grados (<)", en: "Polar angle in degrees (<)", fr: "Angle polaire en degrés (<)" } },
+    { label: "j", insert: "j", tooltip: { es: "Unidad imaginaria j", en: "Imaginary unit j", fr: "Unité imaginaire j" } },
+    { label: ";", insert: "; ", tooltip: { es: "Separador de filas AC (;)", en: "AC row separator (;)", fr: "Séparateur de lignes AC (;)" } },
+    { label: "M\\angle\\theta", insert: "10<30", tooltip: { es: "Fasor polar 10∠30°", en: "Polar phasor 10∠30°", fr: "Phaseur polaire 10∠30°" } },
+    { label: "a+bj", insert: "(3 + 4j)", tooltip: { es: "Complejo en forma binómica", en: "Rectangular complex number", fr: "Complexe algébrique" } }
+  ]
+};
+
+export function getLocalizedKeyboardSections(calcId, lang = "es") {
+  const mapKey = (k) => ({
+    ...k,
+    tooltip: (k.tooltip && (k.tooltip[lang] || k.tooltip.es)) || ""
+  });
+  const common = COMMON_KEYBOARD_KEYS.map(mapKey);
+  const contextual = (CONTEXTUAL_KEYBOARD_KEYS[calcId] || []).map(mapKey);
+  return { common, contextual };
+}
+
 export const CATALOG_I18N = {
   en: {
     fourier: {

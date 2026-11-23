@@ -3,7 +3,7 @@
  */
 
 import {
-  getLocalizedKeyboardKeys,
+  getLocalizedKeyboardSections,
   getLocalizedCatalog,
   getLocalizedLegalPages
 } from "./catalog.js";
@@ -208,6 +208,195 @@ function escapeHtml(str) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function replaceFuncCallLatex(str, fnName, formatter) {
+  let out = "";
+  let i = 0;
+  const target = fnName + "(";
+  while (i < str.length) {
+    if (
+      str.startsWith(target, i) &&
+      (i === 0 || !/[a-zA-Z0-9_]/.test(str[i - 1]))
+    ) {
+      let depth = 1;
+      let j = i + target.length;
+      while (j < str.length && depth > 0) {
+        if (str[j] === "(") depth++;
+        else if (str[j] === ")") depth--;
+        j++;
+      }
+      if (depth === 0) {
+        const inner = str.slice(i + target.length, j - 1);
+        out += formatter(inner);
+        i = j;
+        continue;
+      }
+    }
+    out += str[i];
+    i++;
+  }
+  return out;
+}
+
+function basicMathToLatex(raw) {
+  let s = String(raw || "").trim();
+  if (!s) return "";
+  s = s.replace(/\*\*/g, "^");
+  s = replaceFuncCallLatex(s, "exp", (inner) => `e^{${basicMathToLatex(inner)}}`);
+  s = replaceFuncCallLatex(s, "sqrt", (inner) => `\\sqrt{${basicMathToLatex(inner)}}`);
+  s = replaceFuncCallLatex(s, "factorial", (inner) => {
+    const t = basicMathToLatex(inner);
+    return /^[a-zA-Z0-9]+$/.test(t) ? `${t}!` : `(${t})!`;
+  });
+  s = replaceFuncCallLatex(s, "abs", (inner) => `\\left|${basicMathToLatex(inner)}\\right|`);
+  s = replaceFuncCallLatex(s, "sign", (inner) => `\\operatorname{sgn}(${basicMathToLatex(inner)})`);
+  s = replaceFuncCallLatex(s, "sgn", (inner) => `\\operatorname{sgn}(${basicMathToLatex(inner)})`);
+  s = replaceFuncCallLatex(s, "rect", (inner) => `\\operatorname{rect}(${basicMathToLatex(inner)})`);
+  s = s.replace(/\bdelta\s*\(/g, "\\delta(").replace(/\bdelta\s*\[/g, "\\delta[");
+  s = s.replace(/\bpi\b/g, "\\pi").replace(/\boo\b/g, "\\infty");
+  s = s.replace(/\b(sin|cos|tan|ln|log)\s*\(/g, "\\$1(");
+  s = s.replace(/\^\(([^()]+)\)/g, "^{$1}");
+  s = s.replace(/(\d)\s*\*\s*(\d)/g, "$1 \\cdot $2");
+  s = s.replace(/\s*\*\s*/g, " ");
+  return s;
+}
+
+function exprToLatexPreview(rawExpr, calcId, direction = "direct") {
+  const clean = String(rawExpr || "").trim();
+  if (!clean) return "";
+
+  if (calcId === "matrix" || calcId === "gauss") {
+    if (clean.includes(";") || clean.includes(",")) {
+      let rows = null;
+      if (clean.startsWith("[")) {
+        try {
+          const parsed = JSON.parse(clean);
+          if (Array.isArray(parsed) && parsed.length > 0 && Array.isArray(parsed[0])) {
+            rows = parsed.map((r) => r.map((c) => String(c)));
+          }
+        } catch (e) {
+          rows = null;
+        }
+      } else {
+        rows = clean
+          .split(";")
+          .map((r) => r.trim())
+          .filter(Boolean)
+          .map((r) => r.split(",").map((c) => c.trim()));
+      }
+      if (rows && rows.length > 0 && rows.every((r) => r.length > 0)) {
+        const body = rows.map((r) => r.map((c) => basicMathToLatex(c) || "?").join(" & ")).join(" \\\\ ");
+        if (calcId === "gauss" && rows[0].length >= 2) {
+          const colSpec = "c".repeat(rows[0].length - 1) + "|c";
+          return `\\left(\\begin{array}{${colSpec}} ${body} \\end{array}\\right)`;
+        }
+        return `\\begin{pmatrix} ${body} \\end{pmatrix}`;
+      }
+    }
+    return basicMathToLatex(clean);
+  }
+
+  if (calcId === "phasors") {
+    const convPhasor = (s) =>
+      basicMathToLatex(
+        s.replace(/(\d+(?:\.\d+)?)\s*(?:<|∠|@_)\s*([+-]?\d+(?:\.\d+)?)/g, "$1\\angle $2^\\circ")
+      );
+    if (clean.includes(";")) {
+      const rows = clean.split(";").map((r) => r.trim()).filter(Boolean);
+      if (rows.length > 0) {
+        const matRows = rows.map((r) => r.split(",").map((c) => convPhasor(c.trim())).join(" & ")).join(" \\\\ ");
+        return `\\begin{pmatrix} ${matRows} \\end{pmatrix}`;
+      }
+    }
+    return convPhasor(clean);
+  }
+
+  if (calcId === "integrals") {
+    const parts = clean.split(";").map((p) => p.trim());
+    const fnTex = basicMathToLatex(parts[0]);
+    if (direction === "inverse" && parts.length >= 2 && parts[1].includes(",")) {
+      const [a, b] = parts[1].split(",", 2).map((x) => basicMathToLatex(x.trim()));
+      return `\\int_{${a || "a"}}^{${b || "b"}} ${fnTex}\\,dx`;
+    }
+    return `\\int ${fnTex}\\,dx`;
+  }
+
+  if (calcId === "numseries") {
+    const parts = clean.split(";").map((p) => p.trim());
+    const anTex = basicMathToLatex(parts[0]);
+    const n0 = parts[1] ? basicMathToLatex(parts[1]) : "1";
+    return `\\sum_{n=${n0}}^{\\infty} ${anTex}`;
+  }
+
+  if (calcId === "taylor") {
+    const parts = clean.split(";").map((p) => p.trim());
+    const fnTex = basicMathToLatex(parts[0]);
+    const x0 = parts[1] ? basicMathToLatex(parts[1]) : "0";
+    const n = parts[2] ? basicMathToLatex(parts[2]) : "4";
+    return `P_{${n}}(x)\\;\\text{of}\\;${fnTex},\\quad x_0=${x0}`;
+  }
+
+  if (calcId === "fourierseries") {
+    const parts = clean.split(";").map((p) => p.trim());
+    const fnTex = basicMathToLatex(parts[0]);
+    const L = parts[1] ? basicMathToLatex(parts[1]) : "\\pi";
+    const N = parts[2] ? basicMathToLatex(parts[2]) : "4";
+    return `${fnTex},\\quad x\\in[-${L},${L}],\\quad N=${N}`;
+  }
+
+  if (calcId === "convolution" && clean.includes(";")) {
+    const [xPart, hPart] = clean.split(";", 2).map((p) => basicMathToLatex(p.trim()));
+    return `(${xPart}) * (${hPart})`;
+  }
+
+  if (calcId === "ode" && clean.includes(";")) {
+    const [eqPart, icPart] = clean.split(";", 2).map((p) => basicMathToLatex(p.trim()));
+    return `${eqPart},\\quad ${icPart}`;
+  }
+
+  return basicMathToLatex(clean);
+}
+
+const HISTORY_STORAGE_KEY = "calcweb_history_v1";
+const MAX_HISTORY_PER_CALC = 6;
+
+function loadCalcHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveCalcHistoryItem(calcId, expr, direction) {
+  try {
+    const trimmed = String(expr || "").trim();
+    if (!trimmed) return;
+    const all = loadCalcHistory();
+    const list = Array.isArray(all[calcId]) ? all[calcId] : [];
+    const filtered = list.filter(
+      (item) => !(item.expr === trimmed && (item.direction || "direct") === direction)
+    );
+    filtered.unshift({ expr: trimmed, direction, ts: Date.now() });
+    all[calcId] = filtered.slice(0, MAX_HISTORY_PER_CALC);
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(all));
+  } catch (e) {
+    // Ignore storage quota / privacy mode errors
+  }
+}
+
+function clearCalcHistory(calcId) {
+  try {
+    const all = loadCalcHistory();
+    delete all[calcId];
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(all));
+  } catch (e) {
+    // Ignore storage errors
+  }
 }
 
 function showToast(message, type = "success") {
@@ -901,10 +1090,19 @@ function renderCalculatorView(calc) {
 
   const ui = getUI();
   const catalog = getLocalizedCatalog(state.lang);
-  const keyboardKeys = getLocalizedKeyboardKeys(state.lang);
+  const keyboardSections = getLocalizedKeyboardSections(calc.id, state.lang);
+  const allKeyboardKeys = [...keyboardSections.common, ...keyboardSections.contextual];
   const homeRoute = ROUTE_MAP.home[state.lang];
 
-  state.activeDirection = calc.defaultDirection || "direct";
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryDir = urlParams.get("dir");
+  const queryExpr = urlParams.get("expr");
+
+  state.activeDirection =
+    calc.hasDirectionToggle && (queryDir === "direct" || queryDir === "inverse")
+      ? queryDir
+      : calc.defaultDirection || "direct";
+  const initialExpr = queryExpr && queryExpr.trim() ? queryExpr.trim() : calc.defaultExpr;
 
   main.innerHTML = `
     <!-- Breadcrumb Navigation -->
@@ -998,7 +1196,7 @@ function renderCalculatorView(calc) {
             <input
               id="calc-input"
               type="text"
-              value="${escapeHtml(calc.defaultExpr)}"
+              value="${escapeHtml(initialExpr)}"
               placeholder="${escapeHtml(
                 state.activeDirection === "inverse" && calc.placeholderInverse
                   ? calc.placeholderInverse
@@ -1040,6 +1238,15 @@ function renderCalculatorView(calc) {
           </div>
         </div>
 
+        <!-- Live KaTeX Input Preview -->
+        <div
+          id="live-katex-preview"
+          class="hidden items-center gap-2.5 px-3.5 py-2 rounded-xl bg-slate-50/90 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 text-xs text-slate-700 dark:text-slate-200 overflow-x-auto"
+        >
+          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 shrink-0">${escapeHtml(ui.livePreviewLabel)}</span>
+          <div id="live-katex-preview-math" class="text-sm text-slate-900 dark:text-white"></div>
+        </div>
+
         <!-- Collapsible Virtual Mathematical Keyboard Drawer -->
         <div
           id="virtual-keyboard-drawer"
@@ -1053,24 +1260,59 @@ function renderCalculatorView(calc) {
               ${escapeHtml(ui.clearInput)}
             </button>
           </div>
-          <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
-            ${keyboardKeys
-              .map(
-                (k, i) => `
-              <button
-                type="button"
-                data-key-idx="${i}"
-                title="${escapeHtml(k.tooltip)} -> ${escapeHtml(k.insert)}"
-                class="math-key p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 hover:bg-blue-50 dark:bg-slate-950 dark:hover:bg-blue-950/50 hover:border-blue-400 text-slate-800 dark:text-slate-200 flex flex-col items-center justify-center min-h-[46px]"
-              >
-                <span class="text-xs">${renderLatexToHtml(k.label, false)}</span>
-                <span class="text-[9px] font-mono text-slate-400 mt-0.5 truncate max-w-full">${escapeHtml(k.insert)}</span>
-              </button>
+          <div class="space-y-2.5">
+            <div>
+              <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">${escapeHtml(ui.keyboardCommonLabel)}</div>
+              <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                ${keyboardSections.common
+                  .map(
+                    (k, i) => `
+                  <button
+                    type="button"
+                    data-key-idx="${i}"
+                    title="${escapeHtml(k.tooltip)} -> ${escapeHtml(k.insert)}"
+                    class="math-key p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 hover:bg-blue-50 dark:bg-slate-950 dark:hover:bg-blue-950/50 hover:border-blue-400 text-slate-800 dark:text-slate-200 flex flex-col items-center justify-center min-h-[44px]"
+                  >
+                    <span class="text-xs">${renderLatexToHtml(k.label, false)}</span>
+                    <span class="text-[9px] font-mono text-slate-400 mt-0.5 truncate max-w-full">${escapeHtml(k.insert)}</span>
+                  </button>
+                `
+                  )
+                  .join("")}
+              </div>
+            </div>
+            ${
+              keyboardSections.contextual.length > 0
+                ? `
+            <div>
+              <div class="text-[10px] font-mono uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1.5">${escapeHtml(ui.keyboardContextualLabel)}</div>
+              <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                ${keyboardSections.contextual
+                  .map(
+                    (k, i) => `
+                  <button
+                    type="button"
+                    data-key-idx="${keyboardSections.common.length + i}"
+                    title="${escapeHtml(k.tooltip)} -> ${escapeHtml(k.insert)}"
+                    class="math-key p-2 rounded-lg border border-blue-200/80 dark:border-blue-900/70 bg-blue-50/40 hover:bg-blue-50 dark:bg-blue-950/20 dark:hover:bg-blue-950/50 hover:border-blue-400 text-slate-800 dark:text-slate-200 flex flex-col items-center justify-center min-h-[44px]"
+                  >
+                    <span class="text-xs">${renderLatexToHtml(k.label, false)}</span>
+                    <span class="text-[9px] font-mono text-slate-400 mt-0.5 truncate max-w-full">${escapeHtml(k.insert)}</span>
+                  </button>
+                `
+                  )
+                  .join("")}
+              </div>
+            </div>
             `
-            ).join("")}
+                : ""
+            }
           </div>
         </div>
       </form>
+
+      <!-- Recent History Chips -->
+      <div id="calc-history-bar" class="hidden mt-4 pt-3 border-t border-slate-200/70 dark:border-slate-800/70"></div>
     </section>
 
     <!-- Dynamic Step-by-Step Solution Output Section -->
@@ -1203,6 +1445,79 @@ function renderCalculatorView(calc) {
     }
   `;
 
+  const updateLivePreview = () => {
+    const box = document.getElementById("live-katex-preview");
+    const mathEl = document.getElementById("live-katex-preview-math");
+    const inputEl = document.getElementById("calc-input");
+    if (!box || !mathEl || !inputEl) return;
+    const latex = exprToLatexPreview(inputEl.value, calc.id, state.activeDirection);
+    if (!latex) {
+      box.classList.add("hidden");
+      box.classList.remove("flex");
+      mathEl.innerHTML = "";
+      return;
+    }
+    mathEl.innerHTML = renderLatexToHtml(latex, false);
+    box.classList.remove("hidden");
+    box.classList.add("flex");
+  };
+
+  const renderHistoryBar = () => {
+    const bar = document.getElementById("calc-history-bar");
+    if (!bar) return;
+    const items = loadCalcHistory()[calc.id] || [];
+    if (items.length === 0) {
+      bar.classList.add("hidden");
+      bar.innerHTML = "";
+      return;
+    }
+    bar.classList.remove("hidden");
+    bar.innerHTML = `
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+        <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400">${escapeHtml(ui.historyLabel)}</span>
+        <button type="button" id="clear-calc-history-btn" class="text-[11px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
+          ${escapeHtml(ui.clearHistoryBtn)}
+        </button>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        ${items
+          .map(
+            (item, idx) => `
+          <button
+            type="button"
+            data-history-idx="${idx}"
+            class="history-chip px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 hover:bg-blue-50 dark:bg-slate-950 dark:hover:bg-blue-950/40 hover:border-blue-400 text-[11px] font-mono text-slate-700 dark:text-slate-300 max-w-[240px] truncate transition-colors"
+            title="${escapeHtml(item.expr)}"
+          >${escapeHtml(item.expr)}</button>
+        `
+          )
+          .join("")}
+      </div>
+    `;
+    const clearHistBtn = document.getElementById("clear-calc-history-btn");
+    if (clearHistBtn) {
+      clearHistBtn.addEventListener("click", () => {
+        clearCalcHistory(calc.id);
+        renderHistoryBar();
+      });
+    }
+    bar.querySelectorAll(".history-chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const idx = parseInt(chip.getAttribute("data-history-idx"), 10);
+        const item = items[idx];
+        if (!item) return;
+        if (calc.hasDirectionToggle && (item.direction === "direct" || item.direction === "inverse")) {
+          state.activeDirection = item.direction;
+          updateDirectionButtonsUI();
+        }
+        const inputEl = document.getElementById("calc-input");
+        if (inputEl) inputEl.value = item.expr;
+        updateLivePreview();
+        executeCalculation(calc, item.expr, state.activeDirection);
+      });
+    });
+  };
+
   // Wire up Direction Toggle
   const updateDirectionButtonsUI = () => {
     document.querySelectorAll(".dir-toggle-btn").forEach((btn) => {
@@ -1224,11 +1539,24 @@ function renderCalculatorView(calc) {
   };
 
   updateDirectionButtonsUI();
+  updateLivePreview();
+  renderHistoryBar();
+
+  const historyBarEl = document.getElementById("calc-history-bar");
+  if (historyBarEl) {
+    historyBarEl.addEventListener("calcweb:history-updated", renderHistoryBar);
+  }
+
+  const mainInputEl = document.getElementById("calc-input");
+  if (mainInputEl) {
+    mainInputEl.addEventListener("input", updateLivePreview);
+  }
 
   document.querySelectorAll(".dir-toggle-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.activeDirection = btn.getAttribute("data-dir");
       updateDirectionButtonsUI();
+      updateLivePreview();
     });
   });
 
@@ -1246,6 +1574,7 @@ function renderCalculatorView(calc) {
       if (inputEl) {
         inputEl.value = preset.expr;
       }
+      updateLivePreview();
       executeCalculation(calc, preset.expr, state.activeDirection);
     });
   });
@@ -1269,6 +1598,7 @@ function renderCalculatorView(calc) {
       if (inputEl) {
         inputEl.value = "";
         inputEl.focus();
+        updateLivePreview();
       }
     });
   }
@@ -1276,7 +1606,7 @@ function renderCalculatorView(calc) {
   document.querySelectorAll(".math-key").forEach((keyBtn) => {
     keyBtn.addEventListener("click", () => {
       const idx = parseInt(keyBtn.getAttribute("data-key-idx"), 10);
-      const keyDef = keyboardKeys[idx];
+      const keyDef = allKeyboardKeys[idx];
       const inputEl = document.getElementById("calc-input");
       if (!keyDef || !inputEl) return;
 
@@ -1285,8 +1615,9 @@ function renderCalculatorView(calc) {
       const val = inputEl.value;
       inputEl.value = val.slice(0, start) + keyDef.insert + val.slice(end);
       inputEl.focus();
-      const nextCursor = start + keyDef.insert.length;
+      const nextCursor = start + keyDef.insert.length + (keyDef.cursorOffset || 0);
       inputEl.setSelectionRange(nextCursor, nextCursor);
+      updateLivePreview();
     });
   });
 
@@ -1300,8 +1631,8 @@ function renderCalculatorView(calc) {
     });
   }
 
-  // Run initial calculation so the page immediately displays a rich step-by-step derivation
-  executeCalculation(calc, calc.defaultExpr, state.activeDirection);
+  // Run initial calculation (from ?expr= if present, else defaultExpr)
+  executeCalculation(calc, initialExpr, state.activeDirection, renderHistoryBar);
 }
 
 /* ==========================================================================
@@ -1339,7 +1670,7 @@ function renderCalculationError(container, calc, errMsg, direction = "direct") {
   `;
 }
 
-async function executeCalculation(calc, expr, direction) {
+async function executeCalculation(calc, expr, direction, onSuccessCb = null) {
   const container = document.getElementById("solution-container");
   if (!container) return;
 
@@ -1355,7 +1686,7 @@ async function executeCalculation(calc, expr, direction) {
   const hybridRes = runHybridEngine(calc.id, expr, direction, state.lang);
   if (hybridRes && hybridRes.ok) {
     const engineTag = state.workerReady ? ui.engineVerifiedTag : ui.engineInstantTag;
-    renderSolutionSteps(calc, expr, hybridRes, engineTag, direction);
+    renderSolutionSteps(calc, expr, hybridRes, engineTag, direction, onSuccessCb);
     return;
   }
 
@@ -1388,7 +1719,8 @@ async function executeCalculation(calc, expr, direction) {
       expr,
       localizedWorkerRes,
       workerResp.engine || "Pyodide + SymPy (WASM)",
-      direction
+      direction,
+      onSuccessCb
     );
     return;
   }
@@ -1398,11 +1730,21 @@ async function executeCalculation(calc, expr, direction) {
   renderCalculationError(container, calc, errMsg, direction);
 }
 
-function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direct") {
+function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direct", onSuccessCb = null) {
   const container = document.getElementById("solution-container");
   if (!container) return;
 
   const ui = getUI();
+
+  saveCalcHistoryItem(calc.id, expr, direction);
+  if (typeof onSuccessCb === "function") {
+    onSuccessCb();
+  } else {
+    const bar = document.getElementById("calc-history-bar");
+    if (bar) {
+      bar.dispatchEvent(new CustomEvent("calcweb:history-updated"));
+    }
+  }
 
   window.gtag?.("event", "calculate_math", {
     tool: calc.id,
@@ -1440,6 +1782,17 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
 
         <!-- Export & Copy LaTeX Buttons -->
         <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            id="copy-share-link-btn"
+            class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition-colors shadow-2xs"
+          >
+            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+            </svg>
+            <span>${escapeHtml(ui.copyShareLinkBtn)}</span>
+          </button>
+
           <button
             type="button"
             id="copy-final-latex-btn"
@@ -1530,6 +1883,22 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
       </div>
     </div>
   `;
+
+  // Wire up Copy Share Link
+  const copyShareBtn = document.getElementById("copy-share-link-btn");
+  if (copyShareBtn) {
+    copyShareBtn.addEventListener("click", async () => {
+      const shareUrl = `${window.location.origin}${calc.route}?expr=${encodeURIComponent(expr)}${
+        calc.hasDirectionToggle ? "&dir=" + encodeURIComponent(direction) : ""
+      }`;
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast(ui.toastShareLinkCopied);
+      } catch (err) {
+        showToast(ui.toastCopyError, "error");
+      }
+    });
+  }
 
   // Wire up Copy Final LaTeX
   const copyFinalBtn = document.getElementById("copy-final-latex-btn");
