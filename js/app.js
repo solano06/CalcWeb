@@ -33,7 +33,8 @@ const state = {
   pendingRequests: new Map(),
   lastSolution: null, // { steps: [], final_latex: "", expr: "", title: "", engineUsed: "" }
   activeDirection: "direct",
-  keyboardOpen: false
+  keyboardOpen: false,
+  studyMode: false
 };
 
 function getUI() {
@@ -1122,7 +1123,7 @@ function renderCalculatorView(calc) {
 
   main.innerHTML = `
     <!-- Breadcrumb Navigation -->
-    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+    <nav aria-label="Breadcrumb" class="print:hidden mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
       <a href="${homeRoute}" data-route="${homeRoute}" class="hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
         <span>${escapeHtml(ui.breadcrumbHome)}</span>
@@ -1134,7 +1135,7 @@ function renderCalculatorView(calc) {
     </nav>
 
     <!-- Calculator SEO Header (H1 + Subtitle) -->
-    <header class="mb-7">
+    <header class="print:hidden mb-7">
       <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
         ${escapeHtml(calc.h1)}
       </h1>
@@ -1144,7 +1145,7 @@ function renderCalculatorView(calc) {
     </header>
 
     <!-- Main Workbench Card -->
-    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
+    <section class="print:hidden min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
       
       ${
         calc.hasDirectionToggle
@@ -1337,7 +1338,7 @@ function renderCalculatorView(calc) {
     </section>
 
     <!-- Bottom SEO Organic Ranking Section: Quick Guide & Key Formulas -->
-    <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+    <section aria-labelledby="guide-heading" class="print:hidden rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
       <div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold mb-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
@@ -1387,7 +1388,7 @@ function renderCalculatorView(calc) {
       Array.isArray(calc.faqs) && calc.faqs.length > 0
         ? `
     <!-- SEO On-Page: 4 Preguntas Frecuentes (FAQ) Synchronized with FAQPage JSON-LD -->
-    <section aria-labelledby="faq-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
+    <section aria-labelledby="faq-heading" class="print:hidden rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
       <div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold mb-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -1423,7 +1424,7 @@ function renderCalculatorView(calc) {
       Array.isArray(calc.relatedRoutes) && calc.relatedRoutes.length > 0
         ? `
     <!-- Contextual Internal Linking: Calculadoras Relacionadas -->
-    <section aria-labelledby="related-heading" class="mt-8">
+    <section aria-labelledby="related-heading" class="print:hidden mt-8">
       <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
         ${escapeHtml(ui.relatedHeadingPrefix)} ${escapeHtml(calc.category)}
       </h2>
@@ -1746,11 +1747,42 @@ async function executeCalculation(calc, expr, direction, onSuccessCb = null) {
   renderCalculationError(container, calc, errMsg, direction);
 }
 
+function printSolutionAsPdf() {
+  const wasDark = document.documentElement.classList.contains("dark");
+  let restored = false;
+  const restoreDark = () => {
+    if (restored) return;
+    restored = true;
+    if (wasDark) {
+      document.documentElement.classList.add("dark");
+    }
+  };
+
+  if (wasDark) {
+    document.documentElement.classList.remove("dark");
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.addEventListener("afterprint", restoreDark, { once: true });
+      try {
+        window.print();
+      } finally {
+        setTimeout(restoreDark, 300);
+      }
+    });
+  });
+}
+
 function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direct", onSuccessCb = null) {
   const container = document.getElementById("solution-container");
   if (!container) return;
 
   const ui = getUI();
+  const totalSteps = solution.steps.length;
+  let revealedCount = state.studyMode && totalSteps > 1 ? 1 : totalSteps;
+  const printDate = new Date().toLocaleDateString(ui.locale || "es-ES");
+  const cleanUrl = `${window.location.origin}${calc.route}`;
 
   saveCalcHistoryItem(calc.id, expr, direction);
   if (typeof onSuccessCb === "function") {
@@ -1779,25 +1811,62 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
 
   container.innerHTML = `
     <div class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+
+      <!-- Print-Only Academic Header -->
+      <div class="hidden print:block px-1 pb-4 mb-4 border-b border-slate-300 text-slate-900">
+        <div class="flex items-center justify-between gap-4 mb-2">
+          <span class="font-serif font-bold text-lg">CalcWeb &Sigma;</span>
+          <span class="text-xs font-mono text-slate-500">${escapeHtml(printDate)} &bull; ${escapeHtml(cleanUrl)}</span>
+        </div>
+        <h2 class="font-serif font-bold text-xl text-slate-900 mb-1">${escapeHtml(calc.h1)}</h2>
+        <p class="text-xs font-mono text-slate-700">
+          <strong>${escapeHtml(ui.printExprLabel)}:</strong> ${escapeHtml(expr)}
+        </p>
+      </div>
       
       <!-- Top Result Summary Banner & Action Toolbar -->
       <div class="p-4 sm:p-6 bg-slate-50/90 dark:bg-slate-950/60 border-b border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 min-w-0">
         <div class="min-w-0 max-w-full">
-          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+          <div class="print:hidden flex flex-wrap items-center gap-2 mb-1.5">
             <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-              ${escapeHtml(ui.solutionCompleted)} (${solution.steps.length} ${escapeHtml(ui.stepsWord)})
+              ${escapeHtml(ui.solutionCompleted)} (${totalSteps} ${escapeHtml(ui.stepsWord)})
             </span>
             <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400">
               &bull; ${escapeHtml(engineTag)}
             </span>
           </div>
-          <div class="text-sm sm:text-base font-medium text-slate-900 dark:text-white max-w-full overflow-x-auto">
+          <div id="study-spoiler-notice" class="hidden text-xs sm:text-sm italic text-amber-700 dark:text-amber-300 py-1.5">
+            ${escapeHtml(ui.studySpoilerMsg)}
+          </div>
+          <div id="final-result-math" class="text-sm sm:text-base font-medium text-slate-900 dark:text-white max-w-full overflow-x-auto">
             ${renderLatexToHtml(solution.final_latex, true)}
           </div>
         </div>
 
-        <!-- Export & Copy LaTeX Buttons -->
-        <div class="flex flex-wrap items-center gap-2 shrink-0">
+        <!-- Export, Print & Study Mode Buttons -->
+        <div class="print:hidden flex flex-wrap items-center gap-2 shrink-0">
+          ${
+            totalSteps > 1
+              ? `
+          <button
+            type="button"
+            id="study-mode-toggle"
+            aria-pressed="${state.studyMode}"
+            class="px-3.5 py-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-colors shadow-2xs ${
+              state.studyMode
+                ? "bg-amber-500 border-amber-600 text-white"
+                : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
+            }"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <span>${escapeHtml(ui.studyModeLabel)}</span>
+          </button>
+          `
+              : ""
+          }
+
           <button
             type="button"
             id="copy-share-link-btn"
@@ -1818,6 +1887,17 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
             </svg>
             <span>${escapeHtml(ui.copyFinalLatex)}</span>
+          </button>
+
+          <button
+            type="button"
+            id="print-pdf-btn"
+            class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition-colors shadow-2xs"
+          >
+            <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            </svg>
+            <span>${escapeHtml(ui.savePdfBtn)}</span>
           </button>
 
           <button
@@ -1850,7 +1930,7 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
         ${solution.steps
           .map(
             (step, index) => `
-          <article class="step-item py-5 first:pt-0 last:pb-0 animate-step min-w-0 max-w-full" style="animation-delay: ${index * 45}ms">
+          <article data-step-idx="${index}" class="step-item py-5 first:pt-0 last:pb-0 animate-step min-w-0 max-w-full" style="animation-delay: ${index * 45}ms">
             <div class="flex items-start gap-3 sm:gap-3.5 min-w-0 max-w-full">
               <!-- Step Number Badge -->
               <div class="w-7 h-7 rounded-lg bg-blue-600/10 dark:bg-blue-500/20 border border-blue-500/30 text-blue-700 dark:text-blue-300 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
@@ -1888,6 +1968,32 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
         `
           )
           .join("")}
+
+        <!-- Study Mode Progressive Reveal Controls -->
+        <div id="study-controls" class="hidden print:hidden pt-5 mt-2 flex flex-wrap items-center justify-between gap-3">
+          <span id="study-progress-label" class="text-xs font-mono font-semibold text-amber-700 dark:text-amber-300">
+            ${escapeHtml(ui.studyProgress(revealedCount, totalSteps))}
+          </span>
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              id="reveal-all-steps-btn"
+              class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-200 transition-colors"
+            >
+              ${escapeHtml(ui.revealAllStepsBtn)}
+            </button>
+            <button
+              type="button"
+              id="reveal-next-step-btn"
+              class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
+            >
+              <span>${escapeHtml(ui.revealNextStepBtn)}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Collapsible Raw JSON Structure Inspector (proves compliance with [{titulo_paso, explicacion, latex}]) -->
@@ -1902,6 +2008,85 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
       </div>
     </div>
   `;
+
+  const syncStudyModeUI = (newlyRevealedIdx = -1) => {
+    const toggleBtn = document.getElementById("study-mode-toggle");
+    const spoilerEl = document.getElementById("study-spoiler-notice");
+    const finalMathEl = document.getElementById("final-result-math");
+    const controlsEl = document.getElementById("study-controls");
+    const progressEl = document.getElementById("study-progress-label");
+
+    if (toggleBtn) {
+      toggleBtn.setAttribute("aria-pressed", String(state.studyMode));
+      toggleBtn.className = `px-3.5 py-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-colors shadow-2xs ${
+        state.studyMode
+          ? "bg-amber-500 border-amber-600 text-white"
+          : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
+      }`;
+    }
+
+    const isStudyingPartial = state.studyMode && totalSteps > 1 && revealedCount < totalSteps;
+    if (spoilerEl && finalMathEl) {
+      spoilerEl.classList.toggle("hidden", !isStudyingPartial);
+      finalMathEl.classList.toggle("hidden", isStudyingPartial);
+      finalMathEl.classList.toggle("print:block", isStudyingPartial);
+    }
+
+    document.querySelectorAll("#solution-container .step-item").forEach((el) => {
+      const idx = parseInt(el.getAttribute("data-step-idx"), 10);
+      const isHidden = state.studyMode && totalSteps > 1 && idx >= revealedCount;
+      el.classList.toggle("hidden", isHidden);
+      el.classList.toggle("print:block", isHidden);
+      if (idx === newlyRevealedIdx) {
+        el.classList.remove("animate-step");
+        void el.offsetWidth;
+        el.classList.add("animate-step");
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    });
+
+    if (controlsEl) {
+      controlsEl.classList.toggle("hidden", !isStudyingPartial);
+    }
+    if (progressEl) {
+      progressEl.textContent = ui.studyProgress(revealedCount, totalSteps);
+    }
+  };
+
+  syncStudyModeUI();
+
+  const studyToggleBtn = document.getElementById("study-mode-toggle");
+  if (studyToggleBtn) {
+    studyToggleBtn.addEventListener("click", () => {
+      state.studyMode = !state.studyMode;
+      revealedCount = state.studyMode ? 1 : totalSteps;
+      syncStudyModeUI();
+    });
+  }
+
+  const revealNextBtn = document.getElementById("reveal-next-step-btn");
+  if (revealNextBtn) {
+    revealNextBtn.addEventListener("click", () => {
+      if (revealedCount < totalSteps) {
+        const revealedIdx = revealedCount;
+        revealedCount += 1;
+        syncStudyModeUI(revealedIdx);
+      }
+    });
+  }
+
+  const revealAllBtn = document.getElementById("reveal-all-steps-btn");
+  if (revealAllBtn) {
+    revealAllBtn.addEventListener("click", () => {
+      revealedCount = totalSteps;
+      syncStudyModeUI();
+    });
+  }
+
+  const printPdfBtn = document.getElementById("print-pdf-btn");
+  if (printPdfBtn) {
+    printPdfBtn.addEventListener("click", printSolutionAsPdf);
+  }
 
   const plotWrapper = document.getElementById("solution-plot-wrapper");
   const hasValidPlot =

@@ -90,3 +90,83 @@ body {
 .animate-step {
   animation: fadeInSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Professional Print / Save as PDF Styles */
+@media print {
+  @page {
+    margin: 14mm;
+    size: auto;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    overflow: visible !important;
+  }
+
+  header,
+  footer,
+  nav[aria-label="Breadcrumb"],
+  #toast-container,
+  #json-inspector-panel,
+  #study-controls,
+  #study-spoiler-notice,
+  .copy-step-btn,
+  .plot-download-btn,
+  .plot-alt-btn {
+    display: none !important;
+  }
+
+  main#app-main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  #solution-container {
+    min-height: 0 !important;
+    contain: none !important;
+    overflow: visible !important;
+  }
+
+  #solution-container > div {
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  #final-result-math {
+    display: block !important;
+  }
+
+  .step-item {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #solution-plot-wrapper {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  #solution-plot-wrapper canvas,
+  .plot-canvas {
+    max-width: 100% !important;
+  }
+
+  .katex-display {
+    overflow: visible !important;
+    max-width: 100% !important;
+  }
+}
