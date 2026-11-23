@@ -72,6 +72,21 @@ export const ROUTE_MAP = {
     en: "/en/phasor-calculator",
     fr: "/fr/calculateur-phaseurs"
   },
+  limits: {
+    es: "/limites-lhopital",
+    en: "/en/limits-lhopital",
+    fr: "/fr/limites-lhopital"
+  },
+  bode: {
+    es: "/diagrama-de-bode",
+    en: "/en/bode-plot-calculator",
+    fr: "/fr/diagramme-de-bode"
+  },
+  matops: {
+    es: "/determinante-inversa-matriz",
+    en: "/en/matrix-determinant-inverse",
+    fr: "/fr/determinant-inverse-matrice"
+  },
   about: {
     es: "/sobre-nosotros",
     en: "/en/about",
@@ -118,7 +133,10 @@ export const UI_STRINGS = {
       numseries: "Series Num.",
       matrix: "Matrices",
       gauss: "Gauss-Jordan",
-      phasors: "Fasores AC"
+      phasors: "Fasores AC",
+      limits: "Límites",
+      bode: "Bode",
+      matops: "Det. e Inversa"
     },
     engineLoading: "Cargando motor simbólico...",
     engineStatusLoading: "Cargando motor simbólico...",
@@ -289,7 +307,10 @@ export const UI_STRINGS = {
       numseries: "Num. Series",
       matrix: "Matrices",
       gauss: "Gauss-Jordan",
-      phasors: "AC Phasors"
+      phasors: "AC Phasors",
+      limits: "Limits",
+      bode: "Bode Plot",
+      matops: "Det. & Inverse"
     },
     engineLoading: "Loading symbolic engine...",
     engineStatusLoading: "Loading symbolic engine...",
@@ -460,7 +481,10 @@ export const UI_STRINGS = {
       numseries: "Séries Num.",
       matrix: "Matrices",
       gauss: "Pivot Gauss",
-      phasors: "Phaseurs AC"
+      phasors: "Phaseurs AC",
+      limits: "Limites",
+      bode: "Bode",
+      matops: "Dét. & Inverse"
     },
     engineLoading: "Chargement du moteur symbolique...",
     engineStatusLoading: "Chargement du moteur symbolique...",

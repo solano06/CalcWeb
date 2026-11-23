@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtkow2b">
+  <meta name="build-version" content="mwtl2cdu">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Calculadora de Fasores, Números Complejos y Circuitos AC Paso a Paso | CalcWeb</title>
   <meta name="description" content="Calculadora de fasores y números complejos para Teoría de Circuitos AC. Opera mezclando forma binómica (a+bj) y polar (M∠θ°), convierte paso a paso con ajuste de cuadrante y resuelve sistemas complejos 2x2 y 3x3.">
@@ -42,11 +42,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtkow2b">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtkow2b">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtkow2b">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkow2b">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/app.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtl2cdu">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -142,8 +142,8 @@
   <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
   <!-- Compiled Static Tailwind CSS & Custom Styles -->
-  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtkow2b">
-  <link rel="stylesheet" href="/css/styles.css?v=mwtkow2b">
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtl2cdu">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtl2cdu">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -196,6 +196,13 @@
                   data-route="/integrales-paso-a-paso"
                   class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >Integrales</a>
+              </li>
+              <li>
+                <a
+                  href="/limites-lhopital"
+                  data-route="/limites-lhopital"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Límites</a>
               </li>
               <li>
                 <a
@@ -276,6 +283,13 @@
                   class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >Convolución</a>
               </li>
+              <li>
+                <a
+                  href="/diagrama-de-bode"
+                  data-route="/diagrama-de-bode"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Bode</a>
+              </li>
           </ul>
         </div>
       </div>
@@ -305,6 +319,13 @@
                   data-route="/diagonalizacion-matrices"
                   class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >Matrices</a>
+              </li>
+              <li>
+                <a
+                  href="/determinante-inversa-matriz"
+                  data-route="/determinante-inversa-matriz"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Det. e Inversa</a>
               </li>
               <li>
                 <a
@@ -372,6 +393,11 @@
                     class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                   >Integrales</a>
                   <a
+                    href="/limites-lhopital"
+                    data-route="/limites-lhopital"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Límites</a>
+                  <a
                     href="/ecuaciones-diferenciales"
                     data-route="/ecuaciones-diferenciales"
                     class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -419,6 +445,11 @@
                     data-route="/convolucion"
                     class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                   >Convolución</a>
+                  <a
+                    href="/diagrama-de-bode"
+                    data-route="/diagrama-de-bode"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Bode</a>
               </div>
             </div>
             <div>
@@ -432,6 +463,11 @@
                     data-route="/diagonalizacion-matrices"
                     class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                   >Matrices</a>
+                  <a
+                    href="/determinante-inversa-matriz"
+                    data-route="/determinante-inversa-matriz"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Det. e Inversa</a>
                   <a
                     href="/sistemas-ecuaciones-gauss"
                     data-route="/sistemas-ecuaciones-gauss"
@@ -651,10 +687,13 @@
         <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalización de Matrices</a>
         <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Sistemas Lineales (Gauss-Jordan)</a>
         <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fasores y Circuitos AC</a>
+        <a href="/limites-lhopital" data-route="/limites-lhopital" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Límites y L'Hôpital</a>
+        <a href="/diagrama-de-bode" data-route="/diagrama-de-bode" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagrama de Bode H(s)</a>
+        <a href="/determinante-inversa-matriz" data-route="/determinante-inversa-matriz" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Determinante, Inversa y Rango</a>
       </div>
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtkow2b"></script>
+  <script type="module" src="/js/app.js?v=mwtl2cdu"></script>
 </body>
 </html>

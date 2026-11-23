@@ -1659,6 +1659,248 @@ PY_PHRASES_FR = [
 ]
 
 
+def solve_limits(expr_str):
+    steps = []
+    parts = [p.strip() for p in expr_str.split(';') if p.strip()]
+    if not parts:
+        return {"ok": False, "error": "Introduce una función y punto límite: f(x) ; x0"}
+    fn_expr = parse_engineering_expr(parts[0])
+    x0_raw = parts[1].strip() if len(parts) > 1 else "0"
+    dir_side = "+-"
+    if x0_raw.endswith('+') and x0_raw not in ('+', '+oo', '+inf'):
+        dir_side = "+"
+        x0_raw = x0_raw[:-1].strip()
+    elif x0_raw.endswith('-') and x0_raw not in ('-', '-oo', '-inf'):
+        dir_side = "-"
+        x0_raw = x0_raw[:-1].strip()
+    x0_raw_clean = re.sub(r'\\binf\\b', 'oo', x0_raw, flags=re.IGNORECASE)
+    x0_val = parse_engineering_expr(x0_raw_clean)
+
+    steps.append({
+        "titulo_paso": f"Planteamiento del límite cuando x tiende a {sp.latex(x0_val)}",
+        "explicacion": "Analizamos el comportamiento de la función f(x) alrededor del punto límite indicado mediante sustitución directa.",
+        "latex": rf"L = \\lim_{{x \\to {sp.latex(x0_val)}}} \\left({sp.latex(fn_expr)}\\right)"
+    })
+
+    # Detect 0/0, oo/oo, or 1**oo
+    num, den = sp.fraction(sp.together(fn_expr))
+    if den != 1:
+        try:
+            n_sub = sp.limit(num, x, x0_val)
+            d_sub = sp.limit(den, x, x0_val)
+            if (n_sub == 0 and d_sub == 0) or (n_sub in (sp.oo, -sp.oo, sp.zoo) and d_sub in (sp.oo, -sp.oo, sp.zoo)):
+                indet = r"\\frac{0}{0}" if n_sub == 0 else r"\\frac{\\infty}{\\infty}"
+                steps.append({
+                    "titulo_paso": "Detección de forma indeterminada y aplicación de la Regla de L'Hôpital",
+                    "explicacion": "Al obtener una indeterminación de cociente, derivamos numerador y denominador por separado hasta levantar la indeterminación.",
+                    "latex": rf"\\left[{indet}\\right] \\implies \\text{{Regla de L'Hôpital}}"
+                })
+                cur_n, cur_d = num, den
+                for it in range(1, 5):
+                    cur_n = sp.diff(cur_n, x)
+                    cur_d = sp.diff(cur_d, x)
+                    steps.append({
+                        "titulo_paso": f"Iteración {it} de L'Hôpital: derivación de N(x) y D(x)",
+                        "explicacion": "Calculamos las derivadas independientes del numerador y denominador.",
+                        "latex": rf"\\lim_{{x \\to {sp.latex(x0_val)}}} \\frac{{{sp.latex(cur_n)}}}{{{sp.latex(cur_d)}}}"
+                    })
+                    n_chk = sp.limit(cur_n, x, x0_val)
+                    d_chk = sp.limit(cur_d, x, x0_val)
+                    if not ((n_chk == 0 and d_chk == 0) or (n_chk in (sp.oo, -sp.oo, sp.zoo) and d_chk in (sp.oo, -sp.oo, sp.zoo))):
+                        break
+        except Exception:
+            pass
+    elif fn_expr.is_Pow:
+        base_e, exp_e = fn_expr.as_base_exp()
+        try:
+            b_lim = sp.limit(base_e, x, x0_val)
+            e_lim = sp.limit(exp_e, x, x0_val)
+            if b_lim == 1 and e_lim in (sp.oo, -sp.oo, sp.zoo):
+                steps.append({
+                    "titulo_paso": "Indeterminación exponencial 1^\\infty y transformación logarítmica",
+                    "explicacion": "Transformamos la potencia f(x)^{g(x)} en exp(g(x) * ln(f(x))) para evaluar el límite del exponente.",
+                    "latex": rf"\\left[1^{{\\infty}}\\right] \\implies L = \\exp\\!\\left(\\lim_{{x \\to {sp.latex(x0_val)}}} {sp.latex(exp_e * sp.log(base_e))}\\right)"
+                })
+        except Exception:
+            pass
+
+    if dir_side in ("+", "-"):
+        res_lim = sp.limit(fn_expr, x, x0_val, dir=dir_side)
+    else:
+        res_lim = sp.limit(fn_expr, x, x0_val)
+        if x0_val.is_finite:
+            try:
+                l_left = sp.limit(fn_expr, x, x0_val, dir="-")
+                l_right = sp.limit(fn_expr, x, x0_val, dir="+")
+                if l_left != l_right:
+                    steps.append({
+                        "titulo_paso": "Comprobación de límites laterales",
+                        "explicacion": "Los límites por la izquierda y por la derecha difieren, por lo que el límite bilateral no existe.",
+                        "latex": rf"L^- = {sp.latex(l_left)}, \\qquad L^+ = {sp.latex(l_right)}"
+                    })
+            except Exception:
+                pass
+
+    final_tex = rf"\\lim_{{x \\to {sp.latex(x0_val)}}} {sp.latex(fn_expr)} = {sp.latex(res_lim)}"
+    steps.append({
+        "titulo_paso": "Evaluación final del límite",
+        "explicacion": "Obtenemos el valor simbólico exacto del límite.",
+        "latex": final_tex
+    })
+
+    plot_data = None
+    try:
+        if x0_val in (sp.oo, -sp.oo):
+            x_lo, x_hi = (0.5, 40.0) if x0_val == sp.oo else (-40.0, -0.5)
+            pts = _sample_real_expr(fn_expr, x, x_lo, x_hi)
+            if pts:
+                series_list = [{"label": "f(x)", "points": pts, "style": "primary"}]
+                if res_lim.is_real and res_lim.is_finite:
+                    l_f = float(sp.N(res_lim))
+                    series_list.append({"label": f"y = {round(l_f, 3)}", "points": [[x_lo, l_f], [x_hi, l_f]], "style": "secondary", "dashed": True})
+                plot_data = {"title": "f(x)", "xLabel": "x", "yLabel": "f(x)", "xRange": [x_lo, x_hi], "series": series_list}
+        elif x0_val.is_real and x0_val.is_finite:
+            x0_f = float(sp.N(x0_val))
+            x_lo, x_hi = x0_f - 4.0, x0_f + 4.0
+            pts = [p for p in _sample_real_expr(fn_expr, x, x_lo, x_hi) if abs(p[0] - x0_f) > 0.03]
+            if pts:
+                plot_data = {"title": "f(x)", "xLabel": "x", "yLabel": "f(x)", "xRange": [x_lo, x_hi], "series": [{"label": "f(x)", "points": pts, "style": "primary"}]}
+    except Exception:
+        plot_data = None
+
+    return {"ok": True, "steps": steps, "final_latex": final_tex, "plot": plot_data}
+
+
+def solve_bode(expr_str):
+    steps = []
+    if not expr_str.strip():
+        return {"ok": False, "error": "Introduce una función de transferencia racional H(s)."}
+    H_expr = sp.together(parse_engineering_expr(expr_str))
+    num, den = sp.fraction(H_expr)
+    zeros = sp.roots(num, s)
+    poles = sp.roots(den, s)
+
+    z_tex = ", \\; ".join([rf"s = {sp.latex(rt)} \\; (m={m})" for rt, m in zeros.items()]) if zeros else r"\\emptyset"
+    p_tex = ", \\; ".join([rf"s = {sp.latex(rt)} \\; (m={m})" for rt, m in poles.items()]) if poles else r"\\emptyset"
+    is_stable = all(sp.re(sp.N(p)) < 0 for p in poles.keys()) if poles else True
+    stab_str = "Sistema Estable (Re(p_i) < 0)" if is_stable else "Sistema Inestable o Marginal (Re(p_i) >= 0)"
+
+    steps.append({
+        "titulo_paso": "Factorización de H(s), polos, ceros y estabilidad",
+        "explicacion": f"Extraemos las raíces del numerador (ceros) y del denominador (polos). Diagnóstico: {stab_str}.",
+        "latex": rf"H(s) = \\frac{{{sp.latex(sp.factor(num))}}}{{{sp.latex(sp.factor(den))}}}, \\quad \\text{{Ceros: }} {z_tex}, \\quad \\text{{Polos: }} {p_tex}"
+    })
+
+    H_jw = H_expr.subs(s, sp.I * w)
+    steps.append({
+        "titulo_paso": "Evaluación en régimen sinusoidal permanente s = j\\omega",
+        "explicacion": "Sustituimos s = j\\omega para calcular la ganancia en decibelios 20 log10|H(j\\omega)| y la fase en grados.",
+        "latex": rf"H(j\\omega) = {sp.latex(sp.simplify(H_jw))}"
+    })
+
+    plot_data = None
+    try:
+        fn_jw = sp.lambdify(w, H_jw, modules=["cmath"])
+        mag_pts = []
+        phase_pts = []
+        prev_ph = None
+        ph_off = 0.0
+        for i in range(240):
+            lx = -1.0 + (i / 239.0) * 4.0
+            wv = 10.0 ** lx
+            try:
+                zv = complex(fn_jw(wv))
+                mag = abs(zv)
+                if mag > 1e-12 and math.isfinite(mag):
+                    db = 20.0 * math.log10(mag)
+                    if math.isfinite(db):
+                        mag_pts.append([round(lx, 5), round(db, 4)])
+                ph = math.degrees(cmath.phase(zv))
+                if prev_ph is not None:
+                    diff = ph - prev_ph
+                    while diff > 180.0:
+                        ph_off -= 360.0
+                        diff -= 360.0
+                    while diff < -180.0:
+                        ph_off += 360.0
+                        diff += 360.0
+                prev_ph = ph
+                unw = ph + ph_off
+                if math.isfinite(unw):
+                    phase_pts.append([round(lx, 5), round(unw, 3)])
+            except Exception:
+                continue
+        if mag_pts:
+            plot_data = {
+                "title": "Diagrama de Bode H(jω)",
+                "xLabel": "ω (rad/s)",
+                "yLabel": "20·log₁₀|H(jω)| (dB)",
+                "xScale": "log10",
+                "xRange": [-1.0, 3.0],
+                "series": [{"label": "|H(jω)| (dB)", "points": mag_pts, "style": "primary"}],
+                "altView": {
+                    "toggleLabelA": "Magnitud (dB)",
+                    "toggleLabelB": "Fase (°)",
+                    "yLabelB": "∠H(jω) (°)",
+                    "seriesB": [{"label": "∠H(jω) (°)", "points": phase_pts, "style": "accent"}]
+                }
+            }
+    except Exception:
+        plot_data = None
+
+    final_tex = rf"H(j\\omega) = {sp.latex(sp.simplify(H_jw))}"
+    return {"ok": True, "steps": steps, "final_latex": final_tex, "plot": plot_data}
+
+
+def solve_matops(expr_str):
+    steps = []
+    A = parse_matrix_input(expr_str)
+    if A.rows == 0 or A.rows != A.cols:
+        return {"ok": False, "error": f"La matriz debe ser cuadrada y no vacía (recibida {A.rows}x{A.cols})."}
+    n_dim = A.rows
+    steps.append({
+        "titulo_paso": f"Matriz cuadrada A de dimensión {n_dim}\\times {n_dim}",
+        "explicacion": "Analizamos la matriz cuadrada A para determinar su determinante, rango y matriz inversa.",
+        "latex": rf"A = {sp.latex(A)}"
+    })
+
+    det_A = sp.simplify(A.det())
+    rk_A = A.rank()
+    steps.append({
+        "titulo_paso": "Cálculo del determinante det(A) y rango rg(A)",
+        "explicacion": "Evaluamos el determinante y el rango para comprobar el criterio de invertibilidad (det(A) != 0).",
+        "latex": rf"\\det(A) = {sp.latex(det_A)}, \\qquad \\operatorname{{rg}}(A) = {rk_A}"
+    })
+
+    if det_A == 0:
+        final_tex = rf"\\det(A) = 0, \\quad \\operatorname{{rg}}(A) = {rk_A} < {n_dim} \\; (\\text{{Matriz singular, sin inversa}})"
+        steps.append({
+            "titulo_paso": "Matriz singular (NO invertible)",
+            "explicacion": "Como det(A) = 0, la matriz no posee matriz inversa.",
+            "latex": final_tex
+        })
+        return {"ok": True, "steps": steps, "final_latex": final_tex}
+
+    cof_mat = A.cofactor_matrix()
+    adj_mat = A.adjugate()
+    inv_mat = A.inv()
+    steps.append({
+        "titulo_paso": "Matriz de cofactores C y adjunta adj(A) = C^T",
+        "explicacion": "Calculamos los cofactores C_{ij} = (-1)^{i+j} M_{ij} y trasponemos para obtener la adjunta.",
+        "latex": rf"C = {sp.latex(cof_mat)}, \\qquad \\operatorname{{adj}}(A) = {sp.latex(adj_mat)}"
+    })
+    steps.append({
+        "titulo_paso": "Cálculo de la matriz inversa A^{-1} = (1/det(A)) adj(A)",
+        "explicacion": "Dividimos la matriz adjunta por el determinante en fracciones exactas.",
+        "latex": rf"A^{{-1}} = \\frac{{1}}{{{sp.latex(det_A)}}}{sp.latex(adj_mat)} = {sp.latex(inv_mat)}"
+    })
+    return {
+        "ok": True,
+        "steps": steps,
+        "final_latex": rf"\\det(A) = {sp.latex(det_A)}, \\quad \\operatorname{{rg}}(A) = {rk_A}, \\quad A^{{-1}} = {sp.latex(inv_mat)}"
+    }
+
+
 def localize_py_steps(res, lang="es"):
     if not res or not res.get("ok") or lang == "es":
         return res
@@ -1704,6 +1946,12 @@ def dispatch_calculation(tool, expr_str, direction="direct", lang="es"):
             res = solve_fourier_series(expr_str, direction)
         elif tool == "numseries":
             res = solve_num_series(expr_str)
+        elif tool == "limits":
+            res = solve_limits(expr_str)
+        elif tool == "bode":
+            res = solve_bode(expr_str)
+        elif tool == "matops":
+            res = solve_matops(expr_str)
         else:
             res = {"ok": False, "error": f"Herramienta desconocida: {tool}"}
         res = localize_py_steps(res, lang)

@@ -1187,6 +1187,297 @@ export const CALCULATOR_CATALOG = [
         a: "Se plantea el sistema matricial Z·I = V con las impedancias complejas de resistencias (R), bobinas (jωL) y condensadores (-j/(ωC)). Luego se resuelve mediante la Regla de Cramer compleja o eliminación de Gauss, expresando las corrientes resultantes en forma polar I_m∠φ° para leer su amplitud y desfase."
       }
     ]
+  },
+  {
+    id: "limits",
+    route: "/limites-lhopital",
+    title: "Calculadora de Límites y Regla de L'Hôpital Paso a Paso",
+    shortTitle: "Límites y L'Hôpital",
+    category: "Cálculo y Ecuaciones Diferenciales",
+    categoryBadge: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+    metaDescription: "Calculadora online de límites de funciones y Regla de L'Hôpital paso a paso. Resuelve indeterminaciones 0/0, ∞/∞, 1^∞ y límites en el infinito con derivación iterativa y gráfica 2D.",
+    h1: "Límites y Regla de L'Hôpital Paso a Paso",
+    subtitle: "Evaluación simbólica de límites finitos y en el infinito con detección de indeterminaciones (0/0, ∞/∞, 1^∞), derivación iterativa de L'Hôpital y comprobación de asíntotas.",
+    formulaPreview: "\\lim_{x \\to x_0} \\frac{f(x)}{g(x)} \\stackrel{\\text{L'H}}{=} \\lim_{x \\to x_0} \\frac{f'(x)}{g'(x)}",
+    keywords: ["limites", "lhopital", "indeterminacion", "0/0", "infinito", "asintota", "derivada", "calculo"],
+    hasDirectionToggle: false,
+    placeholderDirect: "Formato f(x) ; x0 -> Ej: sin(x)/x ; 0  o  (exp(x)-1-x)/x^2 ; 0  o  (1+2/x)^x ; oo",
+    defaultExpr: "sin(x)/x ; 0",
+    defaultDirection: "direct",
+    examExamples: [
+      {
+        label: "0/0 Trigonométrica",
+        badge: "Examen Típico 1",
+        latexLabel: "\\lim_{x \\to 0} \\frac{\\sin(x)}{x}",
+        expr: "sin(x)/x ; 0",
+        direction: "direct"
+      },
+      {
+        label: "0/0 Doble L'Hôpital",
+        badge: "Examen Típico 2",
+        latexLabel: "\\lim_{x \\to 0} \\frac{e^x - 1 - x}{x^2}",
+        expr: "(exp(x) - 1 - x)/x^2 ; 0",
+        direction: "direct"
+      },
+      {
+        label: "Cociente ∞/∞",
+        badge: "Examen Típico 3",
+        latexLabel: "\\lim_{x \\to \\infty} \\frac{3x^2 + 2x}{x^2 - 5}",
+        expr: "(3*x^2 + 2*x)/(x^2 - 5) ; oo",
+        direction: "direct"
+      },
+      {
+        label: "Exponencial 1^∞",
+        badge: "Examen Típico 4",
+        latexLabel: "\\lim_{x \\to \\infty} \\left(1 + \\frac{2}{x}\\right)^x",
+        expr: "(1 + 2/x)^x ; oo",
+        direction: "direct"
+      }
+    ],
+    guide: {
+      title: "Guía Rápida y Fórmulas Clave: Cálculo de Límites e Indeterminaciones",
+      intro: "El cálculo de límites estudia el comportamiento local de f(x) alrededor de un punto x₀ o su tendencia asintótica cuando x → ±∞. Cuando la sustitución directa produce una forma indeterminada (0/0, ∞/∞, 1^∞, ∞ - ∞), se aplican técnicas algebraicas, la Regla de L'Hôpital o transformaciones logarítmicas.",
+      formulas: [
+        {
+          name: "Regla de L'Hôpital (Formas 0/0 e ∞/∞)",
+          latex: "\\lim_{x \\to x_0} \\frac{f(x)}{g(x)} = \\lim_{x \\to x_0} \\frac{f'(x)}{g'(x)} = \\lim_{x \\to x_0} \\frac{f''(x)}{g''(x)}",
+          note: "Deriva numerador y denominador por separado (nunca como regla del cociente) mientras persista 0/0 o ∞/∞."
+        },
+        {
+          name: "Indeterminaciones Exponenciales 1^∞ (Número e)",
+          latex: "\\lim_{x \\to x_0} f(x)^{g(x)} = \\exp\\!\\left(\\lim_{x \\to x_0} g(x)\\cdot [f(x) - 1]\\right) \\quad \\text{o} \\quad e^{\\lim g(x)\\ln f(x)}",
+          note: "Para f(x) → 1 y g(x) → ∞, el límite clásico (1 + a/x)^x tiende exactamente a e^a."
+        },
+        {
+          name: "Límites Notables e Infinitésimos Equivalentes (x → 0)",
+          latex: "\\sin(x) \\sim x, \\qquad 1 - \\cos(x) \\sim \\frac{x^2}{2}, \\qquad e^x - 1 \\sim x, \\qquad \\ln(1 + x) \\sim x",
+          note: "Sustituir factores multiplicativos por sus infinitésimos equivalentes acelera enormemente los límites en x = 0."
+        },
+        {
+          name: "Grados en Cocientes de Polinomios (x → ∞)",
+          latex: "\\lim_{x \\to \\infty} \\frac{a_n x^n + \\cdots}{b_m x^m + \\cdots} = \\begin{cases} a_n/b_m, & n = m \\\\ 0, & n < m \\\\ \\pm\\infty, & n > m \\end{cases}",
+          note: "El término de mayor grado domina el comportamiento asintótico en el infinito."
+        }
+      ],
+      tips: [
+        "Verifica siempre primero la sustitución directa: nunca apliques L'Hôpital si el límite no es una indeterminación 0/0 o ∞/∞.",
+        "Para indicar infinito en CalcWeb escribe 'oo' o 'inf' después del punto y coma (ej: (3*x^2+1)/x^2 ; oo).",
+        "Si el límite por la izquierda (x₀⁻) y por la derecha (x₀⁺) no coinciden, el límite global en x₀ no existe."
+      ]
+    },
+    relatedRoutes: ["/integrales-paso-a-paso", "/series-taylor", "/series-numericas"],
+    faqs: [
+      {
+        q: "¿Cuándo se puede aplicar la Regla de L'Hôpital?",
+        a: "Únicamente cuando al evaluar el límite de un cociente f(x)/g(x) se obtiene una indeterminación del tipo 0/0 o ∞/∞, y ambas funciones son derivables en un entorno del punto x0. Si tras derivar sigue dando 0/0 o ∞/∞, puede reiterarse el proceso."
+      },
+      {
+        q: "¿Cómo se resuelven las indeterminaciones del tipo 1^∞?",
+        a: "Se toma logaritmo neperiano o se aplica la fórmula exponencial L = exp(lim g(x)·(f(x) - 1)). Esto transforma la indeterminación exponencial en un producto o cociente resoluble por L'Hôpital."
+      },
+      {
+        q: "¿Cuál es el error más común al aplicar L'Hôpital?",
+        a: "Aplicar la regla de derivación de un cociente (f'g - fg')/g² en lugar de derivar el numerador f'(x) y el denominador g'(x) de forma independiente, o aplicarla sin comprobar antes que existe indeterminación 0/0 o ∞/∞."
+      },
+      {
+        q: "¿Cómo saber si una función tiene asíntota horizontal usando límites?",
+        a: "Calculando el límite cuando x → +∞ y x → -∞. Si lim f(x) = L (un número finito), entonces la recta horizontal y = L es una asíntota horizontal de la gráfica."
+      }
+    ]
+  },
+  {
+    id: "bode",
+    route: "/diagrama-de-bode",
+    title: "Calculadora de Diagrama de Bode y Polos/Ceros de H(s) Paso a Paso",
+    shortTitle: "Diagrama de Bode H(s)",
+    category: "Señales y Sistemas",
+    categoryBadge: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+    metaDescription: "Calculadora online de Diagrama de Bode (magnitud en dB y fase en grados) y análisis de polos/ceros de funciones de transferencia H(s) con gráfica logarítmica interactiva.",
+    h1: "Diagrama de Bode y Análisis de Polos/Ceros H(s)",
+    subtitle: "Factorización de H(s), cálculo de polos, ceros y estabilidad, forma normalizada en constantes de tiempo, ganancia en dB y trazado logarítmico de magnitud y fase.",
+    formulaPreview: "H(j\\omega) \\implies M_{\\text{dB}}(\\omega) = 20\\log_{10}|H(j\\omega)|, \\quad \\phi(\\omega) = \\angle H(j\\omega)",
+    keywords: ["diagrama de bode", "bode", "funcion de transferencia", "polos y ceros", "decibelios", "frecuencia de corte", "control automatico", "filtros", "señales y sistemas"],
+    hasDirectionToggle: false,
+    placeholderDirect: "Función de transferencia H(s) -> Ej: 100/(s + 10)  o  10*(s + 2)/(s*(s + 10))",
+    defaultExpr: "100/(s + 10)",
+    defaultDirection: "direct",
+    examExamples: [
+      {
+        label: "Paso Bajo 1er Orden",
+        badge: "Examen Típico 1",
+        latexLabel: "H(s) = \\frac{100}{s + 10}",
+        expr: "100/(s + 10)",
+        direction: "direct"
+      },
+      {
+        label: "Paso Alto / Cero en Origen",
+        badge: "Examen Típico 2",
+        latexLabel: "H(s) = \\frac{10s}{s + 20}",
+        expr: "10*s/(s + 20)",
+        direction: "direct"
+      },
+      {
+        label: "2º Orden Subamortiguado",
+        badge: "Examen Típico 3",
+        latexLabel: "H(s) = \\frac{100}{s^2 + 4s + 100}",
+        expr: "100/(s^2 + 4*s + 100)",
+        direction: "direct"
+      },
+      {
+        label: "Integrador + Cero + Polo",
+        badge: "Examen Típico 4",
+        latexLabel: "H(s) = \\frac{10(s + 2)}{s(s + 10)}",
+        expr: "10*(s + 2)/(s*(s + 10))",
+        direction: "direct"
+      }
+    ],
+    guide: {
+      title: "Guía Rápida y Fórmulas Clave: Trazado de Diagramas de Bode y Estabilidad",
+      intro: "El Diagrama de Bode representa la respuesta en frecuencia de un sistema LTI H(s) evaluado en s = jω mediante dos gráficas en escala logarítmica de frecuencia ω (rad/s): la magnitud en decibelios 20·log₁₀|H(jω)| y la fase en grados ∠H(jω). Normalizar H(s) en factores (1 + s/ω_c) permite leer al instante las frecuencias de corte y las pendientes asintóticas.",
+      formulas: [
+        {
+          name: "Forma Normalizada de Bode (Constantes de Tiempo)",
+          latex: "H(s) = K_0 \\cdot s^{\\pm m} \\cdot \\frac{\\prod (1 + s/z_i)}{\\prod (1 + s/p_j)}, \\qquad K_{\\text{dB}} = 20\\log_{10}|K_0|",
+          note: "Extraer cada raíz p_j convierte (s + p_j) en p_j(1 + s/p_j), revelando la ganancia estática K_0 y la frecuencia de corte ω_c = |p_j|."
+        },
+        {
+          name: "Pendientes Asintóticas en Magnitud (dB/década)",
+          latex: "\\text{Cero simple: } +20\\,\\text{dB/dec}, \\qquad \\text{Polo simple: } -20\\,\\text{dB/dec}, \\qquad \\text{Polo doble: } -40\\,\\text{dB/dec}",
+          note: "Cada integrador 1/s aporta -20 dB/dec desde ω → 0 y una fase constante de -90°."
+        },
+        {
+          name: "Respuesta en Frecuencia de 2º Orden Subamortiguado",
+          latex: "H(s) = \\frac{\\omega_n^2}{s^2 + 2\\zeta\\omega_n s + \\omega_n^2}, \\qquad M_{\\text{pico}} \\text{ si } \\zeta < \\frac{1}{\\sqrt{2}}",
+          note: "En ω = ω_n la fase pasa exactamente por -90° y la pendiente cambia en -40 dB/dec."
+        },
+        {
+          name: "Criterio de Estabilidad BIBO en el Plano s",
+          latex: "\\text{Estable} \\iff \\operatorname{Re}(p_k) < 0 \\quad \\forall\\text{ polo } p_k",
+          note: "Todos los polos deben situarse en el semiplano izquierdo abierto; polos en jω o Re(s) > 0 provocan oscilación sostenida o inestabilidad."
+        }
+      ],
+      tips: [
+        "En la frecuencia de corte ω_c de un polo real simple, la ganancia real cae exactamente -3.01 dB respecto a la asíntota y la fase vale -45°.",
+        "Para calcular la ganancia en dB de potencias de 10: K = 1 → 0 dB, K = 10 → 20 dB, K = 100 → 40 dB, K = 2 → +6 dB.",
+        "Los polos y ceros en el origen (s^m) determinan la pendiente inicial a bajas frecuencias (ω → 0)."
+      ]
+    },
+    relatedRoutes: ["/transformada-laplace", "/transformada-fourier", "/ecuaciones-diferenciales"],
+    faqs: [
+      {
+        q: "¿Cómo se pasa una función de transferencia H(s) a forma normalizada de Bode?",
+        a: "Se factorizan el numerador y el denominador y se saca factor común la parte constante de cada binomio lineal (s + a) = a(1 + s/a) o cuadrático. Las constantes extraídas se agrupan en la ganancia K_0, que en decibelios vale 20·log10|K_0|."
+      },
+      {
+        q: "¿Qué pendiente aporta cada polo y cada cero en el Diagrama de Bode?",
+        a: "Cada cero real simple aporta +20 dB/década a partir de su frecuencia de corte ω_c = |z_i| y suma +90° de fase total. Cada polo real simple aporta -20 dB/década a partir de ω_c = |p_j| y resta -90° de fase total."
+      },
+      {
+        q: "¿Por qué en la frecuencia de corte la magnitud cae 3 dB?",
+        a: "En ω = ω_c para un polo simple 1/(1 + jω/ω_c), el módulo vale 1/√(1² + 1²) = 1/√2 ≈ 0.7071, lo que en decibelios equivale a 20·log10(1/√2) ≈ -3.01 dB."
+      },
+      {
+        q: "¿Cómo se determina la estabilidad de H(s) a partir de sus polos?",
+        a: "Un sistema LTI causal es estable (BIBO) si y solo si todos los polos de su función de transferencia H(s) tienen parte real estrictamente negativa (Re(p_k) < 0), es decir, están en el semiplano izquierdo del plano complejo s."
+      }
+    ]
+  },
+  {
+    id: "matops",
+    route: "/determinante-inversa-matriz",
+    title: "Calculadora de Determinante, Inversa y Rango de Matrices Paso a Paso",
+    shortTitle: "Determinante, Inversa y Rango",
+    category: "Álgebra Lineal y Circuitos",
+    categoryBadge: "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 border-purple-200 dark:border-purple-800",
+    metaDescription: "Calculadora online de determinante (Sarrus y cofactores), matriz adjunta, matriz inversa A⁻¹ y rango de matrices 2x2, 3x3 y 4x4 paso a paso con fracciones exactas.",
+    h1: "Determinante, Matriz Inversa A⁻¹ y Rango Paso a Paso",
+    subtitle: "Cálculo exacto del determinante (fórmula 2×2, Sarrus/cofactores 3×3), rango rg(A), matriz de cofactores C, adjunta adj(A) = Cᵀ y matriz inversa A⁻¹ en fracciones.",
+    formulaPreview: "A^{-1} = \\frac{1}{\\det(A)}\\operatorname{adj}(A) = \\frac{1}{|A|}C^T \\qquad (|A| \\ne 0)",
+    keywords: ["determinante", "matriz inversa", "adjunta", "cofactores", "rango de matriz", "sarrus", "matriz singular", "algebra lineal"],
+    hasDirectionToggle: false,
+    placeholderDirect: "Filas separadas por ';' -> Ej: 2, 1, 0; 1, 3, 1; 0, 1, 2  o  4, 7; 2, 6",
+    defaultExpr: "2, 1, 0; 1, 3, 1; 0, 1, 2",
+    defaultDirection: "direct",
+    examExamples: [
+      {
+        label: "Matriz 3×3 Invertible",
+        badge: "Examen Típico 1",
+        latexLabel: "A = \\begin{pmatrix} 2 & 1 & 0 \\\\ 1 & 3 & 1 \\\\ 0 & 1 & 2 \\end{pmatrix}",
+        expr: "2, 1, 0; 1, 3, 1; 0, 1, 2",
+        direction: "direct"
+      },
+      {
+        label: "Matriz 2×2 Invertible",
+        badge: "Examen Típico 2",
+        latexLabel: "A = \\begin{pmatrix} 4 & 7 \\\\ 2 & 6 \\end{pmatrix}",
+        expr: "4, 7; 2, 6",
+        direction: "direct"
+      },
+      {
+        label: "Matriz 3×3 Singular (det = 0)",
+        badge: "Examen Típico 3",
+        latexLabel: "A = \\begin{pmatrix} 1 & 2 & 3 \\\\ 4 & 5 & 6 \\\\ 7 & 8 & 9 \\end{pmatrix}",
+        expr: "1, 2, 3; 4, 5, 6; 7, 8, 9",
+        direction: "direct"
+      },
+      {
+        label: "Matriz 3×3 Triangular Superior",
+        badge: "Examen Típico 4",
+        latexLabel: "A = \\begin{pmatrix} 2 & -1 & 3 \\\\ 0 & 4 & 5 \\\\ 0 & 0 & -2 \\end{pmatrix}",
+        expr: "2, -1, 3; 0, 4, 5; 0, 0, -2",
+        direction: "direct"
+      }
+    ],
+    guide: {
+      title: "Guía Rápida y Fórmulas Clave: Determinante, Adjunta, Inversa y Rango",
+      intro: "Una matriz cuadrada A ∈ ℝ^{n×n} es invertible (regular) si y solo si su determinante es distinto de cero (|A| ≠ 0), lo cual equivale a tener rango completo rg(A) = n. El método clásico de la matriz adjunta obtiene A⁻¹ dividiendo la traspuesta de la matriz de cofactores entre det(A).",
+      formulas: [
+        {
+          name: "Inversa 2×2 Directa y Fórmula General por Adjunta",
+          latex: "\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}^{-1} = \\frac{1}{ad - bc}\\begin{pmatrix} d & -b \\\\ -c & a \\end{pmatrix}, \\qquad A^{-1} = \\frac{1}{|A|}\\operatorname{adj}(A)",
+          note: "En 2×2 basta intercambiar la diagonal principal, cambiar el signo a la secundaria y dividir por ad - bc."
+        },
+        {
+          name: "Matriz de Cofactores (Adjuntos) C_{ij}",
+          latex: "C_{ij} = (-1)^{i+j}\\,M_{ij}, \\qquad \\operatorname{adj}(A) = C^T",
+          note: "M_{ij} es el menor complementario (determinante de la submatriz al eliminar fila i y columna j); no olvides trasponer C al final."
+        },
+        {
+          name: "Regla de Sarrus (Determinante 3×3)",
+          latex: "|A| = (a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32}) - (a_{13}a_{22}a_{31} + a_{11}a_{23}a_{32} + a_{12}a_{21}a_{33})",
+          note: "Para matrices triangulares (ceros bajo o sobre la diagonal), |A| es directamente el producto de los elementos diagonales."
+        },
+        {
+          name: "Relación entre Determinante, Rango e Invertibilidad",
+          latex: "\\det(A) \\ne 0 \\iff \\operatorname{rg}(A) = n \\iff \\exists A^{-1}",
+          note: "Si una fila o columna es combinación lineal de las demás, |A| = 0 y la matriz es singular (sin inversa)."
+        }
+      ],
+      tips: [
+        "El error más frecuente al calcular A⁻¹ por cofactores es olvidar trasponer la matriz de cofactores C para formar adj(A) = Cᵀ.",
+        "Comprueba siempre tu resultado verificando que el producto A · A⁻¹ da exactamente la matriz identidad I_n.",
+        "Si det(A) = 0, detente de inmediato: la matriz es singular y no admite inversa."
+      ]
+    },
+    relatedRoutes: ["/diagonalizacion-matrices", "/sistemas-ecuaciones-gauss", "/calculadora-fasores-complejos"],
+    faqs: [
+      {
+        q: "¿Cuándo existe la matriz inversa A⁻¹ de una matriz cuadrada A?",
+        a: "Una matriz cuadrada A de orden n tiene inversa si y solo si su determinante es distinto de cero (det(A) ≠ 0), lo que equivale a que sus n filas (o columnas) sean linealmente independientes y su rango sea igual a n."
+      },
+      {
+        q: "¿Cómo se calcula la matriz inversa mediante cofactores y adjunta?",
+        a: "Se siguen 4 pasos: 1) Calcular det(A) y verificar que no es cero, 2) Calcular cada cofactor C_ij = (-1)^{i+j} M_ij formando la matriz C, 3) Trasponer C para obtener la matriz adjunta adj(A) = Cᵀ, y 4) Dividir todos los elementos de adj(A) entre det(A)."
+      },
+      {
+        q: "¿Qué significa que una matriz tenga determinante igual a cero?",
+        a: "Significa que la matriz es singular (no invertible) y que al menos una de sus filas o columnas es combinación lineal de las otras, por lo que su rango es estrictamente menor que su dimensión (rg(A) < n)."
+      },
+      {
+        q: "¿Cuál es el determinante de una matriz triangular?",
+        a: "El determinante de cualquier matriz triangular superior o inferior (o diagonal) es igual simplemente al producto de los elementos de su diagonal principal."
+      }
+    ]
   }
 ];
 
@@ -1349,6 +1640,24 @@ const CONTEXTUAL_KEYBOARD_KEYS = {
     { label: ";", insert: "; ", tooltip: { es: "Separador de filas AC (;)", en: "AC row separator (;)", fr: "Séparateur de lignes AC (;)" } },
     { label: "M\\angle\\theta", insert: "10<30", tooltip: { es: "Fasor polar 10∠30°", en: "Polar phasor 10∠30°", fr: "Phaseur polaire 10∠30°" } },
     { label: "a+bj", insert: "(3 + 4j)", tooltip: { es: "Complejo en forma binómica", en: "Rectangular complex number", fr: "Complexe algébrique" } }
+  ],
+  limits: [
+    { label: ";\\,0", insert: " ; 0", tooltip: { es: "Límite cuando x → 0", en: "Limit as x → 0", fr: "Limite quand x → 0" } },
+    { label: ";\\,\\infty", insert: " ; oo", tooltip: { es: "Límite cuando x → ∞", en: "Limit as x → ∞", fr: "Limite quand x → ∞" } },
+    { label: "\\frac{\\sin x}{x}", insert: "sin(x)/x ; 0", tooltip: { es: "Indeterminación 0/0 trigonométrica", en: "Trigonometric 0/0 form", fr: "Forme indéterminée 0/0" } },
+    { label: "(1+\\frac{1}{x})^x", insert: "(1 + 2/x)^x ; oo", tooltip: { es: "Indeterminación exponencial 1^∞", en: "Exponential 1^∞ form", fr: "Forme indéterminée 1^∞" } }
+  ],
+  bode: [
+    { label: "s", insert: "s", tooltip: { es: "Variable compleja de Laplace s", en: "Complex Laplace variable s", fr: "Variable complexe de Laplace s" } },
+    { label: "s^2", insert: "s^2", tooltip: { es: "Término cuadrático s²", en: "Quadratic term s²", fr: "Terme quadratique s²" } },
+    { label: "\\frac{K}{s+a}", insert: "100/(s + 10)", tooltip: { es: "Filtro paso bajo de 1er orden", en: "1st-order low-pass filter", fr: "Filtre passe-bas du 1er ordre" } },
+    { label: "\\frac{s+z}{s(s+p)}", insert: "10*(s + 2)/(s*(s + 10))", tooltip: { es: "Planta con integrador, cero y polo", en: "Plant with integrator, zero & pole", fr: "Système avec intégrateur, zéro et pôle" } }
+  ],
+  matops: [
+    { label: ",", insert: ", ", tooltip: { es: "Separador de columnas (,)", en: "Column separator (,)", fr: "Séparateur de colonnes (,)" } },
+    { label: ";", insert: "; ", tooltip: { es: "Separador de filas (;)", en: "Row separator (;)", fr: "Séparateur de lignes (;)" } },
+    { label: "2\\times 2", insert: "4, 7; 2, 6", tooltip: { es: "Plantilla matriz 2×2", en: "2×2 matrix template", fr: "Modèle matrice 2×2" } },
+    { label: "3\\times 3", insert: "2, 1, 0; 1, 3, 1; 0, 1, 2", tooltip: { es: "Plantilla matriz 3×3 invertible", en: "Invertible 3×3 matrix template", fr: "Modèle matrice 3×3 inversible" } }
   ]
 };
 
@@ -2008,6 +2317,162 @@ export const CATALOG_I18N = {
           a: "Form the complex matrix equation Z·I = V using impedances R, jωL, and -j/(ωC), then apply complex Cramer's rule or Gaussian elimination to obtain each current in polar form I_m∠φ°."
         }
       ]
+    },
+    limits: {
+      title: "Step-by-Step Limits & L'Hôpital's Rule Calculator",
+      shortTitle: "Limits & L'Hôpital",
+      metaDescription: "Online step-by-step Limits and L'Hôpital's Rule calculator. Solves 0/0, ∞/∞, 1^∞ indeterminate forms and limits at infinity with iterative differentiation and 2D plotting.",
+      h1: "Limits & L'Hôpital's Rule Step-by-Step",
+      subtitle: "Symbolic evaluation of finite and infinite limits with indeterminate form detection (0/0, ∞/∞, 1^∞), iterative L'Hôpital differentiation, and horizontal asymptote check.",
+      placeholderDirect: "Format f(x) ; x0 -> e.g. sin(x)/x ; 0  or  (exp(x)-1-x)/x^2 ; 0  or  (1+2/x)^x ; oo",
+      examLabels: ["0/0 Trigonometric", "0/0 Double L'Hôpital", "Quotient ∞/∞", "Exponential 1^∞"],
+      guideTitle: "Quick Guide & Key Formulas: Limits & Indeterminate Forms",
+      guideIntro: "Limit analysis studies the local behavior of f(x) near x₀ or its asymptotic trend as x → ±∞. When direct substitution yields an indeterminate form (0/0, ∞/∞, 1^∞, ∞ - ∞), algebraic simplification, L'Hôpital's Rule, or logarithmic transforms apply.",
+      formulas: [
+        {
+          name: "L'Hôpital's Rule (0/0 and ∞/∞ Forms)",
+          note: "Differentiate numerator and denominator separately (not the quotient rule) while 0/0 or ∞/∞ persists."
+        },
+        {
+          name: "Exponential 1^∞ Indeterminate Forms (Euler's e)",
+          note: "For f(x) → 1 and g(x) → ∞, the classic limit (1 + a/x)^x evaluates directly to e^a."
+        },
+        {
+          name: "Standard Limits & Asymptotic Equivalents (x → 0)",
+          note: "Replacing multiplicative factors with asymptotic equivalents greatly simplifies limits at x = 0."
+        },
+        {
+          name: "Polynomial Degree Rules (x → ∞)",
+          note: "The highest-degree term dominates asymptotic behavior at infinity."
+        }
+      ],
+      tips: [
+        "Always check direct substitution first: never apply L'Hôpital's Rule unless the limit is 0/0 or ∞/∞.",
+        "To enter infinity in CalcWeb, type 'oo' or 'inf' after the semicolon (e.g. (3*x^2+1)/x^2 ; oo).",
+        "If left-hand (x₀⁻) and right-hand (x₀⁺) limits disagree, the two-sided limit does not exist."
+      ],
+      faqs: [
+        {
+          q: "When can L'Hôpital's Rule be applied?",
+          a: "Only when evaluating f(x)/g(x) produces an indeterminate form 0/0 or ∞/∞ and both functions are differentiable near x0."
+        },
+        {
+          q: "How do you solve 1^∞ exponential indeterminate forms?",
+          a: "Take the natural logarithm or use L = exp(lim g(x)·(f(x) - 1)), converting the form into a product/quotient solvable by L'Hôpital's Rule."
+        },
+        {
+          q: "What is the most common mistake with L'Hôpital's Rule?",
+          a: "Using the quotient rule (f'g - fg')/g² instead of differentiating numerator f'(x) and denominator g'(x) independently."
+        },
+        {
+          q: "How do you find horizontal asymptotes using limits?",
+          a: "Evaluate the limit as x → +∞ and x → -∞. If lim f(x) = L (finite), then y = L is a horizontal asymptote."
+        }
+      ]
+    },
+    bode: {
+      title: "Step-by-Step Bode Plot & Transfer Function Poles/Zeros Calculator",
+      shortTitle: "Bode Plot H(s)",
+      metaDescription: "Online Bode Plot (magnitude in dB and phase in degrees) and pole-zero stability calculator for transfer functions H(s) with interactive logarithmic frequency plotting.",
+      h1: "Bode Plot & Pole-Zero Analysis H(s)",
+      subtitle: "Factorization of H(s), poles, zeros & stability check, Bode time-constant normal form, DC gain in dB, and logarithmic magnitude/phase plotting.",
+      placeholderDirect: "Transfer function H(s) -> e.g. 100/(s + 10)  or  10*(s + 2)/(s*(s + 10))",
+      examLabels: ["1st-Order Low-Pass", "High-Pass / Origin Zero", "2nd-Order Underdamped", "Integrator + Zero + Pole"],
+      guideTitle: "Quick Guide & Key Formulas: Bode Plots & Stability",
+      guideIntro: "A Bode plot graphs the frequency response H(jω) of an LTI system on a logarithmic frequency axis ω (rad/s): magnitude in decibels 20·log₁₀|H(jω)| and phase in degrees ∠H(jω). Factoring H(s) into (1 + s/ω_c) terms exposes cutoff frequencies and asymptotic slopes.",
+      formulas: [
+        {
+          name: "Bode Normalized Form (Time Constants)",
+          note: "Factoring out p_j turns (s + p_j) into p_j(1 + s/p_j), revealing DC gain K_0 and cutoff ω_c = |p_j|."
+        },
+        {
+          name: "Asymptotic Magnitude Slopes (dB/decade)",
+          note: "Each integrator 1/s adds -20 dB/dec from ω → 0 and a constant -90° phase shift."
+        },
+        {
+          name: "2nd-Order Underdamped Frequency Response",
+          note: "At ω = ω_n the phase crosses -90° and the asymptotic slope drops by -40 dB/dec."
+        },
+        {
+          name: "BIBO Stability Criterion in the s-Plane",
+          note: "All poles must lie in the open left-half plane Re(p_k) < 0 for asymptotic stability."
+        }
+      ],
+      tips: [
+        "At the cutoff frequency ω_c of a simple real pole, actual magnitude is -3.01 dB below the asymptote and phase is -45°.",
+        "Quick dB conversions: K = 1 → 0 dB, K = 10 → 20 dB, K = 100 → 40 dB, K = 2 → +6 dB.",
+        "Poles and zeros at the origin (s^m) set the initial low-frequency slope as ω → 0."
+      ],
+      faqs: [
+        {
+          q: "How do you convert H(s) to Bode normalized form?",
+          a: "Factor numerator and denominator and pull out the constant term from each (s + a) = a(1 + s/a) factor; the combined constants form the gain K_0 (in dB: 20·log10|K_0|)."
+        },
+        {
+          q: "What slope does each pole or zero contribute?",
+          a: "Each simple real zero adds +20 dB/dec above ω_c = |z_i| (+90° phase), while each simple real pole subtracts -20 dB/dec above ω_c = |p_j| (-90° phase)."
+        },
+        {
+          q: "Why does magnitude drop by 3 dB at the cutoff frequency?",
+          a: "At ω = ω_c for 1/(1 + jω/ω_c), the magnitude is 1/√2 ≈ 0.7071, which equals 20·log10(1/√2) ≈ -3.01 dB."
+        },
+        {
+          q: "How do you determine stability from poles?",
+          a: "A causal LTI system is BIBO-stable if and only if all poles of H(s) have strictly negative real part (Re(p_k) < 0)."
+        }
+      ]
+    },
+    matops: {
+      title: "Step-by-Step Matrix Determinant, Inverse & Rank Calculator",
+      shortTitle: "Determinant, Inverse & Rank",
+      metaDescription: "Online step-by-step calculator for matrix determinant (Sarrus & cofactors), adjugate matrix, inverse A⁻¹ in exact fractions, and rank for 2x2, 3x3, and 4x4 matrices.",
+      h1: "Matrix Determinant, Inverse A⁻¹ & Rank Step-by-Step",
+      subtitle: "Exact computation of determinant (2×2 formula, 3×3 Sarrus/cofactors), rank(A), cofactor matrix C, adjugate adj(A) = Cᵀ, and inverse A⁻¹ in exact fractions.",
+      placeholderDirect: "Rows separated by ';' -> e.g. 2, 1, 0; 1, 3, 1; 0, 1, 2  or  4, 7; 2, 6",
+      examLabels: ["Invertible 3×3 Matrix", "Invertible 2×2 Matrix", "Singular 3×3 Matrix (det = 0)", "Upper Triangular 3×3 Matrix"],
+      guideTitle: "Quick Guide & Key Formulas: Determinant, Adjugate, Inverse & Rank",
+      guideIntro: "A square matrix A ∈ ℝ^{n×n} is invertible if and only if det(A) ≠ 0 (equivalently rank(A) = n). The classical adjugate method computes A⁻¹ by transposing the cofactor matrix and dividing by det(A).",
+      formulas: [
+        {
+          name: "Direct 2×2 Inverse & General Adjugate Formula",
+          note: "For 2×2 matrices, swap main diagonal entries, negate off-diagonal entries, and divide by ad - bc."
+        },
+        {
+          name: "Cofactor Matrix C_{ij} & Adjugate",
+          note: "M_{ij} is the minor determinant after deleting row i and column j; remember to transpose C to form adj(A) = Cᵀ."
+        },
+        {
+          name: "Sarrus' Rule (3×3 Determinant)",
+          note: "For triangular matrices, |A| is simply the product of the main diagonal entries."
+        },
+        {
+          name: "Determinant, Rank & Invertibility Equivalence",
+          note: "If any row or column is a linear combination of the others, |A| = 0 and A is singular."
+        }
+      ],
+      tips: [
+        "The most common mistake when computing A⁻¹ via cofactors is forgetting to transpose C into adj(A) = Cᵀ.",
+        "Always verify your inverse by checking that A · A⁻¹ equals the identity matrix I_n.",
+        "If det(A) = 0, stop immediately: the matrix is singular and has no inverse."
+      ],
+      faqs: [
+        {
+          q: "When does the inverse matrix A⁻¹ exist?",
+          a: "A square n×n matrix is invertible if and only if det(A) ≠ 0, which is equivalent to having full rank(A) = n."
+        },
+        {
+          q: "How do you compute the inverse using cofactors and the adjugate?",
+          a: "Compute det(A) ≠ 0, build the cofactor matrix C_ij = (-1)^{i+j} M_ij, transpose it to get adj(A) = Cᵀ, and divide by det(A)."
+        },
+        {
+          q: "What does det(A) = 0 mean?",
+          a: "It means A is singular (not invertible) because its rows/columns are linearly dependent and rank(A) < n."
+        },
+        {
+          q: "What is the determinant of a triangular matrix?",
+          a: "The determinant of any upper/lower triangular or diagonal matrix is simply the product of its main diagonal entries."
+        }
+      ]
     }
   },
   fr: {
@@ -2655,6 +3120,162 @@ export const CATALOG_I18N = {
           a: "On pose le système matriciel complexe Z·I = V puis on applique les formules de Cramer complexes pour obtenir chaque courant sous forme polaire I_m∠φ°."
         }
       ]
+    },
+    limits: {
+      title: "Calculatrice de Limites et Règle de L'Hôpital Étape par Étape",
+      shortTitle: "Limites et L'Hôpital",
+      metaDescription: "Calculatrice en ligne de limites de fonctions et Règle de L'Hôpital étape par étape. Résout formes indéterminées 0/0, ∞/∞, 1^∞ et limites à l'infini avec graphique 2D.",
+      h1: "Limites et Règle de L'Hôpital Étape par Étape",
+      subtitle: "Évaluation symbolique des limites finies et à l'infini avec détection des formes indéterminées (0/0, ∞/∞, 1^∞), dérivation itérative de L'Hôpital et asymptotes.",
+      placeholderDirect: "Format f(x) ; x0 -> Ex : sin(x)/x ; 0  ou  (exp(x)-1-x)/x^2 ; 0  ou  (1+2/x)^x ; oo",
+      examLabels: ["0/0 Trigonométrique", "0/0 Double L'Hôpital", "Quotient ∞/∞", "Exponentielle 1^∞"],
+      guideTitle: "Guide Rapide et Formules Clés : Calcul de Limites et Formes Indéterminées",
+      guideIntro: "L'étude des limites décrit le comportement local de f(x) autour de x₀ ou son comportement asymptotique quand x → ±∞. En cas de forme indéterminée (0/0, ∞/∞, 1^∞, ∞ - ∞), on applique simplification algébrique, règle de L'Hôpital ou passage à l'exponentielle.",
+      formulas: [
+        {
+          name: "Règle de L'Hôpital (Formes 0/0 et ∞/∞)",
+          note: "Dérivez numérateur et dénominateur séparément (jamais comme un quotient) tant que 0/0 ou ∞/∞ persiste."
+        },
+        {
+          name: "Formes Indéterminées Exponentielles 1^∞ (Nombre e)",
+          note: "Pour f(x) → 1 et g(x) → ∞, la limite classique (1 + a/x)^x vaut exactement e^a."
+        },
+        {
+          name: "Équivalents Usuels en x → 0",
+          note: "Remplacer les facteurs multiplicatifs par leurs équivalents accélère fortement les calculs en x = 0."
+        },
+        {
+          name: "Règle des Termes Prépondérants (x → ∞)",
+          note: "Le terme de plus haut degré gouverne le comportement asymptotique à l'infini."
+        }
+      ],
+      tips: [
+        "Vérifiez toujours d'abord par substitution directe : n'appliquez L'Hôpital que pour 0/0 ou ∞/∞.",
+        "Pour saisir l'infini dans CalcWeb, écrivez 'oo' ou 'inf' après le point-virgule (ex : (3*x^2+1)/x^2 ; oo).",
+        "Si les limites à gauche (x₀⁻) et à droite (x₀⁺) diffèrent, la limite globale en x₀ n'existe pas."
+      ],
+      faqs: [
+        {
+          q: "Quand peut-on appliquer la Règle de L'Hôpital ?",
+          a: "Uniquement lorsque le quotient f(x)/g(x) mène à une forme indéterminée 0/0 ou ∞/∞ et que les deux fonctions sont dérivables au voisinage de x0."
+        },
+        {
+          q: "Comment lever une forme indéterminée 1^∞ ?",
+          a: "On passe au logarithme ou à l'exponentielle : L = exp(lim g(x)·(f(x) - 1)), ramenant le calcul à un produit/quotient."
+        },
+        {
+          q: "Quelle est l'erreur la plus fréquente avec L'Hôpital ?",
+          a: "Dériver f(x)/g(x) avec la formule du quotient (f'g - fg')/g² au lieu de dériver f'(x) et g'(x) séparément."
+        },
+        {
+          q: "Comment détecter une asymptote horizontale par les limites ?",
+          a: "Si lim_{x→±∞} f(x) = L (fini), la droite y = L est asymptote horizontale."
+        }
+      ]
+    },
+    bode: {
+      title: "Calculatrice de Diagramme de Bode et Pôles/Zéros H(s) Étape par Étape",
+      shortTitle: "Diagramme de Bode H(s)",
+      metaDescription: "Calculatrice en ligne de Diagramme de Bode (gain en dB et phase en degrés) et stabilité des pôles/zéros de H(s) avec tracé logarithmique interactif.",
+      h1: "Diagramme de Bode et Analyse Pôles/Zéros H(s)",
+      subtitle: "Factorisation de H(s), pôles, zéros et stabilité, forme normalisée de Bode, gain en dB et tracé logarithmique du module et de la phase.",
+      placeholderDirect: "Fonction de transfert H(s) -> Ex : 100/(s + 10)  ou  10*(s + 2)/(s*(s + 10))",
+      examLabels: ["Passe-Bas 1er Ordre", "Passe-Haut / Zéro Origine", "2nd Ordre Sous-Amorti", "Intégrateur + Zéro + Pôle"],
+      guideTitle: "Guide Rapide et Formules Clés : Diagrammes de Bode et Stabilité",
+      guideIntro: "Le diagramme de Bode trace la réponse fréquentielle H(jω) d'un système LTI sur une échelle logarithmique de pulsation ω (rad/s) : module en décibels 20·log₁₀|H(jω)| et phase en degrés ∠H(jω).",
+      formulas: [
+        {
+          name: "Forme Normalisée de Bode (Constantes de Temps)",
+          note: "Factoriser p_j transforme (s + p_j) en p_j(1 + s/p_j), révélant le gain statique K_0 et la pulsation de coupure ω_c = |p_j|."
+        },
+        {
+          name: "Pentes Asymptotiques en Module (dB/décade)",
+          note: "Chaque intégrateur 1/s impose -20 dB/déc dès ω → 0 et une phase constante de -90°."
+        },
+        {
+          name: "Réponse Fréquentielle du 2nd Ordre Sous-Amorti",
+          note: "En ω = ω_n, la phase vaut exactement -90° et la pente chute de -40 dB/déc."
+        },
+        {
+          name: "Critère de Stabilité BIBO dans le Plan s",
+          note: "Tous les pôles doivent appartenir au demi-plan gauche ouvert Re(p_k) < 0."
+        }
+      ],
+      tips: [
+        "À la pulsation de coupure ω_c d'un pôle simple, le module réel chute de -3.01 dB sous l'asymptote et la phase vaut -45°.",
+        "Conversions rapides en dB : K = 1 → 0 dB, K = 10 → 20 dB, K = 100 → 40 dB, K = 2 → +6 dB.",
+        "Les pôles et zéros à l'origine (s^m) fixent la pente initiale aux basses fréquences (ω → 0)."
+      ],
+      faqs: [
+        {
+          q: "Comment mettre H(s) sous forme normalisée de Bode ?",
+          a: "Factorisez numérateur et dénominateur puis mettez la constante en facteur dans chaque (s + a) = a(1 + s/a) pour isoler le gain K_0 (en dB : 20·log10|K_0|)."
+        },
+        {
+          q: "Quelle pente apporte chaque pôle ou zéro ?",
+          a: "Chaque zéro réel simple ajoute +20 dB/décade (+90° de phase) ; chaque pôle réel simple retranche -20 dB/décade (-90° de phase)."
+        },
+        {
+          q: "Pourquoi perd-on 3 dB à la pulsation de coupure ?",
+          a: "En ω = ω_c pour 1/(1 + jω/ω_c), le module vaut 1/√2 ≈ 0.7071, soit 20·log10(1/√2) ≈ -3.01 dB."
+        },
+        {
+          q: "Comment vérifier la stabilité de H(s) ?",
+          a: "Un système LTI causal est stable ssi tous les pôles de H(s) ont une partie réelle strictement négative (Re(p_k) < 0)."
+        }
+      ]
+    },
+    matops: {
+      title: "Calculatrice de Déterminant, Inverse et Rang de Matrices Étape par Étape",
+      shortTitle: "Déterminant, Inverse & Rang",
+      metaDescription: "Calculatrice en ligne de déterminant (Sarrus et cofacteurs), comatrice, matrice inverse A⁻¹ en fractions exactes et rang pour matrices 2x2, 3x3 et 4x4.",
+      h1: "Déterminant, Matrice Inverse A⁻¹ et Rang Étape par Étape",
+      subtitle: "Calcul exact du déterminant (formule 2×2, Sarrus/cofacteurs 3×3), rang rg(A), comatrice C, adjointe adj(A) = Cᵀ et inverse A⁻¹ en fractions exactes.",
+      placeholderDirect: "Lignes séparées par ';' -> Ex : 2, 1, 0; 1, 3, 1; 0, 1, 2  ou  4, 7; 2, 6",
+      examLabels: ["Matrice 3×3 Inversible", "Matrice 2×2 Inversible", "Matrice 3×3 Singulière (det = 0)", "Matrice 3×3 Triangulaire Supérieure"],
+      guideTitle: "Guide Rapide et Formules Clés : Déterminant, Comatrice, Inverse et Rang",
+      guideIntro: "Une matrice carrée A ∈ ℝ^{n×n} est inversible ssi det(A) ≠ 0 (soit rg(A) = n). La méthode par comatrice donne A⁻¹ en transposant la matrice des cofacteurs puis en divisant par det(A).",
+      formulas: [
+        {
+          name: "Inverse 2×2 Directe et Formule Générale par Adjointe",
+          note: "En 2×2, permutez la diagonale principale, opposez l'antidiagonale et divisez par ad - bc."
+        },
+        {
+          name: "Matrice des Cofacteurs (Comatrice) C_{ij}",
+          note: "M_{ij} est le mineur obtenu en supprimant la ligne i et la colonne j ; n'oubliez pas de transposer C pour adj(A) = Cᵀ."
+        },
+        {
+          name: "Règle de Sarrus (Déterminant 3×3)",
+          note: "Pour une matrice triangulaire, |A| est simplement le produit des termes diagonaux."
+        },
+        {
+          name: "Équivalence Déterminant, Rang et Inversibilité",
+          note: "Si une ligne ou colonne est combinaison linéaire des autres, |A| = 0 et A est singulière."
+        }
+      ],
+      tips: [
+        "L'erreur la plus fréquente est d'oublier de transposer la comatrice C pour former adj(A) = Cᵀ.",
+        "Vérifiez toujours votre résultat en contrôlant que A · A⁻¹ = I_n.",
+        "Si det(A) = 0, la matrice est singulière et n'admet pas d'inverse."
+      ],
+      faqs: [
+        {
+          q: "Quand la matrice inverse A⁻¹ existe-t-elle ?",
+          a: "Une matrice carrée d'ordre n est inversible ssi det(A) ≠ 0, ce qui équivaut à rg(A) = n."
+        },
+        {
+          q: "Comment calculer l'inverse par la comatrice ?",
+          a: "Calculez det(A) ≠ 0, formez la comatrice C_ij = (-1)^{i+j} M_ij, transposez-la en adj(A) = Cᵀ et divisez par det(A)."
+        },
+        {
+          q: "Que signifie un déterminant nul ?",
+          a: "La matrice est singulière (non inversible) car ses lignes/colonnes sont liées et rg(A) < n."
+        },
+        {
+          q: "Quel est le déterminant d'une matrice triangulaire ?",
+          a: "C'est simplement le produit des éléments de sa diagonale principale."
+        }
+      ]
     }
   }
 };
@@ -2678,7 +3299,7 @@ export const LEGAL_I18N = {
         },
         {
           heading: "3. Covered Engineering Disciplines",
-          body: "Our 12 modules cover core undergraduate courses in Electrical, Mechanical, Aerospace, Computer Engineering, and Mathematics: Signals & Systems (Fourier Transform, Laplace Transform, Z-Transform, Convolution, Fourier Series), Calculus & Differential Equations (Step-by-Step Integrals, 1st & 2nd Order ODEs, Taylor Series, Numerical Series), and Linear Algebra & AC Circuits (Matrix Diagonalization, Gauss-Jordan Elimination, and AC Phasors)."
+          body: "Our 15 modules cover core undergraduate courses in Electrical, Mechanical, Aerospace, Computer Engineering, and Mathematics: Signals & Systems (Fourier Transform, Laplace Transform, Z-Transform, Convolution, Fourier Series, Bode Plot), Calculus & Differential Equations (Step-by-Step Integrals, Limits & L'Hôpital, 1st & 2nd Order ODEs, Taylor Series, Numerical Series), and Linear Algebra & AC Circuits (Matrix Diagonalization, Determinant & Inverse, Gauss-Jordan Elimination, and AC Phasors)."
         },
         {
           heading: "4. Academic Contact & Feedback",
@@ -2755,7 +3376,7 @@ export const LEGAL_I18N = {
         },
         {
           heading: "3. Domaines d'Ingénierie Couverts",
-          body: "Nos 12 modules couvrent les matières fondamentales des écoles d'ingénieurs et licences scientifiques : Signaux et Systèmes (Transformées de Fourier, Laplace, en Z, Convolution, Séries de Fourier), Calcul Infinitésimal et Équations Différentielles (Intégrales étape par étape, EDO du 1er et 2nd ordre, Séries de Taylor, Séries Numériques) et Algèbre Linéaire & Circuits AC (Diagonalisation, Pivot de Gauss-Jordan et Phaseurs)."
+          body: "Nos 15 modules couvrent les matières fondamentales des écoles d'ingénieurs et licences scientifiques : Signaux et Systèmes (Transformées de Fourier, Laplace, en Z, Convolution, Séries de Fourier, Diagramme de Bode), Calcul Infinitésimal et Équations Différentielles (Intégrales étape par étape, Limites & L'Hôpital, EDO du 1er et 2nd ordre, Séries de Taylor, Séries Numériques) et Algèbre Linéaire & Circuits AC (Diagonalisation, Déterminant & Inverse, Pivot de Gauss-Jordan et Phaseurs)."
         },
         {
           heading: "4. Contact Académique",

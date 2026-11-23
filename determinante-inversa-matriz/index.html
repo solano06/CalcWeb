@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="build-version" content="mwtl2cdu">
+  <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
+  <title>Calculadora de Determinante, Inversa y Rango de Matrices Paso a Paso | CalcWeb</title>
+  <meta name="description" content="Calculadora online de determinante (Sarrus y cofactores), matriz adjunta, matriz inversa A⁻¹ y rango de matrices 2x2, 3x3 y 4x4 paso a paso con fracciones exactas.">
+  <meta name="keywords" content="determinante, matriz inversa, adjunta, cofactores, rango de matriz, sarrus, matriz singular, algebra lineal">
+  <link rel="canonical" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz">
+  <link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz">
+  <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/matrix-determinant-inverse">
+  <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/determinant-inverse-matrice">
+  <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz">
+
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
+
+  <!-- Favicon & Mobile PWA Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="CalcWeb">
+  <meta property="og:title" content="Calculadora de Determinante, Inversa y Rango de Matrices Paso a Paso | CalcWeb">
+  <meta property="og:description" content="Calculadora online de determinante (Sarrus y cofactores), matriz adjunta, matriz inversa A⁻¹ y rango de matrices 2x2, 3x3 y 4x4 paso a paso con fracciones exactas.">
+  <meta property="og:url" content="https://matespasoapaso.vercel.app/determinante-inversa-matriz">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculadora de Determinante, Inversa y Rango de Matrices Paso a Paso | CalcWeb">
+  <meta name="twitter:description" content="Calculadora online de determinante (Sarrus y cofactores), matriz adjunta, matriz inversa A⁻¹ y rango de matrices 2x2, 3x3 y 4x4 paso a paso con fracciones exactas.">
+  <meta name="twitter:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+
+  <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtl2cdu">
+
+  <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
+  <script id="json-ld-seo" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebApplication",
+        "SoftwareApplication"
+      ],
+      "name": "Calculadora de Determinante, Inversa y Rango de Matrices Paso a Paso | CalcWeb",
+      "url": "https://matespasoapaso.vercel.app/determinante-inversa-matriz",
+      "description": "Calculadora online de determinante (Sarrus y cofactores), matriz adjunta, matriz inversa A⁻¹ y rango de matrices 2x2, 3x3 y 4x4 paso a paso con fracciones exactas.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All (100% Client-Side WebAssembly)",
+      "inLanguage": "es-ES",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://matespasoapaso.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Álgebra Lineal y Circuitos",
+          "item": "https://matespasoapaso.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Determinante, Inversa y Rango",
+          "item": "https://matespasoapaso.vercel.app/determinante-inversa-matriz"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Cuándo existe la matriz inversa A⁻¹ de una matriz cuadrada A?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Una matriz cuadrada A de orden n tiene inversa si y solo si su determinante es distinto de cero (det(A) ≠ 0), lo que equivale a que sus n filas (o columnas) sean linealmente independientes y su rango sea igual a n."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo se calcula la matriz inversa mediante cofactores y adjunta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Se siguen 4 pasos: 1) Calcular det(A) y verificar que no es cero, 2) Calcular cada cofactor C_ij = (-1)^{i+j} M_ij formando la matriz C, 3) Trasponer C para obtener la matriz adjunta adj(A) = Cᵀ, y 4) Dividir todos los elementos de adj(A) entre det(A)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué significa que una matriz tenga determinante igual a cero?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Significa que la matriz es singular (no invertible) y que al menos una de sus filas o columnas es combinación lineal de las otras, por lo que su rango es estrictamente menor que su dimensión (rg(A) < n)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuál es el determinante de una matriz triangular?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El determinante de cualquier matriz triangular superior o inferior (o diagonal) es igual simplemente al producto de los elementos de su diagonal principal."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX Math Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtl2cdu">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtl2cdu">
+
+  <!-- Vercel Web Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-1.5 sm:gap-3">
+      <!-- Left: Logo + Home Link -->
+      <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+        <a href="/" data-route="/" class="flex items-center gap-2 sm:gap-2.5 group focus:outline-none min-w-0">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-lg sm:text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all shrink-0">&Sigma;</div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white truncate">CalcWeb</span>
+              <span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block lg:block truncate">Motor Simbólico Universitario &bull; 100% Client-Side</p>
+          </div>
+        </a>
+        <a id="nav-home-link" href="/" data-route="/" class="nav-link hidden md:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0">Inicio</a>
+      </div>
+
+      <!-- Center: 3-Category Dropdowns -->
+      <nav aria-label="Main Navigation" class="hidden lg:flex items-center gap-1.5 relative">
+        
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="calculus">
+        <button
+          type="button"
+          data-cat-toggle="calculus"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Cálculo y Series</span>
+          <svg data-cat-chevron="calculus" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="calculus"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/integrales-paso-a-paso"
+                  data-route="/integrales-paso-a-paso"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Integrales</a>
+              </li>
+              <li>
+                <a
+                  href="/limites-lhopital"
+                  data-route="/limites-lhopital"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Límites</a>
+              </li>
+              <li>
+                <a
+                  href="/ecuaciones-diferenciales"
+                  data-route="/ecuaciones-diferenciales"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >EDOs</a>
+              </li>
+              <li>
+                <a
+                  href="/series-taylor"
+                  data-route="/series-taylor"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Taylor</a>
+              </li>
+              <li>
+                <a
+                  href="/series-de-fourier"
+                  data-route="/series-de-fourier"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >S. Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/series-numericas"
+                  data-route="/series-numericas"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Series Num.</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="transforms">
+        <button
+          type="button"
+          data-cat-toggle="transforms"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Transformadas y Señales</span>
+          <svg data-cat-chevron="transforms" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="transforms"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/transformada-laplace"
+                  data-route="/transformada-laplace"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Laplace</a>
+              </li>
+              <li>
+                <a
+                  href="/transformada-fourier"
+                  data-route="/transformada-fourier"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/transformada-z"
+                  data-route="/transformada-z"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Transf. Z</a>
+              </li>
+              <li>
+                <a
+                  href="/convolucion"
+                  data-route="/convolucion"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Convolución</a>
+              </li>
+              <li>
+                <a
+                  href="/diagrama-de-bode"
+                  data-route="/diagrama-de-bode"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Bode</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="algebra">
+        <button
+          type="button"
+          data-cat-toggle="algebra"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800"
+        >
+          <span>Álgebra y Circuitos</span>
+          <svg data-cat-chevron="algebra" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="algebra"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/diagonalizacion-matrices"
+                  data-route="/diagonalizacion-matrices"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Matrices</a>
+              </li>
+              <li>
+                <a
+                  href="/determinante-inversa-matriz"
+                  data-route="/determinante-inversa-matriz"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                >Det. e Inversa</a>
+              </li>
+              <li>
+                <a
+                  href="/sistemas-ecuaciones-gauss"
+                  data-route="/sistemas-ecuaciones-gauss"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Gauss-Jordan</a>
+              </li>
+              <li>
+                <a
+                  href="/calculadora-fasores-complejos"
+                  data-route="/calculadora-fasores-complejos"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Fasores AC</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      </nav>
+
+      <!-- Right: Language Switcher + Compact Engine Status + Dark Mode + Mobile Hamburger -->
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <div id="lang-switcher" class="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[10px] sm:text-[11px] font-mono font-semibold">
+          <a href="/determinante-inversa-matriz" data-lang-switch="es" class="px-2 py-0.5 rounded transition-colors bg-blue-700 text-white shadow-2xs">ES</a><a href="/en/matrix-determinant-inverse" data-lang-switch="en" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">EN</a><a href="/fr/determinant-inverse-matrice" data-lang-switch="fr" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">FR</a>
+        </div>
+
+        <button id="engine-status-btn" type="button" title="Cargando motor simbólico..." aria-label="Cargando motor simbólico..." class="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="sr-only">Cargando motor simbólico...</span>
+        </button>
+
+        <button id="theme-toggle" type="button" aria-label="Cambiar tema claro/oscuro" class="p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Abrir menú de navegación" class="lg:hidden p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Hamburger Drawer -->
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
+      
+      <div class="space-y-4">
+        <a
+          href="/"
+          data-route="/"
+          class="nav-link block px-3 py-2 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >Inicio</a>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Cálculo y Series
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/integrales-paso-a-paso"
+                    data-route="/integrales-paso-a-paso"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Integrales</a>
+                  <a
+                    href="/limites-lhopital"
+                    data-route="/limites-lhopital"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Límites</a>
+                  <a
+                    href="/ecuaciones-diferenciales"
+                    data-route="/ecuaciones-diferenciales"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >EDOs</a>
+                  <a
+                    href="/series-taylor"
+                    data-route="/series-taylor"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Taylor</a>
+                  <a
+                    href="/series-de-fourier"
+                    data-route="/series-de-fourier"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >S. Fourier</a>
+                  <a
+                    href="/series-numericas"
+                    data-route="/series-numericas"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Series Num.</a>
+              </div>
+            </div>
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Transformadas y Señales
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/transformada-laplace"
+                    data-route="/transformada-laplace"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Laplace</a>
+                  <a
+                    href="/transformada-fourier"
+                    data-route="/transformada-fourier"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Fourier</a>
+                  <a
+                    href="/transformada-z"
+                    data-route="/transformada-z"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Transf. Z</a>
+                  <a
+                    href="/convolucion"
+                    data-route="/convolucion"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Convolución</a>
+                  <a
+                    href="/diagrama-de-bode"
+                    data-route="/diagrama-de-bode"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Bode</a>
+              </div>
+            </div>
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Álgebra y Circuitos
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/diagonalizacion-matrices"
+                    data-route="/diagonalizacion-matrices"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Matrices</a>
+                  <a
+                    href="/determinante-inversa-matriz"
+                    data-route="/determinante-inversa-matriz"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                  >Det. e Inversa</a>
+                  <a
+                    href="/sistemas-ecuaciones-gauss"
+                    data-route="/sistemas-ecuaciones-gauss"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Gauss-Jordan</a>
+                  <a
+                    href="/calculadora-fasores-complejos"
+                    data-route="/calculadora-fasores-complejos"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Fasores AC</a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app-main" class="flex-1 max-w-7xl w-full min-w-0 max-w-full overflow-x-clip mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+    
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="/" data-route="/">Inicio</a>
+      <span>/</span>
+      <span>Álgebra Lineal y Circuitos</span>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">Determinante, Inversa y Rango</span>
+    </nav>
+    <header class="mb-7">
+      <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+        Determinante, Matriz Inversa A⁻¹ y Rango Paso a Paso
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+        Cálculo exacto del determinante (fórmula 2×2, Sarrus/cofactores 3×3), rango rg(A), matriz de cofactores C, adjunta adj(A) = Cᵀ y matriz inversa A⁻¹ en fracciones.
+      </p>
+    </header>
+    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
+      <div class="mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Examen Típico 1</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Matriz 3×3 Invertible &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">2, 1, 0; 1, 3, 1; 0, 1, 2</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Examen Típico 2</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Matriz 2×2 Invertible &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">4, 7; 2, 6</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Examen Típico 3</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Matriz 3×3 Singular (det = 0) &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">1, 2, 3; 4, 5, 6; 7, 8, 9</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Examen Típico 4</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Matriz 3×3 Triangular Superior &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">2, -1, 3; 0, 4, 5; 0, 0, -2</div>
+            </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <input type="text" readonly value="2, 1, 0; 1, 3, 1; 0, 1, 2" class="w-full flex-1 min-w-0 px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white" />
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm shrink-0">Resolver Paso a Paso</button>
+      </div>
+    </section>
+    <section id="solution-container" class="mb-12"></section>
+    <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+      <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
+        Guía Rápida y Fórmulas Clave: Determinante, Adjunta, Inversa y Rango
+      </h2>
+      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        Una matriz cuadrada A ∈ ℝ^{n×n} es invertible (regular) si y solo si su determinante es distinto de cero (|A| ≠ 0), lo cual equivale a tener rango completo rg(A) = n. El método clásico de la matriz adjunta obtiene A⁻¹ dividiendo la traspuesta de la matriz de cofactores entre det(A).
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Inversa 2×2 Directa y Fórmula General por Adjunta</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix}^{-1} = \frac{1}{ad - bc}\begin{pmatrix} d &amp; -b \\ -c &amp; a \end{pmatrix}, \qquad A^{-1} = \frac{1}{|A|}\operatorname{adj}(A)</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              En 2×2 basta intercambiar la diagonal principal, cambiar el signo a la secundaria y dividir por ad - bc.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Matriz de Cofactores (Adjuntos) C_{ij}</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">C_{ij} = (-1)^{i+j}\,M_{ij}, \qquad \operatorname{adj}(A) = C^T</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              M_{ij} es el menor complementario (determinante de la submatriz al eliminar fila i y columna j); no olvides trasponer C al final.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Regla de Sarrus (Determinante 3×3)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">|A| = (a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32}) - (a_{13}a_{22}a_{31} + a_{11}a_{23}a_{32} + a_{12}a_{21}a_{33})</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Para matrices triangulares (ceros bajo o sobre la diagonal), |A| es directamente el producto de los elementos diagonales.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Relación entre Determinante, Rango e Invertibilidad</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\det(A) \ne 0 \iff \operatorname{rg}(A) = n \iff \exists A^{-1}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Si una fila o columna es combinación lineal de las demás, |A| = 0 y la matriz es singular (sin inversa).
+            </p>
+          </div>
+      </div>
+      <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
+        <li>El error más frecuente al calcular A⁻¹ por cofactores es olvidar trasponer la matriz de cofactores C para formar adj(A) = Cᵀ.</li><li>Comprueba siempre tu resultado verificando que el producto A · A⁻¹ da exactamente la matriz identidad I_n.</li><li>Si det(A) = 0, detente de inmediato: la matriz es singular y no admite inversa.</li>
+      </ul>
+    </section>
+    
+    <section aria-labelledby="faq-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
+      <h2 id="faq-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5">
+        Preguntas Frecuentes sobre Determinante, Inversa y Rango
+      </h2>
+      <div class="space-y-3.5">
+        
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cuándo existe la matriz inversa A⁻¹ de una matriz cuadrada A?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Una matriz cuadrada A de orden n tiene inversa si y solo si su determinante es distinto de cero (det(A) ≠ 0), lo que equivale a que sus n filas (o columnas) sean linealmente independientes y su rango sea igual a n.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cómo se calcula la matriz inversa mediante cofactores y adjunta?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Se siguen 4 pasos: 1) Calcular det(A) y verificar que no es cero, 2) Calcular cada cofactor C_ij = (-1)^{i+j} M_ij formando la matriz C, 3) Trasponer C para obtener la matriz adjunta adj(A) = Cᵀ, y 4) Dividir todos los elementos de adj(A) entre det(A).
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Qué significa que una matriz tenga determinante igual a cero?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Significa que la matriz es singular (no invertible) y que al menos una de sus filas o columnas es combinación lineal de las otras, por lo que su rango es estrictamente menor que su dimensión (rg(A) &lt; n).
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              ¿Cuál es el determinante de una matriz triangular?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              El determinante de cualquier matriz triangular superior o inferior (o diagonal) es igual simplemente al producto de los elementos de su diagonal principal.
+            </p>
+          </details>
+      </div>
+    </section>
+    
+    <section aria-labelledby="related-heading" class="mt-8">
+      <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
+        Calculadoras Relacionadas de Álgebra Lineal y Circuitos
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+          <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Diagonalización de Matrices</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Cálculo detallado de la ecuación característica |A - λI| = 0, espectro de autovalores, sistemas homogéneos para cada subespacio propio, matriz de paso P y matriz diagonal D.</p>
+          </a>
+          <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Sistemas Lineales (Gauss-Jordan)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Eliminación gaussiana paso a paso mostrando cada operación elemental entre filas (Fᵢ ← Fᵢ + αFⱼ) sobre la matriz ampliada (A|b), cálculo de rangos rg(A) y rg(A*) y clasificación SCD, SCI o SI.</p>
+          </a>
+          <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Fasores y Circuitos AC</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Operaciones mixtas en forma binómica (a + bj) y polar (M∠θ°), conversión detallada de módulo y argumento con ajuste de cuadrante y resolución de sistemas fasoriales 2×2 y 3×3 (mallas y nudos).</p>
+          </a>
+      </div>
+    </section>
+  
+  </main>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+          <span>&bull;</span>
+          <span>Arquitectura 0€ Servidor (Pyodide WebAssembly + SymPy + Motor Híbrido Instantáneo)</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/sobre-nosotros" data-route="/sobre-nosotros" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Sobre Nosotros</a>
+          <a href="/privacidad" data-route="/privacidad" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Privacidad y Cookies (RGPD)</a>
+          <a href="/aviso-legal" data-route="/aviso-legal" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Aviso Legal</a>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <a href="/transformada-fourier" data-route="/transformada-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada de Fourier</a>
+        <a href="/transformada-z" data-route="/transformada-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada Z</a>
+        <a href="/convolucion" data-route="/convolucion" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolución Continua y Discreta</a>
+        <a href="/series-de-fourier" data-route="/series-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series de Fourier</a>
+        <a href="/transformada-laplace" data-route="/transformada-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformada de Laplace</a>
+        <a href="/ecuaciones-diferenciales" data-route="/ecuaciones-diferenciales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Ecuaciones Diferenciales (EDOs)</a>
+        <a href="/integrales-paso-a-paso" data-route="/integrales-paso-a-paso" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Integrales Paso a Paso</a>
+        <a href="/series-taylor" data-route="/series-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series de Taylor y Maclaurin</a>
+        <a href="/series-numericas" data-route="/series-numericas" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Series Numéricas</a>
+        <a href="/diagonalizacion-matrices" data-route="/diagonalizacion-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalización de Matrices</a>
+        <a href="/sistemas-ecuaciones-gauss" data-route="/sistemas-ecuaciones-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Sistemas Lineales (Gauss-Jordan)</a>
+        <a href="/calculadora-fasores-complejos" data-route="/calculadora-fasores-complejos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Fasores y Circuitos AC</a>
+        <a href="/limites-lhopital" data-route="/limites-lhopital" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Límites y L'Hôpital</a>
+        <a href="/diagrama-de-bode" data-route="/diagrama-de-bode" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagrama de Bode H(s)</a>
+        <a href="/determinante-inversa-matriz" data-route="/determinante-inversa-matriz" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Determinante, Inversa y Rango</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js?v=mwtl2cdu"></script>
+</body>
+</html>

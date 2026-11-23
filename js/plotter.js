@@ -66,6 +66,12 @@ function fmtTick(val) {
   return Number(val.toFixed(3)).toString();
 }
 
+function fmtLogFreq(freq) {
+  if (freq >= 1000) return `${Number((freq / 1000).toFixed(2))}k`;
+  if (freq >= 1) return Number(freq.toFixed(2)).toString();
+  return Number(freq.toFixed(3)).toString();
+}
+
 function computeYRange(seriesList, impulses = []) {
   let yMin = Infinity;
   let yMax = -Infinity;
@@ -313,7 +319,8 @@ export function renderMathPlot(container, plotData, lang = "es") {
     const toMathX = (px) => xMin + ((px - padL) / plotW) * xSpan;
 
     // Grid & Ticks
-    const xStep = niceStep(xSpan, 7);
+    const isLogX = plotData.xScale === "log10";
+    const xStep = isLogX ? 1 : niceStep(xSpan, 7);
     const yStep = niceStep(ySpan, 5);
     ctx.font = "11px 'JetBrains Mono', monospace";
     ctx.lineWidth = 1;
@@ -331,7 +338,7 @@ export function renderMathPlot(container, plotData, lang = "es") {
       ctx.fillStyle = palette.tickText;
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
-      ctx.fillText(fmtTick(x), px, padT + plotH + 6);
+      ctx.fillText(isLogX ? fmtLogFreq(Math.pow(10, x)) : fmtTick(x), px, padT + plotH + 6);
     }
 
     // Horizontal grid lines
@@ -517,10 +524,11 @@ export function renderMathPlot(container, plotData, lang = "es") {
         ctx.fill();
       }
 
+      const xDisplay = isLogX ? fmtLogFreq(Math.pow(10, snapX)) : fmtTick(snapX);
       const coordText =
         snapY !== null
-          ? `(${fmtTick(snapX)}, ${fmtTick(snapY)})`
-          : `x = ${fmtTick(mx)}`;
+          ? `(${xDisplay}, ${fmtTick(snapY)})`
+          : `x = ${isLogX ? fmtLogFreq(Math.pow(10, mx)) : fmtTick(mx)}`;
       ctx.font = "600 11px 'JetBrains Mono', monospace";
       const textW = ctx.measureText(coordText).width;
       const boxW = textW + 14;

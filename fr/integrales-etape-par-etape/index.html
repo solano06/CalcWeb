@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtkow2b">
+  <meta name="build-version" content="mwtl2cdu">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Calculatrice d'Intégrales Indéfinies et Définies Étape par Étape | CalcWeb</title>
   <meta name="description" content="Calculatrice d'intégrales indéfinies et définies étape par étape avec SymPy manualintegrate. Affiche l'intégration par parties (u et dv), le changement de variable et les éléments simples.">
@@ -42,11 +42,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtkow2b">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtkow2b">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtkow2b">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkow2b">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/app.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtl2cdu">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -142,8 +142,8 @@
   <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
   <!-- Compiled Static Tailwind CSS & Custom Styles -->
-  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtkow2b">
-  <link rel="stylesheet" href="/css/styles.css?v=mwtkow2b">
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtl2cdu">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtl2cdu">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -196,6 +196,13 @@
                   data-route="/fr/integrales-etape-par-etape"
                   class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
                 >Intégrales</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/limites-lhopital"
+                  data-route="/fr/limites-lhopital"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Limites</a>
               </li>
               <li>
                 <a
@@ -276,6 +283,13 @@
                   class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >Convolution</a>
               </li>
+              <li>
+                <a
+                  href="/fr/diagramme-de-bode"
+                  data-route="/fr/diagramme-de-bode"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Bode</a>
+              </li>
           </ul>
         </div>
       </div>
@@ -305,6 +319,13 @@
                   data-route="/fr/diagonalisation-matrices"
                   class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >Matrices</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/determinant-inverse-matrice"
+                  data-route="/fr/determinant-inverse-matrice"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Dét. &amp; Inverse</a>
               </li>
               <li>
                 <a
@@ -372,6 +393,11 @@
                     class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
                   >Intégrales</a>
                   <a
+                    href="/fr/limites-lhopital"
+                    data-route="/fr/limites-lhopital"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Limites</a>
+                  <a
                     href="/fr/equations-differentielles"
                     data-route="/fr/equations-differentielles"
                     class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -419,6 +445,11 @@
                     data-route="/fr/convolution"
                     class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                   >Convolution</a>
+                  <a
+                    href="/fr/diagramme-de-bode"
+                    data-route="/fr/diagramme-de-bode"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Bode</a>
               </div>
             </div>
             <div>
@@ -432,6 +463,11 @@
                     data-route="/fr/diagonalisation-matrices"
                     class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                   >Matrices</a>
+                  <a
+                    href="/fr/determinant-inverse-matrice"
+                    data-route="/fr/determinant-inverse-matrice"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Dét. &amp; Inverse</a>
                   <a
                     href="/fr/pivot-de-gauss"
                     data-route="/fr/pivot-de-gauss"
@@ -651,10 +687,13 @@
         <a href="/fr/diagonalisation-matrices" data-route="/fr/diagonalisation-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalisation de Matrices</a>
         <a href="/fr/pivot-de-gauss" data-route="/fr/pivot-de-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Systèmes Linéaires (Gauss-Jordan)</a>
         <a href="/fr/calculateur-phaseurs" data-route="/fr/calculateur-phaseurs" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Phaseurs et Circuits AC</a>
+        <a href="/fr/limites-lhopital" data-route="/fr/limites-lhopital" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Limites et L'Hôpital</a>
+        <a href="/fr/diagramme-de-bode" data-route="/fr/diagramme-de-bode" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagramme de Bode H(s)</a>
+        <a href="/fr/determinant-inverse-matrice" data-route="/fr/determinant-inverse-matrice" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Déterminant, Inverse &amp; Rang</a>
       </div>
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtkow2b"></script>
+  <script type="module" src="/js/app.js?v=mwtl2cdu"></script>
 </body>
 </html>

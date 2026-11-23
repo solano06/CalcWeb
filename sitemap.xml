@@ -131,6 +131,36 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://matespasoapaso.vercel.app/limites-lhopital</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/limites-lhopital" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/limits-lhopital" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/limites-lhopital" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/limites-lhopital" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://matespasoapaso.vercel.app/diagrama-de-bode</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/diagrama-de-bode" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/bode-plot-calculator" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/diagramme-de-bode" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/diagrama-de-bode" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://matespasoapaso.vercel.app/determinante-inversa-matriz</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/matrix-determinant-inverse" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/determinant-inverse-matrice" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://matespasoapaso.vercel.app/sobre-nosotros</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/sobre-nosotros" />
     <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/about" />
@@ -291,6 +321,36 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://matespasoapaso.vercel.app/en/limits-lhopital</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/limites-lhopital" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/limits-lhopital" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/limites-lhopital" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/limites-lhopital" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://matespasoapaso.vercel.app/en/bode-plot-calculator</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/diagrama-de-bode" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/bode-plot-calculator" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/diagramme-de-bode" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/diagrama-de-bode" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://matespasoapaso.vercel.app/en/matrix-determinant-inverse</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/matrix-determinant-inverse" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/determinant-inverse-matrice" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://matespasoapaso.vercel.app/en/about</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/sobre-nosotros" />
     <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/about" />
@@ -446,6 +506,36 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/phasor-calculator" />
     <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/calculateur-phaseurs" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/calculadora-fasores-complejos" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://matespasoapaso.vercel.app/fr/limites-lhopital</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/limites-lhopital" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/limits-lhopital" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/limites-lhopital" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/limites-lhopital" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://matespasoapaso.vercel.app/fr/diagramme-de-bode</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/diagrama-de-bode" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/bode-plot-calculator" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/diagramme-de-bode" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/diagrama-de-bode" />
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://matespasoapaso.vercel.app/fr/determinant-inverse-matrice</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/matrix-determinant-inverse" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/determinant-inverse-matrice" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/determinante-inversa-matriz" />
     <lastmod>2026-11-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>

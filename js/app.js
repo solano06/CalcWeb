@@ -267,7 +267,7 @@ function exprToLatexPreview(rawExpr, calcId, direction = "direct") {
   const clean = String(rawExpr || "").trim();
   if (!clean) return "";
 
-  if (calcId === "matrix" || calcId === "gauss") {
+  if (calcId === "matrix" || calcId === "gauss" || calcId === "matops") {
     if (clean.includes(";") || clean.includes(",")) {
       let rows = null;
       if (clean.startsWith("[")) {
@@ -311,6 +311,18 @@ function exprToLatexPreview(rawExpr, calcId, direction = "direct") {
       }
     }
     return convPhasor(clean);
+  }
+
+  if (calcId === "limits") {
+    const parts = clean.split(";").map((p) => p.trim());
+    const fnTex = basicMathToLatex(parts[0]);
+    let x0 = (parts[1] || "0").replace(/\binf\b/gi, "\\infty").replace(/\boo\b/g, "\\infty");
+    x0 = basicMathToLatex(x0);
+    return `\\lim_{x \\to ${x0}} ${fnTex}`;
+  }
+
+  if (calcId === "bode") {
+    return `H(s) = ${basicMathToLatex(clean)}`;
   }
 
   if (calcId === "integrals") {
@@ -440,9 +452,10 @@ function getNavCategoryGroups(lang) {
     {
       key: "calculus",
       title: ui.navGroups.calculus,
-      ids: ["integrals", "ode", "taylor", "fourierseries", "numseries"],
+      ids: ["integrals", "limits", "ode", "taylor", "fourierseries", "numseries"],
       items: [
         { id: "integrals", route: r.integrals[lang], label: ui.nav.integrals },
+        { id: "limits", route: r.limits[lang], label: ui.nav.limits },
         { id: "ode", route: r.ode[lang], label: ui.nav.ode },
         { id: "taylor", route: r.taylor[lang], label: ui.nav.taylor },
         { id: "fourierseries", route: r.fourierseries[lang], label: ui.nav.fourierseries },
@@ -452,20 +465,22 @@ function getNavCategoryGroups(lang) {
     {
       key: "transforms",
       title: ui.navGroups.transforms,
-      ids: ["laplace", "fourier", "ztransform", "convolution"],
+      ids: ["laplace", "fourier", "ztransform", "convolution", "bode"],
       items: [
         { id: "laplace", route: r.laplace[lang], label: ui.nav.laplace },
         { id: "fourier", route: r.fourier[lang], label: ui.nav.fourier },
         { id: "ztransform", route: r.ztransform[lang], label: ui.nav.ztransform },
-        { id: "convolution", route: r.convolution[lang], label: ui.nav.convolution }
+        { id: "convolution", route: r.convolution[lang], label: ui.nav.convolution },
+        { id: "bode", route: r.bode[lang], label: ui.nav.bode }
       ]
     },
     {
       key: "algebra",
       title: ui.navGroups.algebra,
-      ids: ["matrix", "gauss", "phasors"],
+      ids: ["matrix", "matops", "gauss", "phasors"],
       items: [
         { id: "matrix", route: r.matrix[lang], label: ui.nav.matrix },
+        { id: "matops", route: r.matops[lang], label: ui.nav.matops },
         { id: "gauss", route: r.gauss[lang], label: ui.nav.gauss },
         { id: "phasors", route: r.phasors[lang], label: ui.nav.phasors }
       ]

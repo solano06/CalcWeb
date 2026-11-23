@@ -44,9 +44,10 @@ function getNavCategoryGroups(lang = "es") {
     {
       key: "calculus",
       title: ui.navGroups.calculus,
-      ids: ["integrals", "ode", "taylor", "fourierseries", "numseries"],
+      ids: ["integrals", "limits", "ode", "taylor", "fourierseries", "numseries"],
       items: [
         { id: "integrals", route: r.integrals[lang], label: ui.nav.integrals },
+        { id: "limits", route: r.limits[lang], label: ui.nav.limits },
         { id: "ode", route: r.ode[lang], label: ui.nav.ode },
         { id: "taylor", route: r.taylor[lang], label: ui.nav.taylor },
         { id: "fourierseries", route: r.fourierseries[lang], label: ui.nav.fourierseries },
@@ -56,20 +57,22 @@ function getNavCategoryGroups(lang = "es") {
     {
       key: "transforms",
       title: ui.navGroups.transforms,
-      ids: ["laplace", "fourier", "ztransform", "convolution"],
+      ids: ["laplace", "fourier", "ztransform", "convolution", "bode"],
       items: [
         { id: "laplace", route: r.laplace[lang], label: ui.nav.laplace },
         { id: "fourier", route: r.fourier[lang], label: ui.nav.fourier },
         { id: "ztransform", route: r.ztransform[lang], label: ui.nav.ztransform },
-        { id: "convolution", route: r.convolution[lang], label: ui.nav.convolution }
+        { id: "convolution", route: r.convolution[lang], label: ui.nav.convolution },
+        { id: "bode", route: r.bode[lang], label: ui.nav.bode }
       ]
     },
     {
       key: "algebra",
       title: ui.navGroups.algebra,
-      ids: ["matrix", "gauss", "phasors"],
+      ids: ["matrix", "matops", "gauss", "phasors"],
       items: [
         { id: "matrix", route: r.matrix[lang], label: ui.nav.matrix },
+        { id: "matops", route: r.matops[lang], label: ui.nav.matops },
         { id: "gauss", route: r.gauss[lang], label: ui.nav.gauss },
         { id: "phasors", route: r.phasors[lang], label: ui.nav.phasors }
       ]

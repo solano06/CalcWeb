@@ -3160,7 +3160,595 @@ export function solveNumSeriesHybrid(rawExpr) {
 }
 
 /* ==========================================================================
-   13. UNIFIED DISPATCHER WITH MULTILINGUAL STEP TRANSLATION (ES / EN / FR)
+   13. LIMITS & L'HÔPITAL'S RULE STEP-BY-STEP SOLVER
+   ========================================================================== */
+export function solveLimitsHybrid(rawExpr) {
+  const parts = rawExpr.split(";").map((s) => s.trim());
+  const fnNorm = normalizeExpr(parts[0] || "");
+  const x0Raw = (parts[1] || "0").toLowerCase().trim();
+  const isPosInf = x0Raw === "oo" || x0Raw === "+oo" || x0Raw === "inf" || x0Raw === "+inf";
+  const isNegInf = x0Raw === "-oo" || x0Raw === "-inf";
+  const x0Num = isPosInf || isNegInf ? null : parseFloat(x0Raw);
+
+  // Pattern 1: sin(a*x)/(b*x) ; 0
+  const sinXMatch = fnNorm.match(/^sin\((?:(\d+(?:\.\d+)?)\*?)?x\)\/(?:(\d+(?:\.\d+)?)\*?)?x$/);
+  if (sinXMatch && x0Num === 0) {
+    const a = sinXMatch[1] ? parseFloat(sinXMatch[1]) : 1;
+    const b = sinXMatch[2] ? parseFloat(sinXMatch[2]) : 1;
+    const L = a / b;
+    const aStr = a === 1 ? "" : fmtNum(a);
+    const bStr = b === 1 ? "" : fmtNum(b);
+    return {
+      ok: true,
+      final_latex: `\\lim_{x \\to 0} \\frac{\\sin(${aStr}x)}{${bStr}x} = ${fmtNum(L)}`,
+      plot: {
+        title: `f(x) = sin(${aStr}x)/(${bStr}x),  x → 0`,
+        xLabel: "x",
+        yLabel: "f(x)",
+        xRange: [-4, 4],
+        series: [
+          {
+            label: "f(x)",
+            points: sampleCurve((x) => (Math.abs(x) < 0.03 ? NaN : Math.sin(a * x) / (b * x)), -4, 4),
+            style: "primary"
+          }
+        ]
+      },
+      steps: [
+        {
+          titulo_paso: "Planteamiento del límite y sustitución directa en x = 0",
+          explicacion: "Evaluamos el numerador N(x) y el denominador D(x) directamente en x = 0.",
+          latex: `\\lim_{x \\to 0} \\frac{\\sin(${aStr}x)}{${bStr}x} = \\frac{\\sin(0)}{0} = \\frac{0}{0}`
+        },
+        {
+          titulo_paso: "Identificación de indeterminación 0/0",
+          explicacion: "Tanto el numerador como el denominador se anulan en x = 0, por lo que podemos aplicar la Regla de L'Hôpital.",
+          latex: `\\text{Forma indeterminada } \\left[\\frac{0}{0}\\right]`
+        },
+        {
+          titulo_paso: "Aplicación de la Regla de L'Hôpital (derivación de N(x) y D(x))",
+          explicacion: `Derivamos independientemente el numerador N'(x) = ${a === 1 ? "" : fmtNum(a) + "\\cdot "}\\cos(${aStr}x) y el denominador D'(x) = ${fmtNum(b)}.`,
+          latex: `\\lim_{x \\to 0} \\frac{\\frac{d}{dx}[\\sin(${aStr}x)]}{\\frac{d}{dx}[${bStr}x]} = \\lim_{x \\to 0} \\frac{${aStr}\\cos(${aStr}x)}{${fmtNum(b)}}`
+        },
+        {
+          titulo_paso: "Evaluación final del límite",
+          explicacion: "Sustituimos x = 0 en el cociente de derivadas (con cos(0) = 1).",
+          latex: `\\frac{${fmtNum(a)}\\cos(0)}{${fmtNum(b)}} = ${fmtNum(L)}`
+        }
+      ]
+    };
+  }
+
+  // Pattern 2: (exp(a*x) - 1 - a*x)/x^2 ; 0
+  const expLHMatch = fnNorm.match(/^\((?:exp\(x\)|e\^x)-1-x\)\/x\^2$/);
+  if (expLHMatch && x0Num === 0) {
+    return {
+      ok: true,
+      final_latex: `\\lim_{x \\to 0} \\frac{e^x - 1 - x}{x^2} = \\frac{1}{2}`,
+      plot: {
+        title: "f(x) = (e^x - 1 - x) / x²,  x → 0",
+        xLabel: "x",
+        yLabel: "f(x)",
+        xRange: [-4, 4],
+        series: [
+          {
+            label: "f(x)",
+            points: sampleCurve((x) => (Math.abs(x) < 0.04 ? NaN : (Math.exp(x) - 1 - x) / (x * x)), -4, 4),
+            style: "primary"
+          }
+        ]
+      },
+      steps: [
+        {
+          titulo_paso: "Sustitución directa en x = 0 e identificación de indeterminación 0/0",
+          explicacion: "Al sustituir x = 0 obtenemos (e⁰ - 1 - 0)/0² = 0/0.",
+          latex: `\\lim_{x \\to 0} \\frac{e^x - 1 - x}{x^2} = \\frac{1 - 1 - 0}{0} = \\left[\\frac{0}{0}\\right]`
+        },
+        {
+          titulo_paso: "Primera aplicación de la Regla de L'Hôpital",
+          explicacion: "Derivamos numerador y denominador por separado: N'(x) = e^x - 1 y D'(x) = 2x. La indeterminación 0/0 persiste.",
+          latex: `\\lim_{x \\to 0} \\frac{e^x - 1}{2x} = \\frac{1 - 1}{0} = \\left[\\frac{0}{0}\\right]`
+        },
+        {
+          titulo_paso: "Segunda aplicación de la Regla de L'Hôpital",
+          explicacion: "Volvemos a derivar numerador y denominador: N''(x) = e^x y D''(x) = 2.",
+          latex: `\\lim_{x \\to 0} \\frac{e^x}{2}`
+        },
+        {
+          titulo_paso: "Evaluación final del límite",
+          explicacion: "Sustituimos x = 0 obteniendo e⁰ / 2 = 1/2.",
+          latex: `\\frac{e^0}{2} = \\frac{1}{2}`
+        }
+      ]
+    };
+  }
+
+  // Pattern 3: Rational quadratic (a2*x^2 + a1*x)/(b2*x^2 + b0) ; oo
+  const ratQuadInf = fnNorm.match(/^\((?:(\d+)\*?)?x\^2([+-]\d+)\*?x\)\/\((?:(\d+)\*?)?x\^2([+-]\d+)\)$/);
+  if (ratQuadInf && (isPosInf || isNegInf)) {
+    const a2 = ratQuadInf[1] ? parseFloat(ratQuadInf[1]) : 1;
+    const a1 = parseFloat(ratQuadInf[2]);
+    const b2 = ratQuadInf[3] ? parseFloat(ratQuadInf[3]) : 1;
+    const b0 = parseFloat(ratQuadInf[4]);
+    const L = a2 / b2;
+    const infTex = isPosInf ? "\\infty" : "-\\infty";
+    return {
+      ok: true,
+      final_latex: `\\lim_{x \\to ${infTex}} \\frac{${a2}x^2 ${a1 >= 0 ? "+ " + a1 : "- " + Math.abs(a1)}x}{${b2 === 1 ? "" : b2}x^2 ${b0 >= 0 ? "+ " + b0 : "- " + Math.abs(b0)}} = ${fmtNum(L)}`,
+      plot: {
+        title: `Asíntota horizontal y = ${fmtNum(L)}`,
+        xLabel: "x",
+        yLabel: "f(x)",
+        xRange: [0.5, 40],
+        series: [
+          {
+            label: "f(x)",
+            points: sampleCurve((x) => {
+              const den = b2 * x * x + b0;
+              return Math.abs(den) < 0.05 ? NaN : (a2 * x * x + a1 * x) / den;
+            }, 0.5, 40),
+            style: "primary"
+          },
+          {
+            label: `y = ${fmtNum(L)}`,
+            points: sampleCurve(() => L, 0.5, 40, 20),
+            style: "secondary",
+            dashed: true
+          }
+        ]
+      },
+      steps: [
+        {
+          titulo_paso: `Planteamiento del límite cuando x → ${isPosInf ? "∞" : "-∞"}`,
+          explicacion: "Al evaluar numerador y denominador cuando x tiende a infinito obtenemos una indeterminación ∞/∞.",
+          latex: `\\lim_{x \\to ${infTex}} \\frac{${a2}x^2 ${a1 >= 0 ? "+ " + a1 : "- " + Math.abs(a1)}x}{${b2 === 1 ? "" : b2}x^2 ${b0 >= 0 ? "+ " + b0 : "- " + Math.abs(b0)}} = \\left[\\frac{\\infty}{\\infty}\\right]`
+        },
+        {
+          titulo_paso: "Primera aplicación de la Regla de L'Hôpital",
+          explicacion: "Derivamos numerador y denominador respecto a x.",
+          latex: `\\lim_{x \\to ${infTex}} \\frac{${2 * a2}x ${a1 >= 0 ? "+ " + a1 : "- " + Math.abs(a1)}}{${2 * b2}x} = \\left[\\frac{\\infty}{\\infty}\\right]`
+        },
+        {
+          titulo_paso: "Segunda aplicación de L'Hôpital y simplificación",
+          explicacion: "Derivamos nuevamente para eliminar la variable x.",
+          latex: `\\lim_{x \\to ${infTex}} \\frac{${2 * a2}}{${2 * b2}} = ${fmtNum(L)}`
+        }
+      ]
+    };
+  }
+
+  // Pattern 4: (1 + a/x)^x ; oo -> e^a
+  const expOneInf = fnNorm.match(/^\(1\+([+-]?\d+(?:\.\d+)?)\/x\)\^x$/);
+  if (expOneInf && isPosInf) {
+    const a = parseFloat(expOneInf[1]);
+    const L = Math.exp(a);
+    return {
+      ok: true,
+      final_latex: `\\lim_{x \\to \\infty} \\left(1 + \\frac{${fmtNum(a)}}{x}\\right)^x = e^{${fmtNum(a)}}`,
+      plot: {
+        title: `f(x) = (1 + ${fmtNum(a)}/x)^x → e^${fmtNum(a)} ≈ ${L.toFixed(3)}`,
+        xLabel: "x",
+        yLabel: "f(x)",
+        xRange: [0.5, 40],
+        series: [
+          {
+            label: "f(x)",
+            points: sampleCurve((x) => Math.pow(1 + a / x, x), 0.5, 40),
+            style: "primary"
+          },
+          {
+            label: `y = e^${fmtNum(a)}`,
+            points: sampleCurve(() => L, 0.5, 40, 20),
+            style: "secondary",
+            dashed: true
+          }
+        ]
+      },
+      steps: [
+        {
+          titulo_paso: "Sustitución directa e identificación de indeterminación 1^∞",
+          explicacion: `Cuando x → ∞, la base 1 + ${fmtNum(a)}/x tiende a 1 y el exponente tiende a ∞.`,
+          latex: `\\lim_{x \\to \\infty} \\left(1 + \\frac{${fmtNum(a)}}{x}\\right)^x = \\left[1^{\\infty}\\right]`
+        },
+        {
+          titulo_paso: "Transformación exponencial-logarítmica",
+          explicacion: "Reescribimos f(x)^{g(x)} como exp(g(x) · ln f(x)) para convertir la potencia en un producto/cociente.",
+          latex: `L = \\exp\\!\\left(\\lim_{x \\to \\infty} x\\cdot \\ln\\left(1 + \\frac{${fmtNum(a)}}{x}\\right)\\right) = \\exp\\!\\left(\\lim_{x \\to \\infty} \\frac{\\ln(1 + ${fmtNum(a)}/x)}{1/x}\\right)`
+        },
+        {
+          titulo_paso: "Aplicación de la Regla de L'Hôpital al exponente (forma 0/0)",
+          explicacion: "Derivamos numerador y denominador respecto a x y simplificamos el factor -1/x².",
+          latex: `\\lim_{x \\to \\infty} \\frac{\\frac{-${fmtNum(a)}/x^2}{1 + ${fmtNum(a)}/x}}{-1/x^2} = \\lim_{x \\to \\infty} \\frac{${fmtNum(a)}}{1 + ${fmtNum(a)}/x} = ${fmtNum(a)}`
+        },
+        {
+          titulo_paso: "Evaluación final",
+          explicacion: "Restituimos el resultado en la función exponencial.",
+          latex: `L = e^{${fmtNum(a)}}`
+        }
+      ]
+    };
+  }
+
+  return null;
+}
+
+/* ==========================================================================
+   14. BODE PLOT & POLE-ZERO TRANSFER FUNCTION H(s) SOLVER
+   ========================================================================== */
+function buildBodeLogPlot(evalFn, titleStr) {
+  const logMin = -1; // 0.1 rad/s
+  const logMax = 3;  // 1000 rad/s
+  const count = 240;
+  const magPts = [];
+  const phasePts = [];
+  let prevPhase = null;
+  let phaseOffset = 0;
+
+  for (let i = 0; i < count; i++) {
+    const lx = logMin + (i / (count - 1)) * (logMax - logMin);
+    const w = Math.pow(10, lx);
+    const { re, im } = evalFn(w);
+    const mag = Math.sqrt(re * re + im * im);
+    if (mag > 1e-12 && Number.isFinite(mag)) {
+      const db = 20 * Math.log10(mag);
+      if (Number.isFinite(db)) magPts.push([Number(lx.toFixed(5)), Number(db.toFixed(4))]);
+    }
+    let ph = (Math.atan2(im, re) * 180) / Math.PI;
+    if (prevPhase !== null) {
+      let diff = ph - prevPhase;
+      while (diff > 180) { phaseOffset -= 360; diff -= 360; }
+      while (diff < -180) { phaseOffset += 360; diff += 360; }
+    }
+    prevPhase = ph;
+    const unwrapped = ph + phaseOffset;
+    if (Number.isFinite(unwrapped)) {
+      phasePts.push([Number(lx.toFixed(5)), Number(unwrapped.toFixed(3))]);
+    }
+  }
+
+  return {
+    title: titleStr,
+    xLabel: "ω (rad/s)",
+    yLabel: "20·log₁₀|H(jω)| (dB)",
+    xScale: "log10",
+    xRange: [logMin, logMax],
+    series: [{ label: "|H(jω)| (dB)", points: magPts, style: "primary" }],
+    altView: {
+      toggleLabelA: "Magnitud (dB)",
+      toggleLabelB: "Fase (°)",
+      yLabelB: "∠H(jω) (°)",
+      seriesB: [{ label: "∠H(jω) (°)", points: phasePts, style: "accent" }]
+    }
+  };
+}
+
+export function solveBodeHybrid(rawExpr) {
+  const norm = normalizeExpr(rawExpr);
+
+  // Pattern 1: K / (s + p)
+  const m1 = norm.match(/^(\d+(?:\.\d+)?)\/\(s\+([0-9.]+)\)$/);
+  if (m1) {
+    const K = parseFloat(m1[1]);
+    const p = parseFloat(m1[2]);
+    if (p <= 0) return null;
+    const K0 = K / p;
+    const KdB = 20 * Math.log10(K0);
+    return {
+      ok: true,
+      final_latex: `K_{\\text{dB}} = ${fmtFloat(KdB, 2)}\\,\\text{dB}, \\quad \\omega_c = ${fmtNum(p)}\\,\\text{rad/s}, \\quad \\text{Pendiente: } -20\\,\\text{dB/déc}`,
+      plot: buildBodeLogPlot((w) => {
+        const den = p * p + w * w;
+        return { re: (K * p) / den, im: (-K * w) / den };
+      }, `Diagrama de Bode — ${rawExpr}`),
+      steps: [
+        {
+          titulo_paso: "Polos, ceros y análisis de estabilidad de H(s)",
+          explicacion: `No hay ceros finitos. El denominador s + ${fmtNum(p)} = 0 sitúa un polo real simple en s = -${fmtNum(p)} (semiplano izquierdo Re(s) < 0 → Sistema Estable).`,
+          latex: `\\text{Ceros: } \\emptyset, \\qquad \\text{Polos: } p_1 = -${fmtNum(p)} \\; (\\operatorname{Re} < 0 \\implies \\text{Estable})`
+        },
+        {
+          titulo_paso: "Forma normalizada de Bode (constantes de tiempo)",
+          explicacion: `Extraemos el factor ${fmtNum(p)} del denominador para escribir (1 + s/${fmtNum(p)}) y leer directamente la ganancia estática K₀ = ${fmtNum(K0)}.`,
+          latex: `H(s) = \\frac{${fmtNum(K0)}}{1 + s/${fmtNum(p)}}, \\qquad K_{\\text{dB}} = 20\\log_{10}(${fmtNum(K0)}) = ${fmtFloat(KdB, 2)}\\,\\text{dB}`
+        },
+        {
+          titulo_paso: "Respuesta en frecuencia s = jω (Magnitud en dB y Fase)",
+          explicacion: "Sustituimos s = jω para obtener el módulo logarítmico y la fase exacta en grados.",
+          latex: `|H(j\\omega)|_{\\text{dB}} = ${fmtFloat(KdB, 2)} - 10\\log_{10}\\!\\left(1 + \\left(\\frac{\\omega}{${fmtNum(p)}}\\right)^2\\right), \\qquad \\phi(\\omega) = -\\arctan\\!\\left(\\frac{\\omega}{${fmtNum(p)}}\\right)`
+        },
+        {
+          titulo_paso: "Trazado asintótico y frecuencia de corte ω_c",
+          explicacion: `Hasta ω_c = ${fmtNum(p)} rad/s la ganancia es plana (${fmtFloat(KdB, 2)} dB); a partir de ω_c cae a -20 dB/década (con -3.01 dB y -45° en ω_c).`,
+          latex: `\\omega_c = ${fmtNum(p)}\\,\\text{rad/s}: \\quad |H(j\\omega_c)|_{\\text{dB}} = ${fmtFloat(KdB - 3.01, 2)}\\,\\text{dB}, \\quad \\phi(\\omega_c) = -45^\\circ`
+        }
+      ]
+    };
+  }
+
+  // Pattern 2: K*s / (s + p)
+  const m2 = norm.match(/^(\d+(?:\.\d+)?)\*?s\/\(s\+([0-9.]+)\)$/);
+  if (m2) {
+    const K = parseFloat(m2[1]);
+    const p = parseFloat(m2[2]);
+    if (p <= 0) return null;
+    const K0 = K / p;
+    const KdB = 20 * Math.log10(K0);
+    return {
+      ok: true,
+      final_latex: `K_{\\text{dB}} = ${fmtFloat(KdB, 2)}\\,\\text{dB}, \\quad \\text{Cero en } 0, \\quad \\omega_c = ${fmtNum(p)}\\,\\text{rad/s}`,
+      plot: buildBodeLogPlot((w) => {
+        // K*j*w / (p + j*w) = K*j*w*(p - j*w) / (p^2 + w^2) = (K*w^2 + j*K*p*w)/(p^2+w^2)
+        const den = p * p + w * w;
+        return { re: (K * w * w) / den, im: (K * p * w) / den };
+      }, `Diagrama de Bode — ${rawExpr}`),
+      steps: [
+        {
+          titulo_paso: "Polos, ceros y estabilidad de H(s)",
+          explicacion: `El numerador aporta un cero en el origen z₁ = 0 y el denominador un polo estable en p₁ = -${fmtNum(p)}.`,
+          latex: `\\text{Ceros: } z_1 = 0, \\qquad \\text{Polos: } p_1 = -${fmtNum(p)} \\; (\\text{Estable})`
+        },
+        {
+          titulo_paso: "Forma normalizada de Bode",
+          explicacion: `Factorizamos ${fmtNum(p)} en el denominador obteniendo la ganancia K₀ = ${fmtNum(K0)} y el factor derivador s.`,
+          latex: `H(s) = ${fmtNum(K0)}\\cdot \\frac{s}{1 + s/${fmtNum(p)}}, \\qquad K_{\\text{dB}} = ${fmtFloat(KdB, 2)}\\,\\text{dB}`
+        },
+        {
+          titulo_paso: "Expresiones de Magnitud en dB y Fase en régimen s = jω",
+          explicacion: "El cero en el origen aporta +20 dB/déc desde bajas frecuencias y +90° de fase inicial.",
+          latex: `|H(j\\omega)|_{\\text{dB}} = ${fmtFloat(KdB, 2)} + 20\\log_{10}(\\omega) - 10\\log_{10}\\!\\left(1 + (\\omega/${fmtNum(p)})^2\\right), \\qquad \\phi(\\omega) = 90^\\circ - \\arctan(\\omega/${fmtNum(p)})`
+        },
+        {
+          titulo_paso: "Pendientes asintóticas (Filtro Paso Alto)",
+          explicacion: `Para ω < ${fmtNum(p)} la pendiente es +20 dB/década; para ω > ${fmtNum(p)} el polo cancela la pendiente quedando plana en 20·log₁₀(${fmtNum(K)}) = ${fmtFloat(20 * Math.log10(K), 2)} dB.`,
+          latex: `\\omega \\to \\infty \\implies |H(j\\omega)|_{\\text{dB}} \\to ${fmtFloat(20 * Math.log10(K), 2)}\\,\\text{dB}, \\quad \\phi(\\omega) \\to 0^\\circ`
+        }
+      ]
+    };
+  }
+
+  // Pattern 3: K / (s^2 + a*s + b)
+  const m3 = norm.match(/^(\d+(?:\.\d+)?)\/\(s\^2\+([0-9.]+)\*?s\+([0-9.]+)\)$/);
+  if (m3) {
+    const K = parseFloat(m3[1]);
+    const a = parseFloat(m3[2]);
+    const b = parseFloat(m3[3]);
+    if (b <= 0 || a <= 0) return null;
+    const wn = Math.sqrt(b);
+    const zeta = a / (2 * wn);
+    const K0 = K / b;
+    const KdB = 20 * Math.log10(K0);
+    return {
+      ok: true,
+      final_latex: `\\omega_n = ${fmtFloat(wn, 3)}\\,\\text{rad/s}, \\quad \\zeta = ${fmtFloat(zeta, 3)}, \\quad K_{\\text{dB}} = ${fmtFloat(KdB, 2)}\\,\\text{dB}`,
+      plot: buildBodeLogPlot((w) => {
+        const reD = b - w * w;
+        const imD = a * w;
+        const den = reD * reD + imD * imD;
+        return { re: (K * reD) / den, im: (-K * imD) / den };
+      }, `Diagrama de Bode — ${rawExpr}`),
+      steps: [
+        {
+          titulo_paso: "Polos de 2º orden, frecuencia natural ω_n y amortiguamiento ζ",
+          explicacion: `Identificamos ω_n² = ${fmtNum(b)} (ω_n = ${fmtFloat(wn, 3)} rad/s) y 2ζω_n = ${fmtNum(a)} (ζ = ${fmtFloat(zeta, 3)}). Al ser a > 0 y b > 0, los polos están en el semiplano izquierdo (Estable).`,
+          latex: `\\omega_n = \\sqrt{${fmtNum(b)}} = ${fmtFloat(wn, 3)}, \\qquad \\zeta = \\frac{${fmtNum(a)}}{2\\omega_n} = ${fmtFloat(zeta, 3)}`
+        },
+        {
+          titulo_paso: "Forma normalizada de Bode de 2º orden",
+          explicacion: "Dividimos numerador y denominador por ω_n² para aislar la ganancia DC K₀.",
+          latex: `H(s) = \\frac{${fmtNum(K0)}}{1 + \\frac{${fmtNum(a)}}{${fmtNum(b)}}s + \\left(\\frac{s}{${fmtFloat(wn, 3)}}\\right)^2}, \\qquad K_{\\text{dB}} = ${fmtFloat(KdB, 2)}\\,\\text{dB}`
+        },
+        {
+          titulo_paso: "Magnitud en dB y Fase en s = jω",
+          explicacion: "A partir de ω_n la magnitud cae con pendiente doble (-40 dB/década) y la fase tiende a -180°.",
+          latex: `|H(j\\omega)|_{\\text{dB}} = ${fmtFloat(KdB, 2)} - 10\\log_{10}\\!\\left(\\left(1 - \\left(\\frac{\\omega}{\\omega_n}\\right)^2\\right)^2 + \\left(2\\zeta\\frac{\\omega}{\\omega_n}\\right)^2\\right)`
+        },
+        {
+          titulo_paso: "Comportamiento en frecuencia natural ω = ω_n",
+          explicacion: `En ω = ω_n la fase pasa exactamente por -90° y el pico resonante depende de ζ = ${fmtFloat(zeta, 3)}.`,
+          latex: `\\phi(\\omega_n) = -90^\\circ, \\qquad \\text{Pendiente para } \\omega \\gg \\omega_n: -40\\,\\text{dB/déc}`
+        }
+      ]
+    };
+  }
+
+  // Pattern 4: K*(s + z) / (s*(s + p))
+  const m4 = norm.match(/^(\d+(?:\.\d+)?)\*?\(s\+([0-9.]+)\)\/\(s\*?\(s\+([0-9.]+)\)\)$/);
+  if (m4) {
+    const K = parseFloat(m4[1]);
+    const z = parseFloat(m4[2]);
+    const p = parseFloat(m4[3]);
+    if (z <= 0 || p <= 0) return null;
+    const K0 = (K * z) / p;
+    const KdB = 20 * Math.log10(K0);
+    return {
+      ok: true,
+      final_latex: `K_{\\text{dB}} = ${fmtFloat(KdB, 2)}\\,\\text{dB}, \\quad z_1 = -${fmtNum(z)}, \\quad p = 0, -${fmtNum(p)}`,
+      plot: buildBodeLogPlot((w) => {
+        // K*(z + jw) / (jw * (p + jw)) = K*(z + jw) / (-w^2 + j*p*w)
+        const nRe = K * z;
+        const nIm = K * w;
+        const dRe = -w * w;
+        const dIm = p * w;
+        const den = dRe * dRe + dIm * dIm;
+        return { re: (nRe * dRe + nIm * dIm) / den, im: (nIm * dRe - nRe * dIm) / den };
+      }, `Diagrama de Bode — ${rawExpr}`),
+      steps: [
+        {
+          titulo_paso: "Polos, ceros y presencia de integrador puro",
+          explicacion: `Cero real en s = -${fmtNum(z)}; polo en el origen s = 0 (integrador) y polo estable en s = -${fmtNum(p)}.`,
+          latex: `\\text{Cero: } z_1 = -${fmtNum(z)}, \\qquad \\text{Polos: } p_1 = 0, \\; p_2 = -${fmtNum(p)}`
+        },
+        {
+          titulo_paso: "Forma normalizada de Bode",
+          explicacion: `Extraemos ${fmtNum(z)} del numerador y ${fmtNum(p)} del denominador para obtener K₀ = ${fmtNum(K0)}.`,
+          latex: `H(s) = ${fmtNum(K0)}\\cdot \\frac{1 + s/${fmtNum(z)}}{s(1 + s/${fmtNum(p)})}, \\qquad K_{\\text{dB}} = ${fmtFloat(KdB, 2)}\\,\\text{dB}`
+        },
+        {
+          titulo_paso: "Expresiones de Magnitud en dB y Fase",
+          explicacion: "El polo en el origen aporta -20 dB/déc inicial y -90° constantes.",
+          latex: `|H(j\\omega)|_{\\text{dB}} = ${fmtFloat(KdB, 2)} - 20\\log_{10}(\\omega) + 10\\log_{10}(1 + (\\omega/${fmtNum(z)})^2) - 10\\log_{10}(1 + (\\omega/${fmtNum(p)})^2)`
+        },
+        {
+          titulo_paso: "Tramos de pendientes asintóticas",
+          explicacion: `Inicia con -20 dB/déc; al cruzar el cero (ω = ${fmtNum(z)}) pasa a 0 dB/déc y al cruzar el polo (ω = ${fmtNum(p)}) retoma -20 dB/déc.`,
+          latex: `\\phi(\\omega) = -90^\\circ + \\arctan(\\omega/${fmtNum(z)}) - \\arctan(\\omega/${fmtNum(p)})`
+        }
+      ]
+    };
+  }
+
+  return null;
+}
+
+/* ==========================================================================
+   15. MATRIX DETERMINANT, ADJUGATE, INVERSE & RANK SOLVER
+   ========================================================================== */
+function detNumeric(mat) {
+  const n = mat.length;
+  if (n === 1) return mat[0][0];
+  if (n === 2) return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
+  let total = 0;
+  for (let col = 0; col < n; col++) {
+    const minor = mat.slice(1).map((r) => r.filter((_, j) => j !== col));
+    total += (col % 2 === 0 ? 1 : -1) * mat[0][col] * detNumeric(minor);
+  }
+  return total;
+}
+
+function rankNumeric(mat) {
+  const m = mat.length;
+  const n = mat[0].length;
+  const A = mat.map((r) => [...r]);
+  let r = 0;
+  for (let c = 0; c < n && r < m; c++) {
+    let piv = -1;
+    for (let i = r; i < m; i++) {
+      if (Math.abs(A[i][c]) > 1e-9) { piv = i; break; }
+    }
+    if (piv === -1) continue;
+    [A[r], A[piv]] = [A[piv], A[r]];
+    const pv = A[r][c];
+    for (let j = c; j < n; j++) A[r][j] /= pv;
+    for (let i = 0; i < m; i++) {
+      if (i === r || Math.abs(A[i][c]) < 1e-9) continue;
+      const fac = A[i][c];
+      for (let j = c; j < n; j++) A[i][j] -= fac * A[r][j];
+    }
+    r++;
+  }
+  return r;
+}
+
+export function solveMatOpsHybrid(rawExpr) {
+  let M;
+  try {
+    const clean = rawExpr.trim();
+    if (clean.startsWith("[")) {
+      M = JSON.parse(clean);
+    } else {
+      const numRe = /^[+-]?(?:\d+\.?\d*|\.\d+)$/;
+      M = clean
+        .split(";")
+        .map((r) => r.trim())
+        .filter(Boolean)
+        .map((r) =>
+          r.split(",").map((c) => {
+            const t = c.trim();
+            return numRe.test(t) ? parseFloat(t) : NaN;
+          })
+        );
+    }
+  } catch (e) {
+    return null;
+  }
+
+  if (!Array.isArray(M) || M.length < 2 || M.length > 4) return null;
+  const n = M.length;
+  if (M.some((r) => !Array.isArray(r) || r.length !== n || r.some((x) => !Number.isFinite(x)))) {
+    return null;
+  }
+
+  const det = detNumeric(M);
+  const rk = rankNumeric(M);
+  const steps = [
+    {
+      titulo_paso: `Matriz cuadrada A de dimensión ${n}\\times ${n}`,
+      explicacion: "Identificamos los elementos de la matriz cuadrada A para calcular su determinante, rango y matriz inversa.",
+      latex: `A = ${matToLatex(M)}`
+    }
+  ];
+
+  if (n === 2) {
+    const [[a, b], [c, d]] = M;
+    steps.push({
+      titulo_paso: "Cálculo del determinante 2×2: ad - bc",
+      explicacion: "Aplicamos la fórmula directa del determinante para matrices de orden 2.",
+      latex: `\\det(A) = (${fmtNum(a)})(${fmtNum(d)}) - (${fmtNum(b)})(${fmtNum(c)}) = ${fmtNum(det)}`
+    });
+  } else {
+    const methodLabel = n === 3 ? "Regla de Sarrus / Expansión por cofactores" : "Expansión por cofactores";
+    steps.push({
+      titulo_paso: `Cálculo del determinante ${n}×${n} (${methodLabel})`,
+      explicacion: "Desarrollamos el determinante de la matriz cuadrada sumando los productos de la primera fila por sus cofactores.",
+      latex: `\\det(A) = ${fmtNum(det)}`
+    });
+  }
+
+  steps.push({
+    titulo_paso: "Cálculo del rango rg(A) y criterio de invertibilidad",
+    explicacion:
+      Math.abs(det) > 1e-9
+        ? `Como \\det(A) = ${fmtNum(det)} \\ne 0, la matriz tiene rango completo \\operatorname{rg}(A) = ${n} y es invertible (regular).`
+        : `Como \\det(A) = 0, las filas/columnas son linealmente dependientes (\\operatorname{rg}(A) = ${rk} < ${n}) y la matriz es singular (NO invertible).`,
+    latex:
+      Math.abs(det) > 1e-9
+        ? `\\det(A) = ${fmtNum(det)} \\ne 0 \\iff \\operatorname{rg}(A) = ${n} \\implies \\exists A^{-1}`
+        : `\\det(A) = 0 \\implies \\operatorname{rg}(A) = ${rk} < ${n} \\implies A \\text{ es singular (no existe } A^{-1}\\text{)}`
+  });
+
+  if (Math.abs(det) < 1e-9) {
+    return {
+      ok: true,
+      steps,
+      final_latex: `\\det(A) = 0, \\quad \\operatorname{rg}(A) = ${rk} < ${n} \\; (\\text{Matriz singular, sin inversa})`
+    };
+  }
+
+  // Cofactor matrix C, Adjugate C^T, Inverse (1/det)*adj(A)
+  const C = [];
+  for (let i = 0; i < n; i++) {
+    const row = [];
+    for (let j = 0; j < n; j++) {
+      const sub = M.filter((_, r) => r !== i).map((r) => r.filter((_, c) => c !== j));
+      const minor = n === 2 ? sub[0][0] : detNumeric(sub);
+      row.push(((i + j) % 2 === 0 ? 1 : -1) * minor);
+    }
+    C.push(row);
+  }
+  const adj = C[0].map((_, j) => C.map((r) => r[j]));
+  const inv = adj.map((r) => r.map((v) => v / det));
+
+  steps.push({
+    titulo_paso: "Matriz de cofactores C y matriz adjunta adj(A) = Cᵀ",
+    explicacion: "Calculamos cada cofactor C_{ij} = (-1)^{i+j}M_{ij} y trasponemos C para obtener la matriz adjunta.",
+    latex: `C = ${matToLatex(C)}, \\qquad \\operatorname{adj}(A) = C^T = ${matToLatex(adj)}`
+  });
+
+  steps.push({
+    titulo_paso: "Cálculo de la matriz inversa A⁻¹ = (1/det(A)) · adj(A)",
+    explicacion: `Dividimos cada entrada de la adjunta por \\det(A) = ${fmtNum(det)} expresando el resultado en fracciones exactas.`,
+    latex: `A^{-1} = \\frac{1}{${fmtNum(det)}}${matToLatex(adj)} = ${matToLatex(inv)}`
+  });
+
+  return {
+    ok: true,
+    steps,
+    final_latex: `\\det(A) = ${fmtNum(det)}, \\quad \\operatorname{rg}(A) = ${rk}, \\quad A^{-1} = ${matToLatex(inv)}`
+  };
+}
+
+/* ==========================================================================
+   16. UNIFIED DISPATCHER WITH MULTILINGUAL STEP TRANSLATION (ES / EN / FR)
    ========================================================================== */
 export function solveWithHybridEngine(calcId, expr, direction = "direct", lang = "es") {
   let rawRes = null;
@@ -3176,6 +3764,9 @@ export function solveWithHybridEngine(calcId, expr, direction = "direct", lang =
   else if (calcId === "phasors") rawRes = solvePhasorsHybrid(expr, direction);
   else if (calcId === "fourierseries") rawRes = solveFourierSeriesHybrid(expr, direction);
   else if (calcId === "numseries") rawRes = solveNumSeriesHybrid(expr);
+  else if (calcId === "limits") rawRes = solveLimitsHybrid(expr);
+  else if (calcId === "bode") rawRes = solveBodeHybrid(expr);
+  else if (calcId === "matops") rawRes = solveMatOpsHybrid(expr);
 
   if (!rawRes) return null;
   return localizeStepsResult(rawRes, lang);

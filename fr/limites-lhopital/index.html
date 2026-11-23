@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="build-version" content="mwtl2cdu">
+  <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
+  <title>Calculatrice de Limites et Règle de L'Hôpital Étape par Étape | CalcWeb</title>
+  <meta name="description" content="Calculatrice en ligne de limites de fonctions et Règle de L'Hôpital étape par étape. Résout formes indéterminées 0/0, ∞/∞, 1^∞ et limites à l'infini avec graphique 2D.">
+  <meta name="keywords" content="limites, lhopital, indeterminacion, 0/0, infinito, asintota, derivada, calculo">
+  <link rel="canonical" href="https://matespasoapaso.vercel.app/fr/limites-lhopital">
+  <link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/limites-lhopital">
+  <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/limits-lhopital">
+  <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/limites-lhopital">
+  <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/limites-lhopital">
+
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
+
+  <!-- Favicon & Mobile PWA Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="CalcWeb">
+  <meta property="og:title" content="Calculatrice de Limites et Règle de L'Hôpital Étape par Étape | CalcWeb">
+  <meta property="og:description" content="Calculatrice en ligne de limites de fonctions et Règle de L'Hôpital étape par étape. Résout formes indéterminées 0/0, ∞/∞, 1^∞ et limites à l'infini avec graphique 2D.">
+  <meta property="og:url" content="https://matespasoapaso.vercel.app/fr/limites-lhopital">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculatrice de Limites et Règle de L'Hôpital Étape par Étape | CalcWeb">
+  <meta name="twitter:description" content="Calculatrice en ligne de limites de fonctions et Règle de L'Hôpital étape par étape. Résout formes indéterminées 0/0, ∞/∞, 1^∞ et limites à l'infini avec graphique 2D.">
+  <meta name="twitter:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+
+  <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtl2cdu">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtl2cdu">
+
+  <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
+  <script id="json-ld-seo" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebApplication",
+        "SoftwareApplication"
+      ],
+      "name": "Calculatrice de Limites et Règle de L'Hôpital Étape par Étape | CalcWeb",
+      "url": "https://matespasoapaso.vercel.app/fr/limites-lhopital",
+      "description": "Calculatrice en ligne de limites de fonctions et Règle de L'Hôpital étape par étape. Résout formes indéterminées 0/0, ∞/∞, 1^∞ et limites à l'infini avec graphique 2D.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All (100% Client-Side WebAssembly)",
+      "inLanguage": "fr-FR",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Accueil",
+          "item": "https://matespasoapaso.vercel.app/fr"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Calcul et Équations Différentielles",
+          "item": "https://matespasoapaso.vercel.app/fr"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Limites et L'Hôpital",
+          "item": "https://matespasoapaso.vercel.app/fr/limites-lhopital"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Quand peut-on appliquer la Règle de L'Hôpital ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Uniquement lorsque le quotient f(x)/g(x) mène à une forme indéterminée 0/0 ou ∞/∞ et que les deux fonctions sont dérivables au voisinage de x0."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Comment lever une forme indéterminée 1^∞ ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "On passe au logarithme ou à l'exponentielle : L = exp(lim g(x)·(f(x) - 1)), ramenant le calcul à un produit/quotient."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quelle est l'erreur la plus fréquente avec L'Hôpital ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dériver f(x)/g(x) avec la formule du quotient (f'g - fg')/g² au lieu de dériver f'(x) et g'(x) séparément."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Comment détecter une asymptote horizontale par les limites ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Si lim_{x→±∞} f(x) = L (fini), la droite y = L est asymptote horizontale."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX Math Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtl2cdu">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtl2cdu">
+
+  <!-- Vercel Web Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-1.5 sm:gap-3">
+      <!-- Left: Logo + Home Link -->
+      <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+        <a href="/fr" data-route="/fr" class="flex items-center gap-2 sm:gap-2.5 group focus:outline-none min-w-0">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-lg sm:text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all shrink-0">&Sigma;</div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white truncate">CalcWeb</span>
+              <span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block lg:block truncate">Moteur Symbolique Universitaire &bull; 100% Client-Side</p>
+          </div>
+        </a>
+        <a id="nav-home-link" href="/fr" data-route="/fr" class="nav-link hidden md:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0">Accueil</a>
+      </div>
+
+      <!-- Center: 3-Category Dropdowns -->
+      <nav aria-label="Main Navigation" class="hidden lg:flex items-center gap-1.5 relative">
+        
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="calculus">
+        <button
+          type="button"
+          data-cat-toggle="calculus"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800"
+        >
+          <span>Calcul &amp; Séries</span>
+          <svg data-cat-chevron="calculus" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="calculus"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/fr/integrales-etape-par-etape"
+                  data-route="/fr/integrales-etape-par-etape"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Intégrales</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/limites-lhopital"
+                  data-route="/fr/limites-lhopital"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                >Limites</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/equations-differentielles"
+                  data-route="/fr/equations-differentielles"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >EDO</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-de-taylor"
+                  data-route="/fr/series-de-taylor"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Taylor</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-de-fourier"
+                  data-route="/fr/series-de-fourier"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >S. Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-numeriques"
+                  data-route="/fr/series-numeriques"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Séries Num.</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="transforms">
+        <button
+          type="button"
+          data-cat-toggle="transforms"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Transformées &amp; Signaux</span>
+          <svg data-cat-chevron="transforms" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="transforms"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/fr/transformee-de-laplace"
+                  data-route="/fr/transformee-de-laplace"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Laplace</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/transformee-de-fourier"
+                  data-route="/fr/transformee-de-fourier"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/transformee-en-z"
+                  data-route="/fr/transformee-en-z"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Transf. Z</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/convolution"
+                  data-route="/fr/convolution"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Convolution</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/diagramme-de-bode"
+                  data-route="/fr/diagramme-de-bode"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Bode</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="algebra">
+        <button
+          type="button"
+          data-cat-toggle="algebra"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Algèbre &amp; Circuits</span>
+          <svg data-cat-chevron="algebra" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="algebra"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/fr/diagonalisation-matrices"
+                  data-route="/fr/diagonalisation-matrices"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Matrices</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/determinant-inverse-matrice"
+                  data-route="/fr/determinant-inverse-matrice"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Dét. &amp; Inverse</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/pivot-de-gauss"
+                  data-route="/fr/pivot-de-gauss"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Pivot Gauss</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/calculateur-phaseurs"
+                  data-route="/fr/calculateur-phaseurs"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Phaseurs AC</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      </nav>
+
+      <!-- Right: Language Switcher + Compact Engine Status + Dark Mode + Mobile Hamburger -->
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <div id="lang-switcher" class="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[10px] sm:text-[11px] font-mono font-semibold">
+          <a href="/limites-lhopital" data-lang-switch="es" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">ES</a><a href="/en/limits-lhopital" data-lang-switch="en" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">EN</a><a href="/fr/limites-lhopital" data-lang-switch="fr" class="px-2 py-0.5 rounded transition-colors bg-blue-700 text-white shadow-2xs">FR</a>
+        </div>
+
+        <button id="engine-status-btn" type="button" title="Chargement du moteur symbolique..." aria-label="Chargement du moteur symbolique..." class="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="sr-only">Chargement du moteur symbolique...</span>
+        </button>
+
+        <button id="theme-toggle" type="button" aria-label="Basculer le thème clair/sombre" class="p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Ouvrir le menu de navigation" class="lg:hidden p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Hamburger Drawer -->
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
+      
+      <div class="space-y-4">
+        <a
+          href="/fr"
+          data-route="/fr"
+          class="nav-link block px-3 py-2 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >Accueil</a>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Calcul &amp; Séries
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/fr/integrales-etape-par-etape"
+                    data-route="/fr/integrales-etape-par-etape"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Intégrales</a>
+                  <a
+                    href="/fr/limites-lhopital"
+                    data-route="/fr/limites-lhopital"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium active bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 font-semibold"
+                  >Limites</a>
+                  <a
+                    href="/fr/equations-differentielles"
+                    data-route="/fr/equations-differentielles"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >EDO</a>
+                  <a
+                    href="/fr/series-de-taylor"
+                    data-route="/fr/series-de-taylor"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Taylor</a>
+                  <a
+                    href="/fr/series-de-fourier"
+                    data-route="/fr/series-de-fourier"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >S. Fourier</a>
+                  <a
+                    href="/fr/series-numeriques"
+                    data-route="/fr/series-numeriques"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Séries Num.</a>
+              </div>
+            </div>
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Transformées &amp; Signaux
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/fr/transformee-de-laplace"
+                    data-route="/fr/transformee-de-laplace"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Laplace</a>
+                  <a
+                    href="/fr/transformee-de-fourier"
+                    data-route="/fr/transformee-de-fourier"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Fourier</a>
+                  <a
+                    href="/fr/transformee-en-z"
+                    data-route="/fr/transformee-en-z"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Transf. Z</a>
+                  <a
+                    href="/fr/convolution"
+                    data-route="/fr/convolution"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Convolution</a>
+                  <a
+                    href="/fr/diagramme-de-bode"
+                    data-route="/fr/diagramme-de-bode"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Bode</a>
+              </div>
+            </div>
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Algèbre &amp; Circuits
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/fr/diagonalisation-matrices"
+                    data-route="/fr/diagonalisation-matrices"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Matrices</a>
+                  <a
+                    href="/fr/determinant-inverse-matrice"
+                    data-route="/fr/determinant-inverse-matrice"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Dét. &amp; Inverse</a>
+                  <a
+                    href="/fr/pivot-de-gauss"
+                    data-route="/fr/pivot-de-gauss"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Pivot Gauss</a>
+                  <a
+                    href="/fr/calculateur-phaseurs"
+                    data-route="/fr/calculateur-phaseurs"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Phaseurs AC</a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app-main" class="flex-1 max-w-7xl w-full min-w-0 max-w-full overflow-x-clip mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+    
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="/fr" data-route="/fr">Accueil</a>
+      <span>/</span>
+      <span>Calcul et Équations Différentielles</span>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">Limites et L'Hôpital</span>
+    </nav>
+    <header class="mb-7">
+      <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+        Limites et Règle de L'Hôpital Étape par Étape
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+        Évaluation symbolique des limites finies et à l'infini avec détection des formes indéterminées (0/0, ∞/∞, 1^∞), dérivation itérative de L'Hôpital et asymptotes.
+      </p>
+    </header>
+    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
+      <div class="mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 1</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">0/0 Trigonométrique &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">sin(x)/x ; 0</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 2</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">0/0 Double L'Hôpital &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">(exp(x) - 1 - x)/x^2 ; 0</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 3</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Quotient ∞/∞ &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">(3*x^2 + 2*x)/(x^2 - 5) ; oo</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 4</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Exponentielle 1^∞ &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">(1 + 2/x)^x ; oo</div>
+            </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <input type="text" readonly value="sin(x)/x ; 0" class="w-full flex-1 min-w-0 px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white" />
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm shrink-0">Résoudre Étape par Étape</button>
+      </div>
+    </section>
+    <section id="solution-container" class="mb-12"></section>
+    <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+      <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
+        Guide Rapide et Formules Clés : Calcul de Limites et Formes Indéterminées
+      </h2>
+      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        L'étude des limites décrit le comportement local de f(x) autour de x₀ ou son comportement asymptotique quand x → ±∞. En cas de forme indéterminée (0/0, ∞/∞, 1^∞, ∞ - ∞), on applique simplification algébrique, règle de L'Hôpital ou passage à l'exponentielle.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Règle de L'Hôpital (Formes 0/0 et ∞/∞)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\lim_{x \to x_0} \frac{f(x)}{g(x)} = \lim_{x \to x_0} \frac{f'(x)}{g'(x)} = \lim_{x \to x_0} \frac{f''(x)}{g''(x)}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Dérivez numérateur et dénominateur séparément (jamais comme un quotient) tant que 0/0 ou ∞/∞ persiste.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Formes Indéterminées Exponentielles 1^∞ (Nombre e)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\lim_{x \to x_0} f(x)^{g(x)} = \exp\!\left(\lim_{x \to x_0} g(x)\cdot [f(x) - 1]\right) \quad \text{o} \quad e^{\lim g(x)\ln f(x)}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Pour f(x) → 1 et g(x) → ∞, la limite classique (1 + a/x)^x vaut exactement e^a.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Équivalents Usuels en x → 0</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\sin(x) \sim x, \qquad 1 - \cos(x) \sim \frac{x^2}{2}, \qquad e^x - 1 \sim x, \qquad \ln(1 + x) \sim x</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Remplacer les facteurs multiplicatifs par leurs équivalents accélère fortement les calculs en x = 0.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Règle des Termes Prépondérants (x → ∞)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\lim_{x \to \infty} \frac{a_n x^n + \cdots}{b_m x^m + \cdots} = \begin{cases} a_n/b_m, &amp; n = m \\ 0, &amp; n &lt; m \\ \pm\infty, &amp; n &gt; m \end{cases}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Le terme de plus haut degré gouverne le comportement asymptotique à l'infini.
+            </p>
+          </div>
+      </div>
+      <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
+        <li>Vérifiez toujours d'abord par substitution directe : n'appliquez L'Hôpital que pour 0/0 ou ∞/∞.</li><li>Pour saisir l'infini dans CalcWeb, écrivez 'oo' ou 'inf' après le point-virgule (ex : (3*x^2+1)/x^2 ; oo).</li><li>Si les limites à gauche (x₀⁻) et à droite (x₀⁺) diffèrent, la limite globale en x₀ n'existe pas.</li>
+      </ul>
+    </section>
+    
+    <section aria-labelledby="faq-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm mt-8">
+      <h2 id="faq-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5">
+        Questions Fréquentes sur Limites et L'Hôpital
+      </h2>
+      <div class="space-y-3.5">
+        
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              Quand peut-on appliquer la Règle de L'Hôpital ?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Uniquement lorsque le quotient f(x)/g(x) mène à une forme indéterminée 0/0 ou ∞/∞ et que les deux fonctions sont dérivables au voisinage de x0.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              Comment lever une forme indéterminée 1^∞ ?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              On passe au logarithme ou à l'exponentielle : L = exp(lim g(x)·(f(x) - 1)), ramenant le calcul à un produit/quotient.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              Quelle est l'erreur la plus fréquente avec L'Hôpital ?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Dériver f(x)/g(x) avec la formule du quotient (f'g - fg')/g² au lieu de dériver f'(x) et g'(x) séparément.
+            </p>
+          </details>
+          <details class="group rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+            <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer">
+              Comment détecter une asymptote horizontale par les limites ?
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+              Si lim_{x→±∞} f(x) = L (fini), la droite y = L est asymptote horizontale.
+            </p>
+          </details>
+      </div>
+    </section>
+    
+    <section aria-labelledby="related-heading" class="mt-8">
+      <h2 id="related-heading" class="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">
+        Calculatrices Associées en Calcul et Équations Différentielles
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+          <a href="/fr/integrales-etape-par-etape" data-route="/fr/integrales-etape-par-etape" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Intégrales Étape par Étape</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Détail pédagogique de l'arbre d'intégration symbolique : intégration par parties (choix de u et dv), changement de variable u = g(x), éléments simples et calcul intégral défini.</p>
+          </a>
+          <a href="/fr/series-de-taylor" data-route="/fr/series-de-taylor" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Séries de Taylor et Maclaurin</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Calcul systématique des dérivées successives f⁽ᵏ⁾(x), évaluation au point de développement x₀ et assemblage terme à terme du polynôme de Taylor Pₙ(x).</p>
+          </a>
+          <a href="/fr/series-numeriques" data-route="/fr/series-numeriques" class="academic-card block rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white mb-1">Séries Numériques</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Étude rigoureuse de la convergence étape par étape : condition nécessaire lim aₙ = 0, séries géométriques, séries de Riemann (p-séries), règle de D'Alembert, Cauchy, Leibniz et somme exacte.</p>
+          </a>
+      </div>
+    </section>
+  
+  </main>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+          <span>&bull;</span>
+          <span>Architecture 0€ Serveur (Pyodide WebAssembly + SymPy + Moteur Hybride Instantané)</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/fr/a-propos" data-route="/fr/a-propos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">À Propos</a>
+          <a href="/fr/confidentialite" data-route="/fr/confidentialite" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Confidentialité et Cookies (RGPD)</a>
+          <a href="/fr/mentions-legales" data-route="/fr/mentions-legales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Mentions Légales</a>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <a href="/fr/transformee-de-fourier" data-route="/fr/transformee-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée de Fourier</a>
+        <a href="/fr/transformee-en-z" data-route="/fr/transformee-en-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée en Z</a>
+        <a href="/fr/convolution" data-route="/fr/convolution" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolution Continue et Discrète</a>
+        <a href="/fr/series-de-fourier" data-route="/fr/series-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries de Fourier</a>
+        <a href="/fr/transformee-de-laplace" data-route="/fr/transformee-de-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée de Laplace</a>
+        <a href="/fr/equations-differentielles" data-route="/fr/equations-differentielles" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Équations Différentielles (EDO)</a>
+        <a href="/fr/integrales-etape-par-etape" data-route="/fr/integrales-etape-par-etape" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Intégrales Étape par Étape</a>
+        <a href="/fr/series-de-taylor" data-route="/fr/series-de-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries de Taylor et Maclaurin</a>
+        <a href="/fr/series-numeriques" data-route="/fr/series-numeriques" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries Numériques</a>
+        <a href="/fr/diagonalisation-matrices" data-route="/fr/diagonalisation-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalisation de Matrices</a>
+        <a href="/fr/pivot-de-gauss" data-route="/fr/pivot-de-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Systèmes Linéaires (Gauss-Jordan)</a>
+        <a href="/fr/calculateur-phaseurs" data-route="/fr/calculateur-phaseurs" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Phaseurs et Circuits AC</a>
+        <a href="/fr/limites-lhopital" data-route="/fr/limites-lhopital" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Limites et L'Hôpital</a>
+        <a href="/fr/diagramme-de-bode" data-route="/fr/diagramme-de-bode" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagramme de Bode H(s)</a>
+        <a href="/fr/determinant-inverse-matrice" data-route="/fr/determinant-inverse-matrice" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Déterminant, Inverse &amp; Rang</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js?v=mwtl2cdu"></script>
+</body>
+</html>

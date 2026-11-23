@@ -62,8 +62,11 @@ server.listen(PORT, () => {
   console.log(`  - http://localhost:${PORT}/convolucion`);
   console.log(`  - http://localhost:${PORT}/ecuaciones-diferenciales`);
   console.log(`  - http://localhost:${PORT}/integrales-paso-a-paso`);
+  console.log(`  - http://localhost:${PORT}/limites-lhopital`);
   console.log(`  - http://localhost:${PORT}/series-taylor`);
+  console.log(`  - http://localhost:${PORT}/diagrama-de-bode`);
   console.log(`  - http://localhost:${PORT}/diagonalizacion-matrices`);
+  console.log(`  - http://localhost:${PORT}/determinante-inversa-matriz`);
   console.log(`  - http://localhost:${PORT}/sistemas-ecuaciones-gauss`);
   console.log(`  - http://localhost:${PORT}/calculadora-fasores-complejos`);
 });
