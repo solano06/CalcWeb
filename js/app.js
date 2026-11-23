@@ -19,6 +19,14 @@ import {
 import { solveWithHybridEngine } from "./hybrid-engine.js";
 import { renderMathPlot } from "./plotter.js";
 
+function loadStudyModePref() {
+  try {
+    return localStorage.getItem("calcweb_study_mode") === "true";
+  } catch (e) {
+    return false;
+  }
+}
+
 // Application State
 const state = {
   currentRoute: "/",
@@ -34,7 +42,8 @@ const state = {
   lastSolution: null, // { steps: [], final_latex: "", expr: "", title: "", engineUsed: "" }
   activeDirection: "direct",
   keyboardOpen: false,
-  studyMode: false
+  studyMode: loadStudyModePref(),
+  onStudyModeChange: null
 };
 
 function getUI() {
@@ -489,6 +498,22 @@ function getNavCategoryGroups(lang) {
   ];
 }
 
+function updateStudyModeButtonUI() {
+  const btn = document.getElementById("study-mode-toggle");
+  const textEl = document.getElementById("study-mode-text");
+  if (!btn) return;
+  const ui = getUI();
+  btn.setAttribute("aria-pressed", String(state.studyMode));
+  btn.setAttribute("title", ui.studyModeLabel);
+  btn.setAttribute("aria-label", ui.studyModeLabel);
+  if (textEl) textEl.textContent = ui.studyModeLabel;
+  btn.className = `inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+    state.studyMode
+      ? "bg-indigo-600 text-white border-indigo-600 dark:bg-indigo-500 dark:border-indigo-500 shadow-xs"
+      : "bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+  }`;
+}
+
 function updateShellNavigationUI(activeRoute, lang) {
   const ui = UI_STRINGS[lang] || UI_STRINGS.es;
   const routes = ROUTE_MAP;
@@ -523,6 +548,7 @@ function updateShellNavigationUI(activeRoute, lang) {
       ? ui.engineStatusLoading
       : ui.engineStatusFallback;
   updateEngineBadgeUI(state.pyodideStatus, statusMsg);
+  updateStudyModeButtonUI();
 
   // Update Center Desktop 3-Category Dropdowns
   const desktopNav = document.querySelector("header nav[aria-label]");
@@ -706,9 +732,13 @@ function navigateTo(route, pushState = true) {
     updateDocumentSEO(calc.title, calc.metaDescription, calc.route, calc, lang);
     renderCalculatorView(calc);
   } else if (legal) {
+    state.lastSolution = null;
+    state.onStudyModeChange = null;
     updateDocumentSEO(legal.title, legal.metaDescription, legal.route, null, lang);
     renderLegalView(legal);
   } else {
+    state.lastSolution = null;
+    state.onStudyModeChange = null;
     const homeRoute = ROUTE_MAP.home[lang];
     updateDocumentSEO(ui.homeSeoTitle, ui.homeSeoDesc, homeRoute, null, lang);
     renderHomeDashboard();
@@ -1835,7 +1865,7 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
               &bull; ${escapeHtml(engineTag)}
             </span>
           </div>
-          <div id="study-spoiler-notice" class="hidden text-xs sm:text-sm italic text-amber-700 dark:text-amber-300 py-1.5">
+          <div id="study-spoiler-notice" class="hidden print:hidden text-xs sm:text-sm italic text-amber-700 dark:text-amber-300 py-1.5">
             ${escapeHtml(ui.studySpoilerMsg)}
           </div>
           <div id="final-result-math" class="text-sm sm:text-base font-medium text-slate-900 dark:text-white max-w-full overflow-x-auto">
@@ -1843,29 +1873,8 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
           </div>
         </div>
 
-        <!-- Export, Print & Study Mode Buttons -->
+        <!-- Export, Print & Copy Buttons -->
         <div class="print:hidden flex flex-wrap items-center gap-2 shrink-0">
-          ${
-            totalSteps > 1
-              ? `
-          <button
-            type="button"
-            id="study-mode-toggle"
-            aria-pressed="${state.studyMode}"
-            class="px-3.5 py-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-colors shadow-2xs ${
-              state.studyMode
-                ? "bg-amber-500 border-amber-600 text-white"
-                : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
-            }"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-            </svg>
-            <span>${escapeHtml(ui.studyModeLabel)}</span>
-          </button>
-          `
-              : ""
-          }
 
           <button
             type="button"
@@ -2010,20 +2019,10 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
   `;
 
   const syncStudyModeUI = (newlyRevealedIdx = -1) => {
-    const toggleBtn = document.getElementById("study-mode-toggle");
     const spoilerEl = document.getElementById("study-spoiler-notice");
     const finalMathEl = document.getElementById("final-result-math");
     const controlsEl = document.getElementById("study-controls");
     const progressEl = document.getElementById("study-progress-label");
-
-    if (toggleBtn) {
-      toggleBtn.setAttribute("aria-pressed", String(state.studyMode));
-      toggleBtn.className = `px-3.5 py-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-colors shadow-2xs ${
-        state.studyMode
-          ? "bg-amber-500 border-amber-600 text-white"
-          : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
-      }`;
-    }
 
     const isStudyingPartial = state.studyMode && totalSteps > 1 && revealedCount < totalSteps;
     if (spoilerEl && finalMathEl) {
@@ -2055,14 +2054,10 @@ function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direc
 
   syncStudyModeUI();
 
-  const studyToggleBtn = document.getElementById("study-mode-toggle");
-  if (studyToggleBtn) {
-    studyToggleBtn.addEventListener("click", () => {
-      state.studyMode = !state.studyMode;
-      revealedCount = state.studyMode ? 1 : totalSteps;
-      syncStudyModeUI();
-    });
-  }
+  state.onStudyModeChange = () => {
+    revealedCount = state.studyMode && totalSteps > 1 ? 1 : totalSteps;
+    syncStudyModeUI();
+  };
 
   const revealNextBtn = document.getElementById("reveal-next-step-btn");
   if (revealNextBtn) {
@@ -2307,7 +2302,25 @@ function closeNavMenus() {
 
 function initRouterEvents() {
   document.addEventListener("click", (e) => {
-    // 1. Desktop 3-Category Dropdown Toggle (opens one, closes others)
+    // 1. Global Study Mode Toggle in Header
+    const studyBtn = e.target.closest("#study-mode-toggle");
+    if (studyBtn) {
+      state.studyMode = !state.studyMode;
+      try {
+        localStorage.setItem("calcweb_study_mode", String(state.studyMode));
+      } catch (err) {
+        // Ignore storage errors
+      }
+      updateStudyModeButtonUI();
+      const ui = getUI();
+      showToast(state.studyMode ? ui.toastStudyEnabled : ui.toastStudyDisabled);
+      if (typeof state.onStudyModeChange === "function" && document.getElementById("solution-container")?.children.length) {
+        state.onStudyModeChange();
+      }
+      return;
+    }
+
+    // 2. Desktop 3-Category Dropdown Toggle (opens one, closes others)
     const toggleBtn = e.target.closest("[data-cat-toggle]");
     if (toggleBtn) {
       const key = toggleBtn.getAttribute("data-cat-toggle");
@@ -2371,6 +2384,7 @@ function initRouterEvents() {
 document.addEventListener("DOMContentLoaded", () => {
   state.lang = detectLangFromPath(window.location.pathname);
   initTheme();
+  updateStudyModeButtonUI();
   initRouterEvents();
   initPyodideWorker();
 

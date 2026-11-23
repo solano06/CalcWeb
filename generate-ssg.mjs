@@ -614,11 +614,25 @@ ${jsonLd}
         ${nav.desktop}
       </nav>
 
-      <!-- Right: Language Switcher + Compact Engine Status + Dark Mode + Mobile Hamburger -->
+      <!-- Right: Language Switcher + Global Study Mode + Compact Engine Status + Dark Mode + Mobile Hamburger -->
       <div class="flex items-center gap-1 sm:gap-2 shrink-0">
         <div id="lang-switcher" class="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[10px] sm:text-[11px] font-mono font-semibold">
           ${nav.langSwitcher}
         </div>
+
+        <button
+          id="study-mode-toggle"
+          type="button"
+          aria-pressed="false"
+          title="${escapeHtml(ui.studyModeLabel)}"
+          aria-label="${escapeHtml(ui.studyModeLabel)}"
+          class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <span id="study-mode-text" class="hidden md:inline">${escapeHtml(ui.studyModeLabel)}</span>
+        </button>
 
         <button id="engine-status-btn" type="button" title="${escapeHtml(ui.engineStatusLoading)}" aria-label="${escapeHtml(ui.engineStatusLoading)}" class="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
           <span id="engine-status-dot" class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-500 animate-ping"></span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtu8uv2">
+  <meta name="build-version" content="mwtug223">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>About Us &amp; Client-Side Symbolic Architecture | CalcWeb</title>
   <meta name="description" content="Learn about the CalcWeb educational engineering project: step-by-step math and engineering calculators powered by WebAssembly (Pyodide + SymPy) running 100% in your browser.">
@@ -42,11 +42,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtu8uv2">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtu8uv2">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtu8uv2">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtu8uv2">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtu8uv2">
+  <link rel="modulepreload" href="/js/app.js?v=mwtug223">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtug223">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtug223">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtug223">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtug223">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -82,8 +82,8 @@
   <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
   <!-- Compiled Static Tailwind CSS & Custom Styles -->
-  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtu8uv2">
-  <link rel="stylesheet" href="/css/styles.css?v=mwtu8uv2">
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtug223">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtug223">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -286,11 +286,25 @@
       </div>
       </nav>
 
-      <!-- Right: Language Switcher + Compact Engine Status + Dark Mode + Mobile Hamburger -->
+      <!-- Right: Language Switcher + Global Study Mode + Compact Engine Status + Dark Mode + Mobile Hamburger -->
       <div class="flex items-center gap-1 sm:gap-2 shrink-0">
         <div id="lang-switcher" class="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[10px] sm:text-[11px] font-mono font-semibold">
           <a href="/sobre-nosotros" data-lang-switch="es" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">ES</a><a href="/en/about" data-lang-switch="en" class="px-2 py-0.5 rounded transition-colors bg-blue-700 text-white shadow-2xs">EN</a><a href="/fr/a-propos" data-lang-switch="fr" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">FR</a>
         </div>
+
+        <button
+          id="study-mode-toggle"
+          type="button"
+          aria-pressed="false"
+          title="Study Mode"
+          aria-label="Study Mode"
+          class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <span id="study-mode-text" class="hidden md:inline">Study Mode</span>
+        </button>
 
         <button id="engine-status-btn" type="button" title="Loading symbolic engine..." aria-label="Loading symbolic engine..." class="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
           <span id="engine-status-dot" class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-500 animate-ping"></span>
@@ -501,6 +515,6 @@
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtu8uv2"></script>
+  <script type="module" src="/js/app.js?v=mwtug223"></script>
 </body>
 </html>
