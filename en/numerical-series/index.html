@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtkhik7">
+  <meta name="build-version" content="mwtkow2b">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Step-by-Step Numerical Series Convergence &amp; Exact Sum Calculator | CalcWeb</title>
   <meta name="description" content="Step-by-step infinite Numerical Series convergence and exact sum calculator. Applies necessary condition, D'Alembert ratio test, Cauchy root test, p-series, Leibniz test, and symbolic summation.">
@@ -13,6 +13,9 @@
   <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/numerical-series">
   <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/series-numeriques">
   <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/series-numericas">
+
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
 
   <!-- Favicon & Mobile PWA Manifest -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -26,20 +29,24 @@
   <meta property="og:title" content="Step-by-Step Numerical Series Convergence &amp; Exact Sum Calculator | CalcWeb">
   <meta property="og:description" content="Step-by-step infinite Numerical Series convergence and exact sum calculator. Applies necessary condition, D'Alembert ratio test, Cauchy root test, p-series, Leibniz test, and symbolic summation.">
   <meta property="og:url" content="https://matespasoapaso.vercel.app/en/numerical-series">
-  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Step-by-Step Numerical Series Convergence &amp; Exact Sum Calculator | CalcWeb">
   <meta name="twitter:description" content="Step-by-step infinite Numerical Series convergence and exact sum calculator. Applies necessary condition, D'Alembert ratio test, Cauchy root test, p-series, Leibniz test, and symbolic summation.">
+  <meta name="twitter:image" content="https://matespasoapaso.vercel.app/og-cover.png">
 
   <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtkhik7">
+  <link rel="modulepreload" href="/js/app.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtkow2b">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -132,25 +139,11 @@
 
   <!-- KaTeX Math Typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            serif: ['Newsreader', 'Georgia', 'serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
-  <link rel="stylesheet" href="/css/styles.css?v=mwtkhik7">
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtkow2b">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtkow2b">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -473,6 +466,45 @@
         Rigorous step-by-step convergence analysis: necessary condition lim aₙ = 0, geometric series, p-series, D'Alembert's ratio test, Cauchy's root test, Leibniz alternating test, and exact sum.
       </p>
     </header>
+    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
+      <div class="mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exam Preset 1</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Geometric Series ∑ 1/2ⁿ &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">1/2^n ; 1</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exam Preset 2</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Necessary Condition (Divergent) &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">n/(n+1) ; 1</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exam Preset 3</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">D'Alembert Factorial ∑ 2ⁿ/n! &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">2^n/factorial(n) ; 1</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exam Preset 4</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Alternating Leibniz ∑ (-1)ⁿ⁺¹/n &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">(-1)^(n+1)/n ; 1</div>
+            </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <input type="text" readonly value="1/2^n ; 1" class="w-full flex-1 min-w-0 px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white" />
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm shrink-0">Solve Step-by-Step</button>
+      </div>
+    </section>
     <section id="solution-container" class="mb-12"></section>
     <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
       <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
@@ -481,6 +513,45 @@
       <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
         Analyzing an infinite numerical series ∑ aₙ consists of determining whether the sequence of partial sums S_N converges to a finite limit as N → ∞. Always start by checking the necessary condition: if lim_{n→∞} aₙ ≠ 0, the series diverges immediately.
       </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Necessary Condition for Convergence &amp; Geometric Series</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\lim_{n\to\infty} a_n \ne 0 \implies \sum a_n \text{ Diverge}, \qquad \sum_{n=n_0}^{\infty} r^n = \frac{r^{n_0}}{1 - r} \; (|r| &lt; 1)</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Careful: lim a_n = 0 is necessary but NOT sufficient (e.g. the harmonic series ∑ 1/n has lim 1/n = 0 yet diverges).
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">D'Alembert Ratio Test &amp; Cauchy Root Test</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">L = \lim_{n\to\infty} \left|\frac{a_{n+1}}{a_n}\right| = \lim_{n\to\infty} \sqrt[n]{|a_n|} \implies \begin{cases} L &lt; 1 &amp; \text{Converge absolutamente} \\ L &gt; 1 &amp; \text{Diverge} \\ L = 1 &amp; \text{Criterio no concluyente} \end{cases}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Use D'Alembert when a_n contains factorials (n!) or products, and Cauchy when the entire term is raised to power n.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Generalized Harmonic Series (Riemann p-Series)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\sum_{n=1}^{\infty} \frac{1}{n^p} \implies \begin{cases} p &gt; 1 &amp; \text{Convergente } (\zeta(p), \text{ ej. } \sum 1/n^2 = \pi^2/6) \\ p \le 1 &amp; \text{Divergente} \end{cases}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Serves as a benchmark for limit comparison tests with rational polynomial quotients.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Leibniz Alternating Series Test ∑ (-1)ⁿ bₙ (bₙ &gt; 0)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\text{Si } \lim_{n\to\infty} b_n = 0 \text{ y } b_{n+1} \le b_n \; \forall n \implies \sum (-1)^n b_n \text{ Converge}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              If ∑ |a_n| diverges while ∑ a_n converges by Leibniz (like ∑ (-1)^{n+1}/n = ln 2), the series is Conditionally Convergent.
+            </p>
+          </div>
+      </div>
       <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
         <li>Always check lim_{n→∞} a_n first: if it is non-zero, the series diverges in a single step.</li><li>If the general term is a rational quotient P(n)/Q(n), compare asymptotically with the p-series 1/n^{deg(Q) - deg(P)}.</li><li>For a geometric series ∑ r^n starting at n = n₀, the exact sum is always (first term) / (1 - ratio) = r^{n₀} / (1 - r).</li>
       </ul>
@@ -584,6 +655,6 @@
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtkhik7"></script>
+  <script type="module" src="/js/app.js?v=mwtkow2b"></script>
 </body>
 </html>

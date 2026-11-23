@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtkhik7">
+  <meta name="build-version" content="mwtkow2b">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Calculatrice de Diagonalisation de Matrices 2x2 et 3x3 Étape par Étape | CalcWeb</title>
   <meta name="description" content="Calculatrice de diagonalisation de matrices 2x2 et 3x3 étape par étape. Calcule le polynôme caractéristique |A - λI| = 0, valeurs propres, vecteurs propres, matrice de passage P et matrice diagonale D.">
@@ -13,6 +13,9 @@
   <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/matrix-diagonalization">
   <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/diagonalisation-matrices">
   <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/diagonalizacion-matrices">
+
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
 
   <!-- Favicon & Mobile PWA Manifest -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -26,20 +29,24 @@
   <meta property="og:title" content="Calculatrice de Diagonalisation de Matrices 2x2 et 3x3 Étape par Étape | CalcWeb">
   <meta property="og:description" content="Calculatrice de diagonalisation de matrices 2x2 et 3x3 étape par étape. Calcule le polynôme caractéristique |A - λI| = 0, valeurs propres, vecteurs propres, matrice de passage P et matrice diagonale D.">
   <meta property="og:url" content="https://matespasoapaso.vercel.app/fr/diagonalisation-matrices">
-  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Calculatrice de Diagonalisation de Matrices 2x2 et 3x3 Étape par Étape | CalcWeb">
   <meta name="twitter:description" content="Calculatrice de diagonalisation de matrices 2x2 et 3x3 étape par étape. Calcule le polynôme caractéristique |A - λI| = 0, valeurs propres, vecteurs propres, matrice de passage P et matrice diagonale D.">
+  <meta name="twitter:image" content="https://matespasoapaso.vercel.app/og-cover.png">
 
   <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtkhik7">
+  <link rel="modulepreload" href="/js/app.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtkow2b">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -132,25 +139,11 @@
 
   <!-- KaTeX Math Typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            serif: ['Newsreader', 'Georgia', 'serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
-  <link rel="stylesheet" href="/css/styles.css?v=mwtkhik7">
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtkow2b">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtkow2b">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -473,6 +466,45 @@
         Calcul détaillé de l'équation caractéristique |A - λI| = 0, spectre des valeurs propres, sous-espaces propres, matrice de passage P et matrice diagonale D.
       </p>
     </header>
+    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
+      <div class="mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 1</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Matrice 2×2 (Valeurs propres simples) &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">4, 1; 2, 3</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 2</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Matrice 2×2 Symétrique Réelle &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">2, 1; 1, 2</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 3</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Matrice 3×3 Diagonalisable &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">2, 0, -2; 1, 3, 2; 0, 0, 3</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 4</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Matrice 2×2 Non Diagonalisable (Jordan) &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">3, 1; 0, 3</div>
+            </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <input type="text" readonly value="4, 1; 2, 3" class="w-full flex-1 min-w-0 px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white" />
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm shrink-0">Résoudre Étape par Étape</button>
+      </div>
+    </section>
     <section id="solution-container" class="mb-12"></section>
     <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
       <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
@@ -481,6 +513,45 @@
       <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
         Une matrice carrée A ∈ ℝ^{n×n} est diagonalisable si et seulement s'il existe une base de ℝ^n formée de vecteurs propres de A. Dans cette base, l'endomorphisme agit par simple multiplication par chaque valeur propre λ_i, permettant le calcul immédiat des puissances A^k = P·D^k·P⁻¹.
       </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Équation et Polynôme Caractéristique</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">p(\lambda) = \det(A - \lambda I_n) = |A - \lambda I_n| = 0</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Pour les matrices 2×2 on a toujours p(λ) = λ² - tr(A)λ + det(A) = 0.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Sous-espace Propre E(λ_i) Associé à une Valeur Propre</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">E(\lambda_i) = \ker(A - \lambda_i I_n) = \left\{ \vec{v} \in \mathbb{R}^n : (A - \lambda_i I_n)\vec{v} = \vec{0} \right\}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              La dimension de ce sous-espace est la multiplicité géométrique : m_g(λ_i) = n - rang(A - λ_i I).
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Théorème Fondamental de Diagonalisabilité</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">A \text{ es diagonalizable } \Longleftrightarrow \sum_{i} m_a(\lambda_i) = n \quad \text{y} \quad m_g(\lambda_i) = m_a(\lambda_i) \; \forall \lambda_i</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Toute matrice symétrique réelle (A = A^T) est toujours diagonalisable en base orthonormée.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Relation de Semblabilité et Puissance n-ième</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">A = P D P^{-1} \implies D = P^{-1} A P, \qquad A^k = P D^k P^{-1}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              L'ordre des vecteurs propres en colonnes dans P doit correspondre à celui des valeurs propres dans D.
+            </p>
+          </div>
+      </div>
       <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
         <li>Vérifiez toujours que la somme des valeurs propres est égale à la trace tr(A) et que leur produit est égal au déterminant det(A).</li><li>Si toutes les valeurs propres sont réelles et distinctes (multiplicité algébrique m_a = 1), la matrice est automatiquement diagonalisable.</li><li>Lorsqu'une valeur propre a une multiplicité algébrique m_a = 2, vérifiez si rang(A - λI) = n - 2 ; sinon la matrice n'est pas diagonalisable.</li>
       </ul>
@@ -584,6 +655,6 @@
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtkhik7"></script>
+  <script type="module" src="/js/app.js?v=mwtkow2b"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtkhik7">
+  <meta name="build-version" content="mwtkow2b">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Calculadora de Fasores, Números Complejos y Circuitos AC Paso a Paso | CalcWeb</title>
   <meta name="description" content="Calculadora de fasores y números complejos para Teoría de Circuitos AC. Opera mezclando forma binómica (a+bj) y polar (M∠θ°), convierte paso a paso con ajuste de cuadrante y resuelve sistemas complejos 2x2 y 3x3.">
@@ -13,6 +13,9 @@
   <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/phasor-calculator">
   <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/calculateur-phaseurs">
   <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/calculadora-fasores-complejos">
+
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
 
   <!-- Favicon & Mobile PWA Manifest -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -26,20 +29,24 @@
   <meta property="og:title" content="Calculadora de Fasores, Números Complejos y Circuitos AC Paso a Paso | CalcWeb">
   <meta property="og:description" content="Calculadora de fasores y números complejos para Teoría de Circuitos AC. Opera mezclando forma binómica (a+bj) y polar (M∠θ°), convierte paso a paso con ajuste de cuadrante y resuelve sistemas complejos 2x2 y 3x3.">
   <meta property="og:url" content="https://matespasoapaso.vercel.app/calculadora-fasores-complejos">
-  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Calculadora de Fasores, Números Complejos y Circuitos AC Paso a Paso | CalcWeb">
   <meta name="twitter:description" content="Calculadora de fasores y números complejos para Teoría de Circuitos AC. Opera mezclando forma binómica (a+bj) y polar (M∠θ°), convierte paso a paso con ajuste de cuadrante y resuelve sistemas complejos 2x2 y 3x3.">
+  <meta name="twitter:image" content="https://matespasoapaso.vercel.app/og-cover.png">
 
   <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtkhik7">
+  <link rel="modulepreload" href="/js/app.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtkow2b">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -132,25 +139,11 @@
 
   <!-- KaTeX Math Typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            serif: ['Newsreader', 'Georgia', 'serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
-  <link rel="stylesheet" href="/css/styles.css?v=mwtkhik7">
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtkow2b">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtkow2b">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -473,6 +466,45 @@
         Operaciones mixtas en forma binómica (a + bj) y polar (M∠θ°), conversión detallada de módulo y argumento con ajuste de cuadrante y resolución de sistemas fasoriales 2×2 y 3×3 (mallas y nudos).
       </p>
     </header>
+    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
+      <div class="mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Examen Típico 1</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Operación mixta Binómica × Polar &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">(3 + 4j) * (5&lt;30)</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Examen Típico 2</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Impedancia equivalente serie/paralelo &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">((4 + 3j)*(2 - 4j)) / ((4 + 3j) + (2 - 4j))</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Examen Típico 3</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Conversión 2º Cuadrante (-3 + 4j) &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">-3 + 4j</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Examen Típico 4</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Sistema 2×2 de Mallas en Corriente Alterna &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">4+2j, -2j, 10&lt;0; -2j, 2+4j, 0</div>
+            </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <input type="text" readonly value="(3 + 4j) * (5&lt;30)" class="w-full flex-1 min-w-0 px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white" />
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm shrink-0">Resolver Paso a Paso</button>
+      </div>
+    </section>
     <section id="solution-container" class="mb-12"></section>
     <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
       <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
@@ -481,6 +513,45 @@
       <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
         En Teoría de Circuitos y Electrotecnia, el método fasorial (Transformada de Steinmetz) convierte ecuaciones integro-diferenciales temporales con excitación sinusoidal v(t) = V_m cos(ωt + φ) en sistemas algebraicos lineales sobre el cuerpo de los números complejos ℂ, donde las bobinas presentan impedancia Z_L = jωL y los condensadores Z_C = 1/(jωC) = -j/(ωC).
       </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Conversión Binómica a Polar con Ajuste de Cuadrante</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">a + j b = M\angle\theta^\circ \implies M = \sqrt{a^2 + b^2}, \qquad \theta = \begin{cases} \arctan(b/a), &amp; a &gt; 0 \\ \arctan(b/a) + 180^\circ, &amp; a &lt; 0, b \ge 0 \\ \arctan(b/a) - 180^\circ, &amp; a &lt; 0, b &lt; 0 \end{cases}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Recuerda sumar o restar 180° cuando la parte real 'a' es negativa (2º y 3º cuadrante).
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Conversión Polar a Binómica (Fórmula de Euler)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">M\angle\theta^\circ = M e^{j\theta} = M\cos(\theta) + j\,M\sin(\theta)</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              La forma binómica es indispensable para sumar o restar fasores; la forma polar es óptima para multiplicar, dividir y elevar a potencias.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Producto y Cociente Directo en Forma Polar</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">(M_1\angle\theta_1)\cdot(M_2\angle\theta_2) = (M_1 M_2)\angle(\theta_1 + \theta_2), \qquad \frac{M_1\angle\theta_1}{M_2\angle\theta_2} = \left(\frac{M_1}{M_2}\right)\angle(\theta_1 - \theta_2)</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Al multiplicar fasores se multiplican los módulos y se suman las fases en grados.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Resolución de Mallas/Nudos AC por Regla de Cramer Compleja</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\mathbb{Z}\,\vec{\mathbb{I}} = \vec{\mathbb{V}} \implies \mathbb{I}_k = \frac{\det(\mathbb{Z}_k)}{\det(\mathbb{Z})}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Permite obtener directamente cada corriente o tensión nodal en forma binómica y polar (amplitud y desfase).
+            </p>
+          </div>
+      </div>
       <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
         <li>Para escribir un fasor en forma polar con ángulo en grados usa el símbolo '&lt;' o '∠': por ejemplo 10&lt;30 o 10∠-45.</li><li>Antes de sumar dos fasores escritos en forma polar (ej. 5&lt;30 + 4&lt;-60), conviértelos siempre a forma binómica a + bj.</li><li>En un sistema de mallas AC sin fuentes dependientes, la matriz de impedancias Z es siempre simétrica respecto a la diagonal principal.</li>
       </ul>
@@ -584,6 +655,6 @@
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtkhik7"></script>
+  <script type="module" src="/js/app.js?v=mwtkow2b"></script>
 </body>
 </html>

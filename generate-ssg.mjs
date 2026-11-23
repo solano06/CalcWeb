@@ -344,6 +344,28 @@ function buildStaticCalculatorMainHtml(calc, lang = "es") {
         ${escapeHtml(calc.subtitle)}
       </p>
     </header>
+    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
+      <div class="mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          ${calc.examExamples
+            .map(
+              (ex) => `
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">${escapeHtml(ex.badge)}</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">${escapeHtml(ex.label)} &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">${escapeHtml(ex.expr)}</div>
+            </div>`
+            )
+            .join("")}
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <input type="text" readonly value="${escapeHtml(calc.defaultExpr)}" class="w-full flex-1 min-w-0 px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white" />
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm shrink-0">${escapeHtml(ui.solveBtn)}</button>
+      </div>
+    </section>
     <section id="solution-container" class="mb-12"></section>
     <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
       <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
@@ -352,6 +374,22 @@ function buildStaticCalculatorMainHtml(calc, lang = "es") {
       <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
         ${escapeHtml(calc.guide.intro)}
       </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        ${calc.guide.formulas
+          .map(
+            (f) => `
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">${escapeHtml(f.name)}</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">${escapeHtml(f.latex)}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              ${escapeHtml(f.note)}
+            </p>
+          </div>`
+          )
+          .join("")}
+      </div>
       <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
         ${calc.guide.tips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join("")}
       </ul>
@@ -479,6 +517,9 @@ function buildFullHtmlDocument({
   <link rel="canonical" href="${canonicalUrl}">
   ${hreflangTags}
 
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
+
   <!-- Favicon & Mobile PWA Manifest -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="manifest" href="/site.webmanifest">
@@ -491,10 +532,14 @@ function buildFullHtmlDocument({
   <meta property="og:title" content="${escapeHtml(fullTitle)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:url" content="${canonicalUrl}">
-  <meta property="og:image" content="${SITE_URL}/favicon.svg">
+  <meta property="og:image" content="${SITE_URL}/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(fullTitle)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
+  <meta name="twitter:image" content="${SITE_URL}/og-cover.png">
 
   <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -516,24 +561,10 @@ ${jsonLd}
 
   <!-- KaTeX Math Typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            serif: ['Newsreader', 'Georgia', 'serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=${BUILD_VERSION}">
   <link rel="stylesheet" href="/css/styles.css?v=${BUILD_VERSION}">
 
   <!-- Vercel Web Analytics -->

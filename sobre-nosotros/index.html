@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtkhik7">
+  <meta name="build-version" content="mwtkow2b">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Sobre Nosotros y Arquitectura Simbólica Client-Side | CalcWeb</title>
   <meta name="description" content="Conoce el proyecto educativo CalcWeb: calculadoras matemáticas y de ingeniería paso a paso con motor simbólico WebAssembly (Pyodide + SymPy) ejecutado 100% en tu navegador.">
@@ -13,6 +13,9 @@
   <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/about">
   <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/a-propos">
   <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/sobre-nosotros">
+
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
 
   <!-- Favicon & Mobile PWA Manifest -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -26,20 +29,24 @@
   <meta property="og:title" content="Sobre Nosotros y Arquitectura Simbólica Client-Side | CalcWeb">
   <meta property="og:description" content="Conoce el proyecto educativo CalcWeb: calculadoras matemáticas y de ingeniería paso a paso con motor simbólico WebAssembly (Pyodide + SymPy) ejecutado 100% en tu navegador.">
   <meta property="og:url" content="https://matespasoapaso.vercel.app/sobre-nosotros">
-  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Sobre Nosotros y Arquitectura Simbólica Client-Side | CalcWeb">
   <meta name="twitter:description" content="Conoce el proyecto educativo CalcWeb: calculadoras matemáticas y de ingeniería paso a paso con motor simbólico WebAssembly (Pyodide + SymPy) ejecutado 100% en tu navegador.">
+  <meta name="twitter:image" content="https://matespasoapaso.vercel.app/og-cover.png">
 
   <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtkhik7">
+  <link rel="modulepreload" href="/js/app.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtkow2b">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -72,25 +79,11 @@
 
   <!-- KaTeX Math Typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            serif: ['Newsreader', 'Georgia', 'serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
-  <link rel="stylesheet" href="/css/styles.css?v=mwtkhik7">
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtkow2b">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtkow2b">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -469,6 +462,6 @@
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtkhik7"></script>
+  <script type="module" src="/js/app.js?v=mwtkow2b"></script>
 </body>
 </html>

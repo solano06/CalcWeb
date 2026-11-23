@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtkhik7">
+  <meta name="build-version" content="mwtkow2b">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Calculatrice de Séries de Fourier (Trigonométrique et Exponentielle) Étape par Étape | CalcWeb</title>
   <meta name="description" content="Calculatrice en ligne de Séries de Fourier trigonométrique (a0, an, bn) et exponentielle complexe (cn) étape par étape sur [-L, L]. Analyse la parité, les intégrales et le développement à l'harmonique N.">
@@ -13,6 +13,9 @@
   <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/fourier-series">
   <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/series-de-fourier">
   <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/series-de-fourier">
+
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
 
   <!-- Favicon & Mobile PWA Manifest -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -26,20 +29,24 @@
   <meta property="og:title" content="Calculatrice de Séries de Fourier (Trigonométrique et Exponentielle) Étape par Étape | CalcWeb">
   <meta property="og:description" content="Calculatrice en ligne de Séries de Fourier trigonométrique (a0, an, bn) et exponentielle complexe (cn) étape par étape sur [-L, L]. Analyse la parité, les intégrales et le développement à l'harmonique N.">
   <meta property="og:url" content="https://matespasoapaso.vercel.app/fr/series-de-fourier">
-  <meta property="og:image" content="https://matespasoapaso.vercel.app/favicon.svg">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Calculatrice de Séries de Fourier (Trigonométrique et Exponentielle) Étape par Étape | CalcWeb">
   <meta name="twitter:description" content="Calculatrice en ligne de Séries de Fourier trigonométrique (a0, an, bn) et exponentielle complexe (cn) étape par étape sur [-L, L]. Analyse la parité, les intégrales et le développement à l'harmonique N.">
+  <meta name="twitter:image" content="https://matespasoapaso.vercel.app/og-cover.png">
 
   <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkhik7">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtkhik7">
+  <link rel="modulepreload" href="/js/app.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtkow2b">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwtkow2b">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -132,25 +139,11 @@
 
   <!-- KaTeX Math Typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            serif: ['Newsreader', 'Georgia', 'serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
-  <link rel="stylesheet" href="/css/styles.css?v=mwtkhik7">
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtkow2b">
+  <link rel="stylesheet" href="/css/styles.css?v=mwtkow2b">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -473,6 +466,45 @@
         Décomposition harmonique des signaux périodiques sur [-L, L] avec analyse préalable de la parité paire/impaire, calcul explicite des intégrales et somme partielle d'ordre N.
       </p>
     </header>
+    <section class="min-w-0 max-w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-7 shadow-sm mb-8">
+      <div class="mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 1</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Dent de scie f(x) = x &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">x ; pi ; 4</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 2</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Signal carré f(x) = sgn(x) &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">sign(x) ; pi ; 5</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 3</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Parabole paire f(x) = x² &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">x^2 ; pi ; 3</div>
+            </div>
+            <div class="min-w-0 max-w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex flex-col justify-between">
+              <div class="flex items-center justify-between w-full gap-1 mb-1.5 min-w-0">
+                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 truncate">Exemple d'Examen 4</span>
+                <span class="text-[10px] font-mono text-slate-400 shrink-0">Onde triangulaire f(x) = |x| &rarr;</span>
+              </div>
+              <div class="text-xs font-mono truncate text-slate-700 dark:text-slate-300 py-0.5">abs(x) ; pi ; 3</div>
+            </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <input type="text" readonly value="x ; pi ; 4" class="w-full flex-1 min-w-0 px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 font-mono text-sm sm:text-base text-slate-900 dark:text-white" />
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm shrink-0">Résoudre Étape par Étape</button>
+      </div>
+    </section>
     <section id="solution-container" class="mb-12"></section>
     <section aria-labelledby="guide-heading" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
       <h2 id="guide-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
@@ -481,6 +513,45 @@
       <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
         Tout signal périodique de période T = 2L vérifiant les conditions de Dirichlet peut se décomposer en une somme infinie d'harmoniques sinusoïdaux de pulsations multiples de ω₀ = π/L. L'étude de la parité (fonction paire ou impaire) avant d'intégrer divise par deux les calculs en examen.
       </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Coefficients Trigonométriques d'Euler-Fourier sur [-L, L]</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">a_0 = \frac{1}{L}\int_{-L}^{L} f(x)\,dx, \qquad a_n = \frac{1}{L}\int_{-L}^{L} f(x)\cos\!\left(\frac{n\pi x}{L}\right)dx, \qquad b_n = \frac{1}{L}\int_{-L}^{L} f(x)\sin\!\left(\frac{n\pi x}{L}\right)dx</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Le terme constant a₀/2 représente exactement la valeur moyenne (composante continue) sur une période.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Simplification par Parité (Fonctions Paires et Impaires)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">\begin{cases} f(-x) = f(x) \text{ (Par)} &amp; \implies b_n = 0, \quad a_n = \frac{2}{L}\int_{0}^{L} f(x)\cos\!\left(\frac{n\pi x}{L}\right)dx \\ f(-x) = -f(x) \text{ (Impar)} &amp; \implies a_0 = 0, \; a_n = 0, \quad b_n = \frac{2}{L}\int_{0}^{L} f(x)\sin\!\left(\frac{n\pi x}{L}\right)dx \end{cases}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Le produit d'une fonction paire par une fonction impaire est impair, donc son intégrale sur [-L, L] est nulle.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Série de Fourier Exponentielle Complexe et Lien avec (aₙ, bₙ)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">c_n = \frac{1}{2L}\int_{-L}^{L} f(x)e^{-j\frac{n\pi x}{L}}\,dx = \frac{a_n - j b_n}{2} \; (n &gt; 0), \qquad c_{-n} = c_n^*, \qquad c_0 = \frac{a_0}{2}</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Les coefficients complexes c_n définissent le spectre discret bilatéral d'amplitude |c_n| et de phase arg(c_n).
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Égalité de Parseval (Puissance Moyenne du Signal Périodique)</h3>
+              <div class="overflow-x-auto py-1 font-mono text-xs text-slate-700 dark:text-slate-300">P = \frac{1}{2L}\int_{-L}^{L} |f(x)|^2\,dx = \left(\frac{a_0}{2}\right)^2 + \frac{1}{2}\sum_{n=1}^{\infty} (a_n^2 + b_n^2) = \sum_{n=-\infty}^{\infty} |c_n|^2</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 pt-2">
+              Très utilisée aux examens pour déduire des sommes de séries comme ∑ 1/n² = π²/6 ou ∑ 1/n⁴ = π⁴/90.
+            </p>
+          </div>
+      </div>
       <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside">
         <li>Avant toute intégration par parties, vérifiez toujours si f(-x) = f(x) (Paire, donc b_n = 0) ou si f(-x) = -f(x) (Impaire, donc a_0 = a_n = 0).</li><li>Lors de l'évaluation aux bornes de [-π, π], utilisez cos(nπ) = (-1)^n et sin(nπ) = 0 pour tout entier n.</li><li>Aux points de discontinuité de première espèce, la série de Fourier converge vers la demi-somme des limites à gauche et à droite : (f(x⁺) + f(x⁻))/2 (Théorème de Dirichlet).</li>
       </ul>
@@ -584,6 +655,6 @@
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtkhik7"></script>
+  <script type="module" src="/js/app.js?v=mwtkow2b"></script>
 </body>
 </html>

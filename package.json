@@ -4,6 +4,7 @@
   "description": "Aplicación web multipágina (SPA/SSG con rutas limpias) de calculadoras matemáticas y de ingeniería paso a paso 100% client-side (Pyodide + SymPy Web Worker + KaTeX).",
   "type": "module",
   "scripts": {
+    "build:css": "npx -y tailwindcss@3 -c ./tailwind.config.cjs -i ./css/tailwind-input.css -o ./css/tailwind.min.css --minify",
     "build:ssg": "node generate-ssg.mjs",
     "start": "node server.mjs",
     "dev": "node server.mjs"

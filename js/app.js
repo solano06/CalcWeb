@@ -2174,13 +2174,18 @@ document.addEventListener("DOMContentLoaded", () => {
   initRouterEvents();
   initPyodideWorker();
 
-  const startApp = () => {
-    navigateTo(window.location.pathname, false);
-  };
+  navigateTo(window.location.pathname, false);
 
-  if (window.katex) {
-    startApp();
-  } else {
-    window.addEventListener("load", startApp, { once: true });
+  if (!window.katex) {
+    const katexScript = document.getElementById("katex-js");
+    if (katexScript) {
+      katexScript.addEventListener(
+        "load",
+        () => {
+          navigateTo(state.currentRoute, false);
+        },
+        { once: true }
+      );
+    }
   }
 });
