@@ -24,6 +24,7 @@ import {
 } from "./js/i18n.js";
 
 export const SITE_URL = (process.env.SITE_URL || "https://matespasoapaso.vercel.app").replace(/\/+$/, "");
+const GA_MEASUREMENT_ID = (process.env.GA_MEASUREMENT_ID || "").trim();
 const TODAY_ISO = new Date().toISOString().split("T")[0];
 const BUILD_VERSION = Date.now().toString(36);
 const ROOT_DIR = process.cwd();
@@ -533,6 +534,22 @@ ${jsonLd}
     }
   </script>
   <link rel="stylesheet" href="/css/styles.css?v=${BUILD_VERSION}">
+
+  <!-- Vercel Web Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>${
+    GA_MEASUREMENT_ID
+      ? `
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${escapeHtml(GA_MEASUREMENT_ID)}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${escapeHtml(GA_MEASUREMENT_ID)}');
+  </script>`
+      : ""
+  }
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
 

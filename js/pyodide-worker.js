@@ -402,6 +402,8 @@ def parse_matrix_input(raw_str):
 def solve_diagonalization(matrix_str):
     steps = []
     A = parse_matrix_input(matrix_str)
+    if A.rows == 0 or A.rows != A.cols:
+        return {"ok": False, "error": f"La matriz debe ser cuadrada y no vacía (recibida {A.rows}x{A.cols})."}
     n = A.rows
     I_n = sp.eye(n)
 
@@ -511,9 +513,7 @@ def solve_ztransform(expr_str, direction="inverse"):
                 })
             else:
                 tm_no_u = tm.subs(sp.Heaviside(n), 1)
-                # Use geometric series summation via SymPy Sum
-                sum_res = sp.summation(tm_no_u * (z_sym := sp.Dummy('z_pos', positive=True))**(-n), (n, 0, sp.oo))
-                # Alternatively algebraic matching for c * n^p * a^n
+                # Algebraic matching for c * n^p * a^n
                 c_coeff = sp.Integer(1)
                 a_base = sp.Integer(1)
                 n_pow = 0
@@ -679,6 +679,8 @@ def solve_convolution(expr_str, direction="direct"):
 def solve_ode(expr_str):
     steps = []
     parts = [p.strip() for p in expr_str.split(';') if p.strip()]
+    if not parts:
+        return {"ok": False, "error": "Introduce una ecuación diferencial válida (ej. y' + 2*y = exp(x))."}
     ode_part = parts[0]
     ics_part = parts[1] if len(parts) > 1 else ""
 
@@ -870,6 +872,8 @@ def solve_integrals(expr_str, direction="direct"):
     from sympy.integrals.manualintegrate import integral_steps, manualintegrate
     steps = []
     parts = [p.strip() for p in expr_str.split(';') if p.strip()]
+    if not parts:
+        return {"ok": False, "error": "Introduce una función f(x) para integrar."}
     fn_expr = parse_engineering_expr(parts[0])
 
     if direction == "direct" and len(parts) == 1:
@@ -938,9 +942,14 @@ def solve_integrals(expr_str, direction="direct"):
 def solve_taylor(expr_str):
     steps = []
     parts = [p.strip() for p in expr_str.split(';') if p.strip()]
+    if not parts:
+        return {"ok": False, "error": "Introduce la función, centro y orden: f(x) ; x0 ; n."}
     fn_expr = parse_engineering_expr(parts[0])
     x0_val = parse_engineering_expr(parts[1]) if len(parts) > 1 else sp.Integer(0)
-    n_ord = int(parts[2]) if len(parts) > 2 else 4
+    try:
+        n_ord = int(parts[2]) if len(parts) > 2 else 4
+    except ValueError:
+        return {"ok": False, "error": "El orden n del polinomio de Taylor debe ser un número entero."}
     n_ord = max(1, min(n_ord, 10))
 
     series_name = "Maclaurin" if x0_val == 0 else "Taylor"
@@ -993,6 +1002,8 @@ def aug_matrix_latex(M, n_vars):
 def solve_gauss(expr_str):
     steps = []
     M = parse_matrix_input(expr_str)
+    if M.rows == 0 or M.cols < 2:
+        return {"ok": False, "error": "Introduce una matriz ampliada válida (A|b) con al menos 2 columnas."}
     m_rows = M.rows
     total_cols = M.cols
     n_vars = total_cols - 1
@@ -1132,6 +1143,8 @@ def solve_phasors(expr_str, direction="direct"):
             cols = [sp.expand_complex(parse_engineering_expr(c.strip())) for c in r.split(',') if c.strip()]
             mat_data.append(cols)
         M = sp.Matrix(mat_data)
+        if M.rows == 0 or M.cols < 2 or M.rows != M.cols - 1:
+            return {"ok": False, "error": f"El sistema complejo debe tener N ecuaciones y N+1 columnas (recibido {M.rows}x{M.cols})."}
         n_v = M.cols - 1
         Z_mat = M[:, :n_v]
         V_vec = M[:, n_v]
@@ -1164,6 +1177,8 @@ def solve_phasors(expr_str, direction="direct"):
 def solve_fourier_series(expr_str, direction="direct"):
     steps = []
     parts = [p.strip() for p in expr_str.split(';') if p.strip()]
+    if not parts:
+        return {"ok": False, "error": "Introduce la función, semiperíodo y armónicos: f(x) ; L ; N."}
     fn_expr = parse_engineering_expr(parts[0])
     L_val = parse_engineering_expr(parts[1]) if len(parts) > 1 else sp.pi
     N_harm = int(parts[2]) if len(parts) > 2 else 4
@@ -1257,6 +1272,8 @@ def solve_fourier_series(expr_str, direction="direct"):
 def solve_num_series(expr_str):
     steps = []
     parts = [p.strip() for p in expr_str.split(';') if p.strip()]
+    if not parts:
+        return {"ok": False, "error": "Introduce el término general de la serie: a_n ; n0."}
     an_expr = parse_engineering_expr(parts[0])
     n0_val = int(parts[1]) if len(parts) > 1 else 1
 

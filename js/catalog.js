@@ -1103,8 +1103,8 @@ export const CALCULATOR_CATALOG = [
     hasDirectionToggle: true,
     directLabel: "Aritmética y Conversión Fasorial (a+bj ↔ M∠θ°)",
     inverseLabel: "Sistema Complejo 2×2 / 3×3 (Mallas / Nudos AC)",
-    placeholderDirect: "Mezcla binómica y polar -> Ej: (3 + 4j) * (10@_30) / (2 - 2j)  o  -3 + 4j",
-    placeholderInverse: "Matriz aumentada compleja (Z|V) separada por ';' -> Ej: 4+2j, -2j, 10@_0 ; -2j, 2+4j, 0",
+    placeholderDirect: "Mezcla binómica y polar -> Ej: (3 + 4j) * (10<30) / (2 - 2j)  o  -3 + 4j",
+    placeholderInverse: "Matriz aumentada compleja (Z|V) separada por ';' -> Ej: 4+2j, -2j, 10<0 ; -2j, 2+4j, 0",
     defaultExpr: "(3 + 4j) * (5<30)",
     defaultDirection: "direct",
     examExamples: [
@@ -1213,7 +1213,55 @@ export const VIRTUAL_KEYBOARD_KEYS = [
   { label: "\\begin{pmatrix}n\\times n\\end{pmatrix}", insert: "4, 1; 2, 3", tooltip: "Plantilla Matriz cuadrada" }
 ];
 
-import { ROUTE_MAP } from "./i18n.js";
+import { ROUTE_MAP, UI_STRINGS } from "./i18n.js";
+
+const KEYBOARD_TOOLTIPS_I18N = {
+  en: [
+    "Integration by parts",
+    "Definite integral with limits a, b",
+    "Fourier series on [-L, L] up to harmonic N",
+    "Infinite numerical series a_n ; n0",
+    "1st-order linear ODE with IVP",
+    "Taylor series f(x) ; x0 ; n",
+    "Gauss-Jordan augmented matrix (A|b)",
+    "Phasor in polar form M∠θ°",
+    "Phasor angle symbol (degrees)",
+    "Complex number in rectangular form",
+    "Factorial n!",
+    "Continuous Heaviside step u(t)",
+    "Causal geometric sequence (Z-Transform)",
+    "Rational function in Z",
+    "Convolution (;)",
+    "Square matrix template"
+  ],
+  fr: [
+    "Intégration par parties",
+    "Intégrale définie sur [a, b]",
+    "Série de Fourier sur [-L, L] jusqu'à l'harmonique N",
+    "Série numérique infinie a_n ; n0",
+    "EDO linéaire du 1er ordre avec Cauchy",
+    "Série de Taylor f(x) ; x0 ; n",
+    "Matrice augmentée Gauss-Jordan (A|b)",
+    "Phaseur sous forme polaire M∠θ°",
+    "Symbole d'angle de phaseur (degrés)",
+    "Nombre complexe sous forme algébrique",
+    "Factorielle n!",
+    "Échelon continu de Heaviside u(t)",
+    "Suite géométrique causale (Transformée en Z)",
+    "Fonction rationnelle en Z",
+    "Convolution (;)",
+    "Modèle de matrice carrée"
+  ]
+};
+
+export function getLocalizedKeyboardKeys(lang = "es") {
+  const tooltips = KEYBOARD_TOOLTIPS_I18N[lang];
+  if (!tooltips) return VIRTUAL_KEYBOARD_KEYS;
+  return VIRTUAL_KEYBOARD_KEYS.map((k, i) => ({
+    ...k,
+    tooltip: tooltips[i] || k.tooltip
+  }));
+}
 
 export const CATALOG_I18N = {
   en: {
@@ -1225,9 +1273,29 @@ export const CATALOG_I18N = {
       subtitle: "Continuous spectral analysis in angular frequency ω with improper integral breakdown, Euler's identities, and table properties.",
       directLabel: "Direct Transform F(ω) = ℱ{f(t)}",
       inverseLabel: "Inverse Transform f(t) = ℱ⁻¹{F(ω)}",
+      placeholderDirect: "e.g. exp(-3*t)*u(t), rect(t/4), cos(5*t), delta(t) + 2*delta(t-3)",
+      placeholderInverse: "e.g. 1/(3 + j*w), 6/(9 + w^2)",
       examLabels: ["Causal Exponential", "Rectangular Pulse", "Harmonic Carrier", "Dirac Impulse Train"],
       guideTitle: "Quick Guide & Key Formulas: Fourier Transform in Engineering",
       guideIntro: "In Signals & Systems and Telecommunications, the continuous-time Fourier Transform decomposes an aperiodic signal f(t) into its angular frequency spectral density F(ω). Generalized distributions such as the Dirac Delta δ(ω) extend the transform to periodic and DC signals.",
+      formulas: [
+        {
+          name: "Direct & Inverse Definition (Angular Frequency ω Convention)",
+          note: "The normalization factor 1/(2π) appears exclusively in the inverse synthesis integral."
+        },
+        {
+          name: "Unilateral Causal Exponential (RC Low-Pass Filter)",
+          note: "The Heaviside step u(t) truncates the integral to [0, ∞). Its magnitude is 1/√(a² + ω²) and its phase is -arctan(ω/a)."
+        },
+        {
+          name: "Rectangular Pulse & Sinc Duality",
+          note: "The narrower the pulse in time (smaller T), the wider its main lobe in frequency (Uncertainty Principle)."
+        },
+        {
+          name: "Harmonic Oscillators & Dirac Deltas",
+          note: "Derived by applying Euler's formula cos(ω₀t) = (e^{jω₀t} + e^{-jω₀t})/2 and the frequency-shift property."
+        }
+      ],
       tips: [
         "Always check whether the signal is multiplied by the unit step u(t): this changes the lower integration limit from -∞ to 0.",
         "When transforming pure undamped trigonometric functions, use Euler's identity to rewrite them as complex exponentials.",
@@ -1260,9 +1328,29 @@ export const CATALOG_I18N = {
       subtitle: "Discrete-time signal and system analysis featuring explicit X(z)/z division, partial fraction decomposition, and causal table lookup.",
       directLabel: "Direct Z-Transform X(z) = 𝒫{x[n]}",
       inverseLabel: "Inverse Z-Transform x[n] = 𝒫⁻¹{X(z)} (X(z)/z Method)",
+      placeholderDirect: "e.g. (0.5)^n*u[n], n*(2)^n*u[n], (3)^n*u[n] + 2*delta[n-1]",
+      placeholderInverse: "e.g. z/((z-1)*(z-2)), (2*z^2 - 0.5*z)/(z^2 - 1.5*z + 0.5), z/(z-0.5)^2",
       examLabels: ["Inverse (Simple Poles X(z)/z)", "Inverse (Two Real Poles)", "Inverse (Double Pole z=2)", "Direct (Geometric + Ramp)"],
       guideTitle: "Quick Guide & Key Formulas: Z-Transform in Digital Signal Processing (DSP)",
       guideIntro: "The Z-Transform is the discrete-time counterpart of the Laplace Transform for analyzing LTI digital filters (FIR/IIR) and difference equations. To compute the Inverse Z-Transform via partial fractions, always divide by z first —forming X(z)/z— so that multiplying back by z produces canonical z/(z - a) blocks.",
+      formulas: [
+        {
+          name: "z-Normalized Partial Fraction Method",
+          note: "Dividing by z first guarantees z/(z - p_k) blocks that invert directly into geometric sequences."
+        },
+        {
+          name: "Basic Pair: Causal Exponential Sequence a^n u[n]",
+          note: "For a = 1 we obtain the Z-transform of the discrete unit step u[n]: z / (z - 1)."
+        },
+        {
+          name: "z-Domain Differentiation Property (Exponential Ramp n·a^n u[n])",
+          note: "Always appears when the transfer function X(z) has a double pole at z = a."
+        },
+        {
+          name: "Kronecker Discrete Impulse & Time Delay",
+          note: "Each isolated negative power z^{-k} inverts into a unit impulse shifted by k samples."
+        }
+      ],
       tips: [
         "Never expand X(z) directly into partial fractions: always divide by z first to expand X(z)/z, then multiply by z at the end.",
         "A causal discrete-time LTI system is BIBO-stable if and only if all poles of H(z) lie strictly inside the unit circle (|p_k| < 1).",
@@ -1295,9 +1383,29 @@ export const CATALOG_I18N = {
       subtitle: "Analytical LTI system response via convolution integral or summation, detailing time folding, shifting, and active integration limits bounded by unit steps.",
       directLabel: "Continuous Convolution y(t) = x(t) * h(t)",
       inverseLabel: "Discrete Convolution y[n] = x[n] * h[n]",
+      placeholderDirect: "Format x(t) ; h(t) -> e.g. exp(-2*t)*u(t) ; exp(-3*t)*u(t) or exp(-2*t)*u(t) ; u(t)",
+      placeholderInverse: "Format x[n] ; h[n] -> e.g. (0.5)^n*u[n] ; u[n] or [1, 2, 1] ; [1, -1]",
       examLabels: ["Two Causal Exponentials", "RC Step Response", "Discrete (Exponential * Step)", "Discrete (Finite FIR Sequences)"],
       guideTitle: "Quick Guide & Key Formulas: Convolution Integral and Summation in LTI Systems",
       guideIntro: "Convolution determines the complete output y(t) or y[n] of any Linear Time-Invariant (LTI) system given its impulse response h(t) or h[n]. The analytical method consists of 4 stages with respect to dummy variable τ (or k): folding h(-τ), shifting h(t - τ), overlapping unit steps u(τ)·u(t - τ), and integrating over the active interval.",
+      formulas: [
+        {
+          name: "Causal Limit Bounding via Unit Steps u(τ)·u(t - τ)",
+          note: "For two causal signals (zero for t < 0), integration limits always reduce from (-∞, ∞) to [0, t] for t ≥ 0."
+        },
+        {
+          name: "Convolution of Two Distinct Causal Exponentials (a ≠ b)",
+          note: "If the poles coincide (a = b), the result is the damped ramp: t·e^{-at}u(t)."
+        },
+        {
+          name: "Discrete Convolution Sum & Finite Geometric Series",
+          note: "Remember that the sum from k = 0 to n contains exactly (n + 1) terms."
+        },
+        {
+          name: "Convolution Theorem (Laplace / Fourier / Z Duality)",
+          note: "Allows verifying any convolution by multiplying transforms and inverting via partial fractions."
+        }
+      ],
       tips: [
         "Always separate the two input signals with a semicolon ';' in the input bar: first x(t), then h(t).",
         "When convolving two causal signals multiplied by u(t), remember to multiply the final result by u(t) to indicate y(t) = 0 for t < 0.",
@@ -1330,9 +1438,29 @@ export const CATALOG_I18N = {
       subtitle: "Harmonic decomposition of periodic signals on [-L, L] with automatic even/odd symmetry detection, explicit coefficient integrals, and N-harmonic partial sum.",
       directLabel: "Trigonometric Series (a₀, aₙ, bₙ)",
       inverseLabel: "Complex Exponential Series (cₙ)",
+      placeholderDirect: "Format f(x) ; L ; N -> e.g. x ; pi ; 4  or  x^2 ; pi ; 3  or  abs(x) ; pi ; 3",
+      placeholderInverse: "Format f(x) ; L ; N -> e.g. x ; pi ; 3  or  sign(x) ; pi ; 5",
       examLabels: ["Sawtooth Wave f(x) = x", "Square Wave f(x) = sgn(x)", "Even Parabola f(x) = x²", "Triangle Wave f(x) = |x|"],
       guideTitle: "Quick Guide & Key Formulas: Fourier Series & Symmetry Conditions",
       guideIntro: "Any periodic signal of period T = 2L satisfying Dirichlet's conditions can be expanded as an infinite superposition of harmonic sinusoids at integer multiples of the fundamental frequency ω₀ = π/L. Checking for even or odd parity before integrating saves half the work in exams.",
+      formulas: [
+        {
+          name: "Euler-Fourier Trigonometric Coefficients on [-L, L]",
+          note: "The constant term a₀/2 represents the exact mean value (DC component) of the signal over one period."
+        },
+        {
+          name: "Parity Simplification (Even and Odd Functions)",
+          note: "The product of an even function and an odd function is odd, so its integral over [-L, L] is identically zero."
+        },
+        {
+          name: "Complex Exponential Fourier Series & Relation to (aₙ, bₙ)",
+          note: "Complex coefficients c_n determine the two-sided discrete amplitude |c_n| and phase arg(c_n) spectrum."
+        },
+        {
+          name: "Parseval's Theorem (Average Power of a Periodic Signal)",
+          note: "Widely used in exams to deduce numerical series sums like ∑ 1/n² = π²/6 or ∑ 1/n⁴ = π⁴/90."
+        }
+      ],
       tips: [
         "Before integrating by parts, always check if f(-x) = f(x) (Even, so b_n = 0) or f(-x) = -f(x) (Odd, so a_0 = a_n = 0).",
         "When evaluating at the endpoints of [-π, π], use the identities cos(nπ) = (-1)^n and sin(nπ) = 0 for every integer n.",
@@ -1365,9 +1493,29 @@ export const CATALOG_I18N = {
       subtitle: "Symbolic resolution in the complex s-plane featuring explicit denominator factorization, pole analysis, and partial fraction decomposition.",
       directLabel: "Direct Transform F(s) = ℒ{f(t)}",
       inverseLabel: "Inverse Transform f(t) = ℒ⁻¹{F(s)} (Partial Fractions)",
+      placeholderDirect: "e.g. exp(-2*t)*cos(3*t), t^2*exp(-4*t)",
+      placeholderInverse: "e.g. (2*s + 5)/(s^2 + 5*s + 6), 4/(s*(s+2)^2), (s+3)/(s^2+2*s+5)",
       examLabels: ["Partial Fractions (Real Poles)", "Repeated Pole at s = -2", "Complex Conjugate Poles", "Damped Oscillation (Direct)"],
       guideTitle: "Quick Guide & Key Formulas: Laplace Transform & Partial Fractions",
       guideIntro: "The Unilateral Laplace Transform converts linear differential equations with initial conditions into algebraic polynomial equations in the complex variable s = σ + jω. To invert F(s) back to the time domain, factor the denominator D(s) and expand into partial fractions.",
+      formulas: [
+        {
+          name: "Partial Fraction Decomposition (Simple Real Poles)",
+          note: "Each term A_k / (s - p_k) inverts directly as A_k e^{p_k t} u(t)."
+        },
+        {
+          name: "First Shifting Theorem (Exponential Damping)",
+          note: "When the denominator has complex roots (Δ < 0), complete the square in the form (s + a)² + ω₀²."
+        },
+        {
+          name: "Repeated Real Poles (Order m)",
+          note: "A repeated pole at s = -a generates t^k e^{-at} time modes typical of critically damped systems."
+        },
+        {
+          name: "Time-Differentiation Property (Initial Conditions)",
+          note: "Automatically incorporates initial energy stored in capacitors, inductors, or springs at t = 0."
+        }
+      ],
       tips: [
         "Before expanding into partial fractions, verify that the rational function is strictly proper: degree(N) < degree(D).",
         "If a quadratic denominator has a negative discriminant (Δ < 0), do not split into complex roots: complete the square (s + α)² + ω² to obtain damped sine and cosine directly.",
@@ -1398,9 +1546,28 @@ export const CATALOG_I18N = {
       metaDescription: "Step-by-step Ordinary Differential Equations (ODE) solver for 1st and 2nd order: separable variables, integrating factor μ(x), characteristic equation, particular solution, and IVP.",
       h1: "Ordinary Differential Equations (1st & 2nd Order ODEs)",
       subtitle: "Analytical step-by-step resolution of separable ODEs, 1st-order linear ODEs via integrating factor μ(x), and 2nd-order constant-coefficient ODEs with Initial Value Problems (IVP).",
+      placeholderDirect: "e.g. y' + 2*y = exp(-x) ; y(0)=3  or  y'' - 3*y' + 2*y = 4*x  or  y' = x*y",
       examLabels: ["1st-Order Linear + IVP", "Separable 1st-Order ODE", "2nd-Order Non-Homogeneous", "2nd-Order Harmonic + IVP"],
       guideTitle: "Quick Guide & Key Formulas: Ordinary Differential Equations (ODEs)",
       guideIntro: "Ordinary Differential Equations model physical dynamical systems, RLC circuits, and thermal processes. University analytical resolution classifies ODEs according to their order and linearity.",
+      formulas: [
+        {
+          name: "1st-Order Linear ODE & Integrating Factor μ(x)",
+          note: "Multiplying the normalized ODE by μ(x) collapses the left-hand side into the exact derivative d/dx[μ(x)·y]."
+        },
+        {
+          name: "Characteristic Equation in 2nd-Order Linear ODEs (a r² + b r + c = 0)",
+          note: "The structure of the homogeneous solution depends exclusively on the discriminant Δ = b² - 4ac."
+        },
+        {
+          name: "General Structure of Non-Homogeneous Linear Systems",
+          note: "The particular solution y_p(x) is found via undetermined coefficients or variation of parameters."
+        },
+        {
+          name: "Separable Differential Equations",
+          note: "Separate all y-dependent terms with dy and all x-dependent terms with dx before integrating both sides."
+        }
+      ],
       tips: [
         "Never apply initial conditions y(0), y'(0) to the homogeneous solution y_h(x) alone: always form the complete general solution y(x) = y_h(x) + y_p(x) first.",
         "In undetermined coefficients, if the forcing term e^{kx} matches a characteristic root r = k of multiplicity m, multiply the trial solution by x^m.",
@@ -1433,9 +1600,29 @@ export const CATALOG_I18N = {
       subtitle: "Pedagogical symbolic integration tree breakdown: integration by parts (identifying u and dv), substitution u = g(x), partial fractions, trigonometric identities, and definite evaluation.",
       directLabel: "Indefinite Integral ∫ f(x) dx",
       inverseLabel: "Definite Integral ∫_a^b f(x) dx (Barrow)",
+      placeholderDirect: "e.g. x*exp(2*x), x*cos(x), 2*x/(x^2 + 1), 1/(x^2 - 1)",
+      placeholderInverse: "Format f(x) ; a, b -> e.g. x*exp(x) ; 0, 1  or  sin(x) ; 0, pi",
       examLabels: ["Integration by Parts (u, dv)", "u-Substitution u = g(x)", "Rational Partial Fractions", "Definite Integral by Parts"],
       guideTitle: "Quick Guide & Key Formulas: Integration Techniques & Fundamental Theorem",
       guideIntro: "Computing antiderivatives requires identifying the algebraic structure of the integrand: u-substitution when an inner derivative is present, integration by parts (LIATE rule) for products of polynomials and exponentials/trigonometric/logarithmic functions, or partial fractions for rational functions.",
+      formulas: [
+        {
+          name: "Integration by Parts & LIATE Rule",
+          note: "Priority for choosing u: Logarithmic > Inverse trig > Algebraic (polynomials) > Trigonometric > Exponential."
+        },
+        {
+          name: "Substitution Theorem (u = g(x))",
+          note: "Fundamental logarithmic case: ∫ g'(x)/g(x) dx = ln|g(x)| + C."
+        },
+        {
+          name: "Integration of Rational Functions P(x)/Q(x)",
+          note: "If degree(P) ≥ degree(Q), perform polynomial long division first."
+        },
+        {
+          name: "Second Fundamental Theorem of Calculus (Barrow's Rule)",
+          note: "When applying u = g(x) to a definite integral, you can directly transform the limits to u_a = g(a) and u_b = g(b)."
+        }
+      ],
       tips: [
         "Never forget to add the arbitrary constant of integration '+ C' to every indefinite integral.",
         "For integrals of the form ∫ P(x)e^{ax} dx or ∫ P(x)cos(ax) dx, always choose the polynomial as u = P(x) to lower its degree upon differentiation.",
@@ -1466,9 +1653,28 @@ export const CATALOG_I18N = {
       metaDescription: "Step-by-step Taylor and Maclaurin Polynomial and Series calculator around x0 up to order n. Displays all successive derivatives f^(k)(x), their evaluation f^(k)(x0), and the Lagrange remainder.",
       h1: "Taylor & Maclaurin Series Step-by-Step",
       subtitle: "Systematic computation of successive derivatives f⁽ᵏ⁾(x), evaluation at the expansion center x₀, and term-by-term assembly of the Taylor polynomial Pₙ(x).",
+      placeholderDirect: "Format f(x) ; x0 ; n -> e.g. exp(x) ; 0 ; 4  or  cos(x) ; 0 ; 6  or  ln(x) ; 1 ; 4",
       examLabels: ["Maclaurin of e^x (Order 4)", "Maclaurin of cos(x) (Order 6)", "Taylor of ln(x) at x₀=1", "Maclaurin of 1/(1 - x)"],
       guideTitle: "Quick Guide & Key Formulas: Taylor Polynomials, Maclaurin Series & Lagrange Remainder",
       guideIntro: "Taylor's Theorem approximates any n-times differentiable function around a center x₀ by a polynomial Pₙ(x) whose derivatives of orders 0 through n match those of f(x) at x = x₀. When centered at the origin (x₀ = 0), it is called a Maclaurin Series.",
+      formulas: [
+        {
+          name: "General Formula for the Order-n Taylor Polynomial at x₀",
+          note: "Each coefficient c_k = f^(k)(x₀) / k! is obtained by evaluating the k-th derivative at x₀ and dividing by k!."
+        },
+        {
+          name: "Classic Maclaurin Expansions (x₀ = 0)",
+          note: "These three series converge on the entire real line x ∈ (-∞, ∞) (radius of convergence R = ∞)."
+        },
+        {
+          name: "Geometric & Logarithmic Series",
+          note: "The expansion of ln(x) centered at x₀ = 1 is obtained by substituting x → (x - 1) in ln(1 + u)."
+        },
+        {
+          name: "Lagrange Remainder Term Rₙ(x)",
+          note: "Provides a rigorous upper bound on the truncation error at order n."
+        }
+      ],
       tips: [
         "Enter the function, expansion center x₀, and order n separated by semicolons: f(x) ; x0 ; n (for example: ln(x) ; 1 ; 4).",
         "If a function is even (like cos(x)), all odd derivatives at x₀ = 0 vanish; if it is odd (like sin(x)), all even derivatives vanish.",
@@ -1499,9 +1705,28 @@ export const CATALOG_I18N = {
       metaDescription: "Step-by-step infinite Numerical Series convergence and exact sum calculator. Applies necessary condition, D'Alembert ratio test, Cauchy root test, p-series, Leibniz test, and symbolic summation.",
       h1: "Numerical Series (Convergence Tests & Exact Sum)",
       subtitle: "Rigorous step-by-step convergence analysis: necessary condition lim aₙ = 0, geometric series, p-series, D'Alembert's ratio test, Cauchy's root test, Leibniz alternating test, and exact sum.",
+      placeholderDirect: "Format a_n ; n0 -> e.g. 1/2^n ; 1  or  n/(n+1) ; 1  or  2^n/factorial(n) ; 0  or  (-1)^(n+1)/n ; 1",
       examLabels: ["Geometric Series ∑ 1/2ⁿ", "Necessary Condition (Divergent)", "D'Alembert Factorial ∑ 2ⁿ/n!", "Alternating Leibniz ∑ (-1)ⁿ⁺¹/n"],
       guideTitle: "Quick Guide & Key Formulas: Convergence Tests & Infinite Series Summation",
       guideIntro: "Analyzing an infinite numerical series ∑ aₙ consists of determining whether the sequence of partial sums S_N converges to a finite limit as N → ∞. Always start by checking the necessary condition: if lim_{n→∞} aₙ ≠ 0, the series diverges immediately.",
+      formulas: [
+        {
+          name: "Necessary Condition for Convergence & Geometric Series",
+          note: "Careful: lim a_n = 0 is necessary but NOT sufficient (e.g. the harmonic series ∑ 1/n has lim 1/n = 0 yet diverges)."
+        },
+        {
+          name: "D'Alembert Ratio Test & Cauchy Root Test",
+          note: "Use D'Alembert when a_n contains factorials (n!) or products, and Cauchy when the entire term is raised to power n."
+        },
+        {
+          name: "Generalized Harmonic Series (Riemann p-Series)",
+          note: "Serves as a benchmark for limit comparison tests with rational polynomial quotients."
+        },
+        {
+          name: "Leibniz Alternating Series Test ∑ (-1)ⁿ bₙ (bₙ > 0)",
+          note: "If ∑ |a_n| diverges while ∑ a_n converges by Leibniz (like ∑ (-1)^{n+1}/n = ln 2), the series is Conditionally Convergent."
+        }
+      ],
       tips: [
         "Always check lim_{n→∞} a_n first: if it is non-zero, the series diverges in a single step.",
         "If the general term is a rational quotient P(n)/Q(n), compare asymptotically with the p-series 1/n^{deg(Q) - deg(P)}.",
@@ -1532,9 +1757,28 @@ export const CATALOG_I18N = {
       metaDescription: "Step-by-step 2x2 and 3x3 Matrix Diagonalization calculator. Computes the characteristic polynomial |A - λI| = 0, eigenvalues, eigenvectors, invertible matrix P, and diagonal matrix D.",
       h1: "Matrix Diagonalization (2×2 & 3×3)",
       subtitle: "Detailed computation of the characteristic equation |A - λI| = 0, eigenvalue spectrum, homogeneous linear systems for each eigenspace, modal matrix P, and diagonal matrix D.",
+      placeholderDirect: "Rows separated by ';' -> e.g. 4, 1; 2, 3 or 2, 0, 0; 1, 2, 1; -1, 0, 1",
       examLabels: ["2×2 Matrix (Distinct Eigenvalues)", "2×2 Real Symmetric Matrix", "3×3 Diagonalizable Matrix", "2×2 Non-Diagonalizable (Jordan)"],
       guideTitle: "Quick Guide & Key Formulas: Spectral Matrix Diagonalization A = P·D·P⁻¹",
       guideIntro: "A square matrix A ∈ ℝ^{n×n} is diagonalizable if and only if ℝ^n admits a basis consisting entirely of eigenvectors of A. In that eigenbasis, the linear transformation simply scales each coordinate axis by its eigenvalue λ_i, enabling instant computation of matrix powers A^k = P·D^k·P⁻¹.",
+      formulas: [
+        {
+          name: "Characteristic Equation & Polynomial",
+          note: "For 2×2 matrices it always holds that p(λ) = λ² - tr(A)λ + det(A) = 0."
+        },
+        {
+          name: "Eigenspace E(λ_i) Associated with an Eigenvalue",
+          note: "The dimension of this subspace is the geometric multiplicity: m_g(λ_i) = n - rank(A - λ_i I)."
+        },
+        {
+          name: "Diagonalizability Criterion Theorem",
+          note: "Every real symmetric matrix (A = A^T) is always orthogonally diagonalizable with real eigenvalues."
+        },
+        {
+          name: "Similarity Relation & n-th Matrix Power",
+          note: "The column order of eigenvectors in P must match the order of eigenvalues along the diagonal of D."
+        }
+      ],
       tips: [
         "Always verify that the sum of all eigenvalues equals trace(A) and their product equals det(A).",
         "If all eigenvalues are real and distinct (algebraic multiplicity m_a = 1 each), the matrix is guaranteed to be diagonalizable.",
@@ -1565,9 +1809,28 @@ export const CATALOG_I18N = {
       metaDescription: "Step-by-step solver for linear systems Ax = b (2x2, 3x3, 4x4) using Gauss-Jordan elimination and the Rouché–Capelli theorem. Displays elementary row operations and RREF.",
       h1: "Systems of Linear Equations (Gauss-Jordan & Rouché–Capelli)",
       subtitle: "Step-by-step Gaussian elimination showing every elementary row operation (Fᵢ ← Fᵢ + αFⱼ) on the augmented matrix (A|b), rank calculation, and consistency classification.",
+      placeholderDirect: "Augmented matrix (A|b) rows separated by ';' -> e.g. 1, 1, 1, 6; 2, -1, 1, 3; 1, 2, -1, 2",
       examLabels: ["3×3 Unique Solution (Consistent)", "3×3 Infinite Solutions (Underdetermined)", "3×3 Inconsistent System (No Solution)", "4×4 Unique Solution System"],
       guideTitle: "Quick Guide & Key Formulas: Gauss-Jordan Elimination & Rouché–Capelli Theorem",
       guideIntro: "Gauss-Jordan elimination transforms the augmented matrix (A|b) of a linear system Ax = b into its Reduced Row Echelon Form (RREF) via elementary row operations. The Rouché–Capelli theorem classifies existence and uniqueness by comparing rank(A) and rank(A|b).",
+      formulas: [
+        {
+          name: "Rouché–Capelli (Rouché–Frobenius) Theorem",
+          note: "Here n is the number of unknowns and r = rank(A) is the number of non-zero pivots."
+        },
+        {
+          name: "Elementary Row Operations",
+          note: "To eliminate the entry in row i and pivot column j, subtract a_ij / a_jj times pivot row F_j from F_i."
+        },
+        {
+          name: "Reduced Row Echelon Form (RREF)",
+          note: "In RREF, every leading pivot equals 1 and is the only non-zero entry in its column."
+        },
+        {
+          name: "Degrees of Freedom in Underdetermined Systems",
+          note: "Unknowns whose columns lack a pivot are freely parameterized (λ, μ, ...)."
+        }
+      ],
       tips: [
         "Enter each row of the augmented matrix (A|b) separating coefficients with commas and rows with a semicolon ';'. The last number in each row is the constant b_i.",
         "If a row of the form (0  0  0 | c) with c ≠ 0 appears during elimination, stop immediately: rank(A) < rank(A|b) and the system is inconsistent.",
@@ -1600,9 +1863,29 @@ export const CATALOG_I18N = {
       subtitle: "Mixed arithmetic in rectangular (a + bj) and polar (M∠θ°) form, detailed magnitude and quadrant-aware angle conversion, and 2×2 / 3×3 AC mesh/nodal linear systems.",
       directLabel: "Phasor Arithmetic & Conversion (a+bj ↔ M∠θ°)",
       inverseLabel: "Complex 2×2 / 3×3 AC System (Mesh / Nodal)",
+      placeholderDirect: "Mix rectangular & polar -> e.g. (3 + 4j) * (10<30) / (2 - 2j)  or  -3 + 4j",
+      placeholderInverse: "Complex augmented matrix (Z|V) separated by ';' -> e.g. 4+2j, -2j, 10<0 ; -2j, 2+4j, 0",
       examLabels: ["Mixed Rectangular × Polar", "Parallel Equivalent Impedance", "2nd Quadrant Conversion (-3+4j)", "2×2 AC Mesh Current System"],
       guideTitle: "Quick Guide & Key Formulas: Phasor Algebra & Sinusoidal Steady-State Analysis",
       guideIntro: "In AC Circuit Theory, the Steinmetz phasor transform converts linear integro-differential equations under sinusoidal excitation v(t) = V_m cos(ωt + φ) into complex linear algebraic systems where inductors have impedance Z_L = jωL and capacitors have impedance Z_C = -j/(ωC).",
+      formulas: [
+        {
+          name: "Rectangular to Polar Conversion with Quadrant Adjustment",
+          note: "Remember to add or subtract 180° when the real part 'a' is negative (2nd and 3rd quadrants)."
+        },
+        {
+          name: "Polar to Rectangular Conversion (Euler's Formula)",
+          note: "Rectangular form is required for addition/subtraction; polar form is optimal for multiplication/division."
+        },
+        {
+          name: "Direct Product & Quotient in Polar Form",
+          note: "Multiplying phasors multiplies their magnitudes and adds their phase angles in degrees."
+        },
+        {
+          name: "AC Mesh/Nodal Solution via Complex Cramer's Rule",
+          note: "Yields each mesh current or node voltage directly in rectangular and polar form (amplitude and phase)."
+        }
+      ],
       tips: [
         "To enter a polar phasor with angle in degrees, use '<' or '∠': for example 10<30 or 10∠-45.",
         "Before adding or subtracting two polar phasors (e.g. 5<30 + 4<-60), always convert them to rectangular form a + bj.",
@@ -1637,9 +1920,29 @@ export const CATALOG_I18N = {
       subtitle: "Analyse spectrale continue en pulsation ω avec détail de l'intégrale impropre, identités d'Euler et propriétés des tables.",
       directLabel: "Transformée Directe F(ω) = ℱ{f(t)}",
       inverseLabel: "Transformée Inverse f(t) = ℱ⁻¹{F(ω)}",
+      placeholderDirect: "Ex : exp(-3*t)*u(t), rect(t/4), cos(5*t), delta(t) + 2*delta(t-3)",
+      placeholderInverse: "Ex : 1/(3 + j*w), 6/(9 + w^2)",
       examLabels: ["Exponentielle causale", "Impulsion rectangulaire", "Porteuse harmonique", "Train d'impulsions de Dirac"],
       guideTitle: "Guide Rapide et Formules Clés : Transformée de Fourier en Ingénierie",
       guideIntro: "En théorie du Traitement du Signal, la Transformée de Fourier continue décompose un signal temporel apériodique f(t) en sa densité spectrale de pulsation ω (rad/s). L'introduction de l'impulsion de Dirac δ(ω) permet de transformer les signaux périodiques et continus.",
+      formulas: [
+        {
+          name: "Définition Directe et Inverse (Convention en ω)",
+          note: "Le facteur de normalisation 1/(2π) apparaît exclusivement dans l'intégrale de synthèse inverse."
+        },
+        {
+          name: "Exponentielle Causale Unilatérale (Filtre Passe-Bas RC)",
+          note: "L'échelon de Heaviside u(t) borne l'intégrale à [0, ∞). Son module vaut 1/√(a² + ω²) et sa phase -arctan(ω/a)."
+        },
+        {
+          name: "Porte Rectangulaire et Dualité Sinus Cardinal",
+          note: "Plus l'impulsion est étroite dans le temps (T petit), plus son lobe principal est large en fréquence (Principe d'Incertitude)."
+        },
+        {
+          name: "Oscillateurs Harmoniques et Impulsions de Dirac",
+          note: "Obtenu par la formule d'Euler cos(ω₀t) = (e^{jω₀t} + e^{-jω₀t})/2 et le théorème du décalage fréquentiel."
+        }
+      ],
       tips: [
         "Vérifiez toujours si le signal est multiplié par l'échelon u(t) : cela réduit la borne inférieure d'intégration de -∞ à 0.",
         "Pour transformer des fonctions trigonométriques pures, utilisez l'identité d'Euler afin de passer aux exponentielles complexes.",
@@ -1672,9 +1975,29 @@ export const CATALOG_I18N = {
       subtitle: "Analyse des signaux et systèmes à temps discret avec division explicite X(z)/z, décomposition en éléments simples et application des tables causales.",
       directLabel: "Transformée en Z Directe X(z) = 𝒫{x[n]}",
       inverseLabel: "Transformée en Z Inverse x[n] = 𝒫⁻¹{X(z)} (Méthode X(z)/z)",
+      placeholderDirect: "Ex : (0.5)^n*u[n], n*(2)^n*u[n], (3)^n*u[n] + 2*delta[n-1]",
+      placeholderInverse: "Ex : z/((z-1)*(z-2)), (2*z^2 - 0.5*z)/(z^2 - 1.5*z + 0.5), z/(z-0.5)^2",
       examLabels: ["Inverse (Pôles simples X(z)/z)", "Inverse (Deux pôles réels)", "Inverse (Pôle double z = 2)", "Directe (Géométrique + rampe)"],
       guideTitle: "Guide Rapide et Formules Clés : Transformée en Z en Traitement Numérique (DSP)",
       guideIntro: "La Transformée en Z est l'équivalent discret de la Transformée de Laplace pour analyser les filtres numériques FIR/IIR et les équations aux différences. Pour calculer la Transformée en Z Inverse par éléments simples, divisez toujours d'abord par z pour former X(z)/z.",
+      formulas: [
+        {
+          name: "Méthode des Éléments Simples Normalisés par z",
+          note: "Diviser d'abord par z garantit des blocs z/(z - p_k) directement inversibles en suites géométriques."
+        },
+        {
+          name: "Paire de Base : Suite Exponentielle Causale a^n u[n]",
+          note: "Pour a = 1 on obtient la transformée de l'échelon discret unitaire u[n] : z / (z - 1)."
+        },
+        {
+          name: "Propriété de Dérivation en z (Rampe Exponentielle n·a^n u[n])",
+          note: "Apparaît dès que la fonction de transfert X(z) possède un pôle double en z = a."
+        },
+        {
+          name: "Impulsion Discrète de Kronecker et Retard Temporel",
+          note: "Chaque puissance négative isolée z^{-k} s'inverse en une impulsion décalée de k échantillons."
+        }
+      ],
       tips: [
         "Ne décomposez jamais directement X(z) en éléments simples : divisez toujours d'abord par z pour décomposer X(z)/z puis multipliez par z à la fin.",
         "Un système LTI discret causal est BIBO-stable si et seulement si tous les pôles de H(z) sont strictement à l'intérieur du cercle unité (|p_k| < 1).",
@@ -1707,9 +2030,29 @@ export const CATALOG_I18N = {
       subtitle: "Calcul analytique de la réponse des systèmes LTI par intégrale ou somme de convolution, détaillant retournement temporel, décalage et bornes actives par échelons.",
       directLabel: "Convolution Continue y(t) = x(t) * h(t)",
       inverseLabel: "Convolution Discrète y[n] = x[n] * h[n]",
+      placeholderDirect: "Format x(t) ; h(t) -> Ex : exp(-2*t)*u(t) ; exp(-3*t)*u(t) ou exp(-2*t)*u(t) ; u(t)",
+      placeholderInverse: "Format x[n] ; h[n] -> Ex : (0.5)^n*u[n] ; u[n] ou [1, 2, 1] ; [1, -1]",
       examLabels: ["Deux exponentielles causales", "Réponse indicielle RC", "Discrète (Exponentielle * Échelon)", "Discrète (Séquences finies FIR)"],
       guideTitle: "Guide Rapide et Formules Clés : Intégrale et Somme de Convolution des Systèmes LTI",
       guideIntro: "Le produit de convolution détermine la sortie y(t) ou y[n] de tout système Linéaire Invariant dans le Temps (LTI) à partir de sa réponse impulsionnelle h(t) ou h[n]. La méthode comporte 4 étapes : retournement h(-τ), décalage h(t - τ), intersection des échelons u(τ)·u(t - τ) et intégration.",
+      formulas: [
+        {
+          name: "Bornes Causales par Échelons u(τ)·u(t - τ)",
+          note: "Pour deux signaux causaux (nuls pour t < 0), les bornes passent de (-∞, ∞) à [0, t] pour t ≥ 0."
+        },
+        {
+          name: "Convolution de Deux Exponentielles Causales Distinctes (a ≠ b)",
+          note: "Si les pôles coïncident (a = b), le résultat est la rampe amortie : t·e^{-at}u(t)."
+        },
+        {
+          name: "Somme de Convolution Discrète et Série Géométrique Finie",
+          note: "Rappel : la somme de k = 0 à n contient exactement (n + 1) termes."
+        },
+        {
+          name: "Théorème de Convolution (Dualité Laplace / Fourier / Z)",
+          note: "Permet de vérifier toute convolution en multipliant les transformées puis en inversant par éléments simples."
+        }
+      ],
       tips: [
         "Séparez toujours les deux signaux par un point-virgule ';' dans le champ de saisie : d'abord x(t) puis h(t).",
         "Lors de la convolution de deux signaux causaux multipliés par u(t), n'oubliez pas de multiplier le résultat final par u(t).",
@@ -1742,9 +2085,29 @@ export const CATALOG_I18N = {
       subtitle: "Décomposition harmonique des signaux périodiques sur [-L, L] avec analyse préalable de la parité paire/impaire, calcul explicite des intégrales et somme partielle d'ordre N.",
       directLabel: "Série Trigonométrique (a₀, aₙ, bₙ)",
       inverseLabel: "Série Exponentielle Complexe (cₙ)",
+      placeholderDirect: "Format f(x) ; L ; N -> Ex : x ; pi ; 4  ou  x^2 ; pi ; 3  ou  abs(x) ; pi ; 3",
+      placeholderInverse: "Format f(x) ; L ; N -> Ex : x ; pi ; 3  ou  sign(x) ; pi ; 5",
       examLabels: ["Dent de scie f(x) = x", "Signal carré f(x) = sgn(x)", "Parabole paire f(x) = x²", "Onde triangulaire f(x) = |x|"],
       guideTitle: "Guide Rapide et Formules Clés : Séries de Fourier et Propriétés de Symétrie",
       guideIntro: "Tout signal périodique de période T = 2L vérifiant les conditions de Dirichlet peut se décomposer en une somme infinie d'harmoniques sinusoïdaux de pulsations multiples de ω₀ = π/L. L'étude de la parité (fonction paire ou impaire) avant d'intégrer divise par deux les calculs en examen.",
+      formulas: [
+        {
+          name: "Coefficients Trigonométriques d'Euler-Fourier sur [-L, L]",
+          note: "Le terme constant a₀/2 représente exactement la valeur moyenne (composante continue) sur une période."
+        },
+        {
+          name: "Simplification par Parité (Fonctions Paires et Impaires)",
+          note: "Le produit d'une fonction paire par une fonction impaire est impair, donc son intégrale sur [-L, L] est nulle."
+        },
+        {
+          name: "Série de Fourier Exponentielle Complexe et Lien avec (aₙ, bₙ)",
+          note: "Les coefficients complexes c_n définissent le spectre discret bilatéral d'amplitude |c_n| et de phase arg(c_n)."
+        },
+        {
+          name: "Égalité de Parseval (Puissance Moyenne du Signal Périodique)",
+          note: "Très utilisée aux examens pour déduire des sommes de séries comme ∑ 1/n² = π²/6 ou ∑ 1/n⁴ = π⁴/90."
+        }
+      ],
       tips: [
         "Avant toute intégration par parties, vérifiez toujours si f(-x) = f(x) (Paire, donc b_n = 0) ou si f(-x) = -f(x) (Impaire, donc a_0 = a_n = 0).",
         "Lors de l'évaluation aux bornes de [-π, π], utilisez cos(nπ) = (-1)^n et sin(nπ) = 0 pour tout entier n.",
@@ -1777,9 +2140,29 @@ export const CATALOG_I18N = {
       subtitle: "Résolution symbolique dans le plan complexe s avec factorisation explicite du dénominateur, calcul des pôles et décomposition en éléments simples.",
       directLabel: "Transformée Directe F(s) = ℒ{f(t)}",
       inverseLabel: "Transformée Inverse f(t) = ℒ⁻¹{F(s)} (Éléments Simples)",
+      placeholderDirect: "Ex : exp(-2*t)*cos(3*t), t^2*exp(-4*t)",
+      placeholderInverse: "Ex : (2*s + 5)/(s^2 + 5*s + 6), 4/(s*(s+2)^2), (s+3)/(s^2+2*s+5)",
       examLabels: ["Éléments simples (Pôles réels)", "Pôle multiple en s = -2", "Pôles complexes conjugués", "Oscillation amortie (Directe)"],
       guideTitle: "Guide Rapide et Formules Clés : Transformée de Laplace et Éléments Simples",
       guideIntro: "La Transformée de Laplace Unilatérale convertit les équations différentielles linéaires avec conditions initiales en équations algébriques polynomiales en la variable complexe s. Pour revenir au domaine temporel, on factorise le dénominateur D(s) et on décompose F(s) en éléments simples.",
+      formulas: [
+        {
+          name: "Décomposition en Éléments Simples (Pôles Réels Simples)",
+          note: "Chaque terme A_k / (s - p_k) s'inverse directement en A_k e^{p_k t} u(t)."
+        },
+        {
+          name: "Premier Théorème de Décalage (Amortissement Exponentiel)",
+          note: "Lorsque le dénominateur a des racines complexes (Δ < 0), mettez sous forme canonique (s + a)² + ω₀²."
+        },
+        {
+          name: "Pôles Réels Multiples (Ordre m)",
+          note: "Un pôle multiple en s = -a engendre des modes temporels en t^k e^{-at} typiques des régimes critiques."
+        },
+        {
+          name: "Propriété de la Dérivée Temporelle (Conditions Initiales)",
+          note: "Intègre directement l'énergie initiale stockée dans les condensateurs, bobines ou ressorts à t = 0."
+        }
+      ],
       tips: [
         "Avant de décomposer en éléments simples, vérifiez que la fraction rationnelle est strictement propre : degré(N) < degré(D).",
         "Si le discriminant d'un dénominateur du second ordre est négatif (Δ < 0), mettez-le sous forme canonique (s + α)² + ω² pour faire apparaître cosinus et sinus amortis.",
@@ -1810,9 +2193,28 @@ export const CATALOG_I18N = {
       metaDescription: "Solveur étape par étape d'Équations Différentielles Ordinaires (EDO) du 1er et 2nd ordre : variables séparables, facteur intégrant μ(x), équation caractéristique et problème de Cauchy.",
       h1: "Équations Différentielles Ordinaires (1er et 2nd Ordre)",
       subtitle: "Résolution analytique étape par étape des EDO à variables séparables, linéaires du 1er ordre par facteur intégrant μ(x) et linéaires du 2nd ordre avec conditions initiales.",
+      placeholderDirect: "Ex : y' + 2*y = exp(-x) ; y(0)=3  ou  y'' - 3*y' + 2*y = 4*x  ou  y' = x*y",
       examLabels: ["Linéaire 1er Ordre + Cauchy", "Variables Séparables 1er Ordre", "2nd Ordre Non Homogène", "2nd Ordre Harmonique + Cauchy"],
       guideTitle: "Guide Rapide et Formules Clés : Équations Différentielles Ordinaires (EDO)",
       guideIntro: "Les Équations Différentielles Ordinaires modélisent les systèmes dynamiques physiques, les circuits électriques RLC et les transferts thermiques. Leur résolution analytique dépend de l'ordre et de la linéarité de l'équation.",
+      formulas: [
+        {
+          name: "EDO Linéaire du 1er Ordre et Facteur Intégrant μ(x)",
+          note: "En multipliant l'EDO normalisée par μ(x), le membre gauche devient la dérivée exacte d/dx[μ(x)·y]."
+        },
+        {
+          name: "Équation Caractéristique en EDO Linéaire du 2nd Ordre (a r² + b r + c = 0)",
+          note: "La forme de la solution homogène dépend uniquement du discriminant Δ = b² - 4ac."
+        },
+        {
+          name: "Structure Générale des Systèmes Linéaires Non Homogènes",
+          note: "La solution particulière y_p(x) s'obtient par coefficients indéterminés ou variation des constantes."
+        },
+        {
+          name: "EDO à Variables Séparables",
+          note: "Séparez tous les termes en y avec dy et tous les termes en x avec dx avant d'intégrer."
+        }
+      ],
       tips: [
         "N'appliquez jamais les conditions initiales y(0), y'(0) sur la seule solution homogène y_h(x) : formez d'abord la solution générale complète y(x) = y_h(x) + y_p(x).",
         "Avec la méthode des coefficients indéterminés, si le second membre e^{kx} correspond à une racine caractéristique r = k de multiplicité m, multipliez la solution particulière d'essai par x^m.",
@@ -1845,9 +2247,29 @@ export const CATALOG_I18N = {
       subtitle: "Détail pédagogique de l'arbre d'intégration symbolique : intégration par parties (choix de u et dv), changement de variable u = g(x), éléments simples et calcul intégral défini.",
       directLabel: "Intégrale Indéfinie ∫ f(x) dx",
       inverseLabel: "Intégrale Définie ∫_a^b f(x) dx",
+      placeholderDirect: "Ex : x*exp(2*x), x*cos(x), 2*x/(x^2 + 1), 1/(x^2 - 1)",
+      placeholderInverse: "Format f(x) ; a, b -> Ex : x*exp(x) ; 0, 1  ou  sin(x) ; 0, pi",
       examLabels: ["Intégration par parties (u, dv)", "Changement de variable u = g(x)", "Fraction rationnelle", "Intégrale définie par parties"],
       guideTitle: "Guide Rapide et Formules Clés : Techniques d'Intégration et Primitives",
       guideIntro: "Le calcul de primitives repose sur l'identification de la structure de l'intégrande : changement de variable lorsqu'apparaît la dérivée d'une fonction composée, intégration par parties (règle ALPES) pour les produits polynôme × exponentielle/trigonométrique/logarithme, ou décomposition en éléments simples.",
+      formulas: [
+        {
+          name: "Intégration par Parties et Critère ALPES",
+          note: "Priorité pour choisir u : Arcsin/Inverses > Logarithmes > Polynômes > Exponentielles > Sinus/Cosinus."
+        },
+        {
+          name: "Théorème de Changement de Variable (u = g(x))",
+          note: "Cas logarithmique fondamental : ∫ g'(x)/g(x) dx = ln|g(x)| + C."
+        },
+        {
+          name: "Intégration des Fonctions Rationnelles P(x)/Q(x)",
+          note: "Si degré(P) ≥ degré(Q), effectuez d'abord la division euclidienne de polynômes."
+        },
+        {
+          name: "Théorème Fondamental de l'Analyse (Calcul Défini)",
+          note: "Lors d'un changement de variable u = g(x) dans une intégrale définie, transformez directement les bornes en u_a = g(a) et u_b = g(b)."
+        }
+      ],
       tips: [
         "N'oubliez jamais d'ajouter la constante d'intégration '+ C' à la fin de toute intégrale indéfinie.",
         "Pour les intégrales du type ∫ P(x)e^{ax} dx ou ∫ P(x)cos(ax) dx, choisissez toujours le polynôme comme u = P(x) afin d'abaisser son degré en dérivant.",
@@ -1878,9 +2300,28 @@ export const CATALOG_I18N = {
       metaDescription: "Calculatrice étape par étape du Polynôme et Développement Limité de Taylor et Maclaurin en x0 à l'ordre n. Affiche toutes les dérivées successives f^(k)(x) et leur évaluation f^(k)(x0).",
       h1: "Séries de Taylor et Maclaurin Étape par Étape",
       subtitle: "Calcul systématique des dérivées successives f⁽ᵏ⁾(x), évaluation au point de développement x₀ et assemblage terme à terme du polynôme de Taylor Pₙ(x).",
+      placeholderDirect: "Format f(x) ; x0 ; n -> Ex : exp(x) ; 0 ; 4  ou  cos(x) ; 0 ; 6  ou  ln(x) ; 1 ; 4",
       examLabels: ["Maclaurin de e^x (Ordre 4)", "Maclaurin de cos(x) (Ordre 6)", "Taylor de ln(x) en x₀ = 1", "Maclaurin de 1/(1 - x)"],
       guideTitle: "Guide Rapide et Formules Clés : Polynômes de Taylor, Maclaurin et Reste de Lagrange",
       guideIntro: "La formule de Taylor permet d'approcher toute fonction n fois dérivable au voisinage d'un point x₀ par un polynôme Pₙ(x) dont les dérivées d'ordre 0 à n coïncident avec celles de f(x) en x = x₀. Lorsque x₀ = 0, on parle de développement de Maclaurin.",
+      formulas: [
+        {
+          name: "Formule Générale du Polynôme de Taylor d'Ordre n en x₀",
+          note: "Chaque coefficient c_k = f^(k)(x₀) / k! s'obtient en évaluant la dérivée k-ième en x₀ divisée par k!."
+        },
+        {
+          name: "Développements Classiques de Maclaurin (x₀ = 0)",
+          note: "Ces trois séries convergent sur toute la droite réelle x ∈ (-∞, ∞) (rayon de convergence R = ∞)."
+        },
+        {
+          name: "Série Géométrique et Logarithmique",
+          note: "Le développement de ln(x) centré en x₀ = 1 s'obtient en posant x → (x - 1) dans ln(1 + u)."
+        },
+        {
+          name: "Reste de Lagrange Rₙ(x)",
+          note: "Permet de majorer rigoureusement l'erreur d'approximation à l'ordre n."
+        }
+      ],
       tips: [
         "Saisissez la fonction, le centre x₀ et l'ordre n séparés par des points-virgules : f(x) ; x0 ; n (par exemple : ln(x) ; 1 ; 4).",
         "Si la fonction est paire (comme cos(x)), toutes ses dérivées d'ordre impair en x₀ = 0 sont nulles ; si elle est impaire (comme sin(x)), les dérivées paires s'annulent.",
@@ -1911,9 +2352,28 @@ export const CATALOG_I18N = {
       metaDescription: "Calculatrice étape par étape de convergence et somme exacte de Séries Numériques infinies. Applique condition nécessaire, règle de D'Alembert, Cauchy, séries de Riemann, Leibniz et somme symbolique.",
       h1: "Séries Numériques (Critères de Convergence et Somme Exacte)",
       subtitle: "Étude rigoureuse de la convergence étape par étape : condition nécessaire lim aₙ = 0, séries géométriques, séries de Riemann (p-séries), règle de D'Alembert, Cauchy, Leibniz et somme exacte.",
+      placeholderDirect: "Format a_n ; n0 -> Ex : 1/2^n ; 1  ou  n/(n+1) ; 1  ou  2^n/factorial(n) ; 0  ou  (-1)^(n+1)/n ; 1",
       examLabels: ["Série Géométrique ∑ 1/2ⁿ", "Condition Nécessaire (Divergente)", "D'Alembert Factorielle ∑ 2ⁿ/n!", "Alternée de Leibniz ∑ (-1)ⁿ⁺¹/n"],
       guideTitle: "Guide Rapide et Formules Clés : Critères de Convergence et Somme de Séries Infinies",
       guideIntro: "Étudier la nature d'une série numérique ∑ aₙ consiste à déterminer si la suite de ses sommes partielles S_N converge vers une limite finie lorsque N → ∞. L'étude commence toujours par la condition nécessaire : si lim_{n→∞} aₙ ≠ 0, la série diverge grossièrement.",
+      formulas: [
+        {
+          name: "Condition Nécessaire de Convergence et Série Géométrique",
+          note: "Attention : lim a_n = 0 est nécessaire mais NON suffisante (la série harmonique ∑ 1/n tend vers 0 mais diverge)."
+        },
+        {
+          name: "Règle de D'Alembert (Quotient) et Critère de Cauchy (Racine)",
+          note: "Utilisez D'Alembert en présence de factorielles (n!) et Cauchy lorsque tout a_n est à la puissance n."
+        },
+        {
+          name: "Séries de Riemann (p-Séries)",
+          note: "Servent de référence pour les comparaisons par équivalents avec les fractions rationnelles."
+        },
+        {
+          name: "Critère Spécial des Séries Alternées (Leibniz) ∑ (-1)ⁿ bₙ",
+          note: "Si ∑ |a_n| diverge alors que ∑ a_n converge par Leibniz (ex. ∑ (-1)^{n+1}/n = ln 2), la série est semi-convergente."
+        }
+      ],
       tips: [
         "Vérifiez toujours en premier lieu lim_{n→∞} a_n : si cette limite est non nulle, la série diverge immédiatement.",
         "Si le terme général est une fraction rationnelle P(n)/Q(n), utilisez un équivalent asymptotique pour comparer à la série de Riemann 1/n^{deg(Q) - deg(P)}.",
@@ -1944,9 +2404,28 @@ export const CATALOG_I18N = {
       metaDescription: "Calculatrice de diagonalisation de matrices 2x2 et 3x3 étape par étape. Calcule le polynôme caractéristique |A - λI| = 0, valeurs propres, vecteurs propres, matrice de passage P et matrice diagonale D.",
       h1: "Diagonalisation de Matrices (2×2 et 3×3)",
       subtitle: "Calcul détaillé de l'équation caractéristique |A - λI| = 0, spectre des valeurs propres, sous-espaces propres, matrice de passage P et matrice diagonale D.",
+      placeholderDirect: "Lignes séparées par ';' -> Ex : 4, 1; 2, 3 ou 2, 0, 0; 1, 2, 1; -1, 0, 1",
       examLabels: ["Matrice 2×2 (Valeurs propres simples)", "Matrice 2×2 Symétrique Réelle", "Matrice 3×3 Diagonalisable", "Matrice 2×2 Non Diagonalisable (Jordan)"],
       guideTitle: "Guide Rapide et Formules Clés : Diagonalisation Endomorphique A = P·D·P⁻¹",
       guideIntro: "Une matrice carrée A ∈ ℝ^{n×n} est diagonalisable si et seulement s'il existe une base de ℝ^n formée de vecteurs propres de A. Dans cette base, l'endomorphisme agit par simple multiplication par chaque valeur propre λ_i, permettant le calcul immédiat des puissances A^k = P·D^k·P⁻¹.",
+      formulas: [
+        {
+          name: "Équation et Polynôme Caractéristique",
+          note: "Pour les matrices 2×2 on a toujours p(λ) = λ² - tr(A)λ + det(A) = 0."
+        },
+        {
+          name: "Sous-espace Propre E(λ_i) Associé à une Valeur Propre",
+          note: "La dimension de ce sous-espace est la multiplicité géométrique : m_g(λ_i) = n - rang(A - λ_i I)."
+        },
+        {
+          name: "Théorème Fondamental de Diagonalisabilité",
+          note: "Toute matrice symétrique réelle (A = A^T) est toujours diagonalisable en base orthonormée."
+        },
+        {
+          name: "Relation de Semblabilité et Puissance n-ième",
+          note: "L'ordre des vecteurs propres en colonnes dans P doit correspondre à celui des valeurs propres dans D."
+        }
+      ],
       tips: [
         "Vérifiez toujours que la somme des valeurs propres est égale à la trace tr(A) et que leur produit est égal au déterminant det(A).",
         "Si toutes les valeurs propres sont réelles et distinctes (multiplicité algébrique m_a = 1), la matrice est automatiquement diagonalisable.",
@@ -1977,9 +2456,28 @@ export const CATALOG_I18N = {
       metaDescription: "Solveur étape par étape de systèmes d'équations linéaires Ax = b (2x2, 3x3 et 4x4) par élimination de Gauss-Jordan et Théorème de Rouché-Fontené avec opérations élémentaires sur les lignes.",
       h1: "Systèmes d'Équations Linéaires (Pivot de Gauss-Jordan)",
       subtitle: "Élimination de Gauss étape par étape affichant chaque opération élémentaire sur les lignes (Fᵢ ← Fᵢ + αFⱼ) de la matrice augmentée (A|b), calcul du rang et théorème de Rouché-Fontené.",
+      placeholderDirect: "Lignes de la matrice augmentée (A|b) séparées par ';' -> Ex : 1, 1, 1, 6; 2, -1, 1, 3; 1, 2, -1, 2",
       examLabels: ["Système 3×3 Solution Unique", "Système 3×3 Indéterminé (Infinité)", "Système 3×3 Incompatible", "Système 4×4 Solution Unique"],
       guideTitle: "Guide Rapide et Formules Clés : Pivot de Gauss-Jordan et Théorème de Rouché-Fontené",
       guideIntro: "La méthode du pivot de Gauss-Jordan transforme la matrice augmentée (A|b) d'un système linéaire Ax = b en sa forme échelonnée réduite (RREF) par des opérations élémentaires sur les lignes. Le théorème de Rouché-Fontené caractérise l'existence et l'unicité des solutions via les rangs rg(A) et rg(A|b).",
+      formulas: [
+        {
+          name: "Théorème de Rouché-Fontené (Classification Complète)",
+          note: "Ici n désigne le nombre d'inconnues et r = rg(A) le nombre de pivots non nuls."
+        },
+        {
+          name: "Opérations Élémentaires sur les Lignes",
+          note: "Pour annuler le coefficient en ligne i et colonne pivot j, on retranche a_ij / a_jj fois la ligne pivot F_j à F_i."
+        },
+        {
+          name: "Forme Échelonnée Réduite (RREF)",
+          note: "En RREF, chaque pivot vaut 1 et est le seul élément non nul de sa colonne."
+        },
+        {
+          name: "Degrés de Liberté dans les Systèmes Indéterminés",
+          note: "Les inconnues sans pivot deviennent des paramètres libres (λ, μ, ...)."
+        }
+      ],
       tips: [
         "Saisissez chaque ligne de la matrice augmentée (A|b) en séparant les coefficients par des virgules et les lignes par un point-virgule ';'.",
         "Si une ligne du type (0  0  0 | c) avec c ≠ 0 apparaît, arrêtez immédiatement : rg(A) < rg(A|b) et le système est incompatible.",
@@ -2012,9 +2510,29 @@ export const CATALOG_I18N = {
       subtitle: "Opérations mixtes sous forme algébrique (a + bj) et polaire (M∠θ°), conversion détaillée module/argument avec ajustement du quadrant et systèmes de mailles/nœuds AC 2×2 et 3×3.",
       directLabel: "Arithmétique et Conversion de Phaseurs (a+bj ↔ M∠θ°)",
       inverseLabel: "Système Complexe 2×2 / 3×3 (Mailles / Nœuds AC)",
+      placeholderDirect: "Mélange algébrique & polaire -> Ex : (3 + 4j) * (10<30) / (2 - 2j)  ou  -3 + 4j",
+      placeholderInverse: "Matrice augmentée complexe (Z|V) séparée par ';' -> Ex : 4+2j, -2j, 10<0 ; -2j, 2+4j, 0",
       examLabels: ["Opération mixte Algébrique × Polaire", "Impédance équivalente parallèle", "Conversion 2e Quadrant (-3 + 4j)", "Système 2×2 de Mailles en Régime AC"],
       guideTitle: "Guide Rapide et Formules Clés : Algèbre des Phaseurs et Régime Sinusoïdal Permanent",
       guideIntro: "En électrotechnique et théorie des circuits, la représentation complexe (phaseurs de Steinmetz) transforme les équations intégro-différentielles en régime sinusoïdal permanent en systèmes linéaires complexes où les bobines ont une impédance Z_L = jωL et les condensateurs Z_C = -j/(ωC).",
+      formulas: [
+        {
+          name: "Conversion Algébrique vers Polaire avec Ajustement du Quadrant",
+          note: "Pensez à ajouter ou retrancher 180° lorsque la partie réelle 'a' est négative (2e et 3e quadrants)."
+        },
+        {
+          name: "Conversion Polaire vers Algébrique (Formule d'Euler)",
+          note: "La forme algébrique est indispensable pour additionner/soustraire ; la forme polaire pour multiplier/diviser."
+        },
+        {
+          name: "Produit et Quotient Direct en Forme Polaire",
+          note: "En multipliant deux phaseurs, on multiplie leurs modules et on additionne leurs phases en degrés."
+        },
+        {
+          name: "Résolution des Mailles/Nœuds AC par Règle de Cramer Complexe",
+          note: "Fournit directement chaque courant ou tension nodale en formes algébrique et polaire."
+        }
+      ],
       tips: [
         "Pour saisir un phaseur sous forme polaire avec un angle en degrés, utilisez '<' ou '∠' : par exemple 10<30 ou 10∠-45.",
         "Avant d'additionner deux phaseurs écrits sous forme polaire, convertissez-les toujours sous forme algébrique a + bj.",
@@ -2201,6 +2719,7 @@ export const LEGAL_I18N = {
 
 export function getLocalizedCalculator(calc, lang = "es") {
   const localizedRoute = ROUTE_MAP[calc.id]?.[lang] || calc.route;
+  const localizedCategory = UI_STRINGS[lang]?.categories?.[calc.category] || calc.category;
   const localizedRelated = (calc.relatedRoutes || []).map((esR) => {
     const targetCalc = CALCULATOR_CATALOG.find((c) => c.route === esR);
     return targetCalc ? (ROUTE_MAP[targetCalc.id]?.[lang] || esR) : esR;
@@ -2209,6 +2728,8 @@ export function getLocalizedCalculator(calc, lang = "es") {
   if (lang === "es" || !CATALOG_I18N[lang]?.[calc.id]) {
     return {
       ...calc,
+      categoryKey: calc.category,
+      category: localizedCategory,
       route: localizedRoute,
       relatedRoutes: localizedRelated
     };
@@ -2219,6 +2740,8 @@ export function getLocalizedCalculator(calc, lang = "es") {
 
   return {
     ...calc,
+    categoryKey: calc.category,
+    category: localizedCategory,
     route: localizedRoute,
     title: tr.title,
     shortTitle: tr.shortTitle,
@@ -2227,6 +2750,8 @@ export function getLocalizedCalculator(calc, lang = "es") {
     subtitle: tr.subtitle,
     directLabel: tr.directLabel || calc.directLabel,
     inverseLabel: tr.inverseLabel || calc.inverseLabel,
+    placeholderDirect: tr.placeholderDirect || calc.placeholderDirect,
+    placeholderInverse: tr.placeholderInverse || calc.placeholderInverse,
     examExamples: calc.examExamples.map((ex, i) => ({
       ...ex,
       badge: `${badgePrefix} ${i + 1}`,
@@ -2236,6 +2761,11 @@ export function getLocalizedCalculator(calc, lang = "es") {
       ...calc.guide,
       title: tr.guideTitle || calc.guide.title,
       intro: tr.guideIntro || calc.guide.intro,
+      formulas: calc.guide.formulas.map((f, i) => ({
+        ...f,
+        name: tr.formulas?.[i]?.name || f.name,
+        note: tr.formulas?.[i]?.note || f.note
+      })),
       tips: tr.tips || calc.guide.tips
     },
     faqs: tr.faqs || calc.faqs,
@@ -2343,7 +2873,7 @@ export const LEGAL_PAGES = [
         body: "Aunque CalcWeb emplea motores de álgebra computacional contrastados (SymPy) y algoritmos verificados con casos de prueba académicos, los resultados y desarrollos paso a paso se proporcionan 'tal cual' (AS IS) con fines estrictamente formativos. El usuario es el único responsable de contrastar y validar cualquier cálculo antes de aplicarlo en proyectos reales de ingeniería, diseño industrial, instalaciones eléctricas o entregas evaluables."
       },
       {
-        heading: "3. Propiedad Intelectual yLicencias de Software Abierto",
+        heading: "3. Propiedad Intelectual y Licencias de Software Abierto",
         body: "El diseño de la interfaz, los textos pedagógicos, las guías teóricas, los desgloses paso a paso y el código fuente original de CalcWeb están protegidos por la normativa de propiedad intelectual. La aplicación integra en el cliente librerías de código abierto bajo sus respectivas licencias libres (Pyodide bajo MPL-2.0, SymPy bajo licencia BSD y KaTeX bajo licencia MIT)."
       },
       {

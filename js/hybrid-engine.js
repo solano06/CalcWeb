@@ -20,6 +20,23 @@ function normalizeExpr(raw) {
     .replace(/Heaviside/g, "u");
 }
 
+function splitTopLevelSum(expr) {
+  const terms = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < expr.length; i++) {
+    const ch = expr[i];
+    if (ch === "(" || ch === "[" || ch === "{") depth++;
+    else if (ch === ")" || ch === "]" || ch === "}") depth = Math.max(0, depth - 1);
+    else if (depth === 0 && i > start && (ch === "+" || ch === "-")) {
+      terms.push(expr.slice(start, i));
+      start = i;
+    }
+  }
+  if (start < expr.length) terms.push(expr.slice(start));
+  return terms;
+}
+
 function fmtNum(n) {
   if (Math.abs(n - Math.round(n)) < 1e-9) return String(Math.round(n));
   // Try simple fraction representation up to denominator 24
@@ -196,25 +213,29 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
 
     // Pattern E: Dirac Delta combinations: a*delta(t) + b*delta(t - t0)
     if (norm.includes("delta(t")) {
-      const terms = norm.split(/(?=[+-])/);
+      const terms = splitTopLevelSum(norm);
       const stepLatexParts = [];
       const resParts = [];
 
       for (const tm of terms) {
-        const m = tm.match(/^([+-]?\d+)?\*?delta\(t([+-]\d+)?\)$/);
-        if (m) {
-          let c = m[1] ? (m[1] === "+" ? 1 : m[1] === "-" ? -1 : parseFloat(m[1])) : 1;
-          let shift = m[2] ? -parseFloat(m[2]) : 0; // t - t0 => m[2] is -t0 => t0 = -m[2]
-          if (shift === 0) {
-            stepLatexParts.push(`\\mathcal{F}\\{${c === 1 ? "" : c}\\delta(t)\\} = ${c}`);
-            resParts.push(`${c}`);
-          } else {
-            const cStr = c === 1 ? "" : c === -1 ? "-" : `${c}`;
-            const signShift = shift > 0 ? `- ${shift}` : `+ ${Math.abs(shift)}`;
-            const expSign = shift > 0 ? `-j${shift}\\omega` : `j${Math.abs(shift)}\\omega`;
-            stepLatexParts.push(`\\mathcal{F}\\{${cStr}\\delta(t ${signShift})\\} = ${cStr}e^{${expSign}}`);
-            resParts.push(`${c > 0 && resParts.length > 0 ? "+ " : ""}${cStr}e^{${expSign}}`);
-          }
+        const m = tm.match(/^([+-]?(?:\d+(?:\.\d+)?)?)?\*?delta\(t([+-]\d+(?:\.\d+)?)?\)$/);
+        if (!m) {
+          return null;
+        }
+        const c = m[1] ? (m[1] === "+" ? 1 : m[1] === "-" ? -1 : parseFloat(m[1])) : 1;
+        const shift = m[2] ? -parseFloat(m[2]) : 0; // t - t0 => m[2] is -t0 => t0 = -m[2]
+        const cStr = c === 1 ? "" : c === -1 ? "-" : `${c}`;
+        const cAbsStr = Math.abs(c) === 1 ? "" : `${Math.abs(c)}`;
+        const prefix = resParts.length === 0 ? cStr : c >= 0 ? `+ ${cAbsStr}` : `- ${cAbsStr}`;
+
+        if (shift === 0) {
+          stepLatexParts.push(`\\mathcal{F}\\{${cStr}\\delta(t)\\} = ${c}`);
+          resParts.push(resParts.length === 0 ? `${c}` : c >= 0 ? `+ ${c}` : `- ${Math.abs(c)}`);
+        } else {
+          const signShift = shift > 0 ? `- ${shift}` : `+ ${Math.abs(shift)}`;
+          const expSign = shift > 0 ? `-j${shift}\\omega` : `j${Math.abs(shift)}\\omega`;
+          stepLatexParts.push(`\\mathcal{F}\\{${cStr}\\delta(t ${signShift})\\} = ${cStr}e^{${expSign}}`);
+          resParts.push(`${prefix}e^{${expSign}}`);
         }
       }
 
@@ -279,7 +300,9 @@ export function solveFourierHybrid(rawExpr, direction = "direct") {
     if (invBilateral) {
       const num = parseFloat(invBilateral[1]);
       const a2 = parseFloat(invBilateral[2]);
-      const a = Math.round(Math.sqrt(a2));
+      const sqrtA2 = Math.sqrt(a2);
+      if (a2 <= 0 || Math.abs(sqrtA2 - Math.round(sqrtA2)) >= 1e-9) return null;
+      const a = Math.round(sqrtA2);
       const scale = fmtNum(num / (2 * a));
       const scalePrefix = scale === "1" ? "" : `${scale}`;
       return {
@@ -755,9 +778,13 @@ function solveMatrix2x2(A) {
       vx = 1;
       vy = 0;
     }
-    const g = gcd(vx, vy);
-    vx /= g;
-    vy /= g;
+    if (Math.abs(vx - Math.round(vx)) < 1e-9 && Math.abs(vy - Math.round(vy)) < 1e-9) {
+      vx = Math.round(vx);
+      vy = Math.round(vy);
+      const g = gcd(vx, vy);
+      vx /= g;
+      vy /= g;
+    }
     if (vx < 0 || (vx === 0 && vy < 0)) {
       vx = -vx;
       vy = -vy;
@@ -922,6 +949,7 @@ export function solveZTransformHybrid(rawExpr, direction = "inverse") {
     if (doublePole) {
       const K = doublePole[1] ? parseFloat(doublePole[1]) : 1;
       const a = parseFloat(doublePole[2]);
+      if (Math.abs(a) < 1e-9) return null;
       const scale = fmtNum(K / a);
       const scalePrefix = scale === "1" ? "" : `${scale}\\cdot `;
       return {
@@ -1143,7 +1171,14 @@ export function solveConvolutionHybrid(rawExpr, direction = "direct") {
       try {
         const xArr = JSON.parse(xNorm);
         const hArr = JSON.parse(hNorm);
-        if (Array.isArray(xArr) && Array.isArray(hArr)) {
+        if (
+          Array.isArray(xArr) &&
+          Array.isArray(hArr) &&
+          xArr.length > 0 &&
+          hArr.length > 0 &&
+          xArr.every((v) => typeof v === "number" && Number.isFinite(v)) &&
+          hArr.every((v) => typeof v === "number" && Number.isFinite(v))
+        ) {
           const N = xArr.length;
           const M = hArr.length;
           const L = N + M - 1;
@@ -1195,6 +1230,7 @@ export function solveConvolutionHybrid(rawExpr, direction = "direct") {
     if (discGeom && hNorm === "u[n]") {
       const a = parseFloat(discGeom[1]);
       const denom = 1 - a;
+      if (Math.abs(denom) < 1e-9) return null;
       const invDenom = fmtNum(1 / denom);
       return {
         ok: true,
@@ -1235,10 +1271,14 @@ export function solveOdeHybrid(rawExpr) {
   let y0 = null;
   let dy0 = null;
   if (icNorm) {
-    const mY0 = icNorm.match(/y\(0\)=([+-]?\d+(?:\.\d+)?)/);
-    const mDY0 = icNorm.match(/y'\(0\)=([+-]?\d+(?:\.\d+)?)/);
-    if (mY0) y0 = parseFloat(mY0[1]);
-    if (mDY0) dy0 = parseFloat(mDY0[1]);
+    const icItems = icNorm.split(",").map((s) => s.trim()).filter(Boolean);
+    for (const ic of icItems) {
+      const mY0 = ic.match(/^y\(0\)=([+-]?\d+(?:\.\d+)?)$/);
+      const mDY0 = ic.match(/^y'\(0\)=([+-]?\d+(?:\.\d+)?)$/);
+      if (mY0) y0 = parseFloat(mY0[1]);
+      else if (mDY0) dy0 = parseFloat(mDY0[1]);
+      else return null; // Delegate non-zero initial point or symbolic ICs to SymPy
+    }
   }
 
   // Pattern 1: 1st Order Linear ODE: y' + p*y = K*exp(a*x)
@@ -1346,7 +1386,7 @@ export function solveOdeHybrid(rawExpr) {
     const K = parseFloat(ode2ExpMatch[3]);
     const a = parseFloat(ode2ExpMatch[4] || ode2ExpMatch[5]);
     const disc = b * b - 4 * c;
-    if (disc > 0) {
+    if (disc > 0 && Math.abs(Math.sqrt(disc) - Math.round(Math.sqrt(disc))) < 1e-9) {
       const r1 = (-b - Math.sqrt(disc)) / 2;
       const r2 = (-b + Math.sqrt(disc)) / 2;
       const charAtA = a * a + b * a + c;
@@ -1392,6 +1432,7 @@ export function solveOdeHybrid(rawExpr) {
   if (harmMatch) {
     const w0_sq = parseFloat(harmMatch[1]);
     const w0 = Math.sqrt(w0_sq);
+    if (w0_sq <= 0 || Math.abs(w0 - Math.round(w0)) >= 1e-9) return null;
     const w0Tex = fmtNum(w0);
 
     const steps = [
@@ -1445,6 +1486,7 @@ export function solveIntegralsHybrid(rawExpr, direction = "direct") {
     if (partsExp) {
       const aRaw = partsExp[1] ?? partsExp[2] ?? "";
       const a = aRaw === "" || aRaw === "+" ? 1 : aRaw === "-" ? -1 : parseFloat(aRaw);
+      if (a === 0) return null;
       const aStr = a === 1 ? "x" : a === -1 ? "-x" : `${fmtNum(a)}x`;
       const invA = fmtNum(1 / a);
       const invA2 = fmtNum(1 / (a * a));
@@ -1774,11 +1816,17 @@ export function solveGaussHybrid(rawExpr) {
     if (clean.startsWith("[")) {
       M = JSON.parse(clean);
     } else {
+      const numRe = /^[+-]?(?:\d+\.?\d*|\.\d+)$/;
       M = clean
         .split(";")
         .map((r) => r.trim())
         .filter(Boolean)
-        .map((r) => r.split(",").map((c) => parseFloat(c.trim())));
+        .map((r) =>
+          r.split(",").map((c) => {
+            const t = c.trim();
+            return numRe.test(t) ? parseFloat(t) : NaN;
+          })
+        );
     }
   } catch (e) {
     return null;
@@ -1991,6 +2039,7 @@ function cMul(z1, z2) {
 }
 function cDiv(z1, z2) {
   const den = z2.re * z2.re + z2.im * z2.im;
+  if (den < 1e-12) return null;
   return {
     re: (z1.re * z2.re + z1.im * z2.im) / den,
     im: (z1.im * z2.re - z1.re * z2.im) / den
@@ -2142,6 +2191,7 @@ export function solvePhasorsHybrid(rawExpr, direction = "direct") {
           });
         } else if (op === "/") {
           res = cDiv(z1, z2);
+          if (!res) return null;
           steps.push({
             titulo_paso: "División fasorial (Cociente de módulos y resta de argumentos)",
             explicacion: "Dividimos los módulos |\\mathbb{Z}_1|/|\\mathbb{Z}_2| y restamos las fases \\theta_1 - \\theta_2 (equivalente a racionalizar multiplicando por el conjugado).",
@@ -2181,6 +2231,7 @@ export function solvePhasorsHybrid(rawExpr, direction = "direct") {
         const num = cMul(z1, z2);
         const den = cAdd(z1, z2);
         const res = cDiv(num, den);
+        if (!res) return null;
         const steps = [
           {
             titulo_paso: "Planteamiento de la Impedancia Equivalente en Paralelo \\mathbb{Z}_{eq} = (\\mathbb{Z}_1 \\parallel \\mathbb{Z}_2)",
@@ -2218,10 +2269,12 @@ export function solvePhasorsHybrid(rawExpr, direction = "direct") {
 
         // Cramer's Rule
         const detZ = cSub(cMul(z11, z22), cMul(z12, z21));
+        if (cAbs(detZ) < 1e-12) return null;
         const detI1 = cSub(cMul(v1, z22), cMul(z12, v2));
         const detI2 = cSub(cMul(z11, v2), cMul(v1, z21));
         const I1 = cDiv(detI1, detZ);
         const I2 = cDiv(detI2, detZ);
+        if (!I1 || !I2) return null;
 
         return {
           ok: true,
@@ -2490,11 +2543,13 @@ export function solveNumSeriesHybrid(rawExpr) {
   const parts = rawExpr.split(";").map((s) => s.trim());
   const anNorm = normalizeExpr(parts[0] || "");
   const n0 = parts[1] !== undefined && parts[1] !== "" ? parseInt(parts[1], 10) : 1;
+  if (Number.isNaN(n0)) return null;
 
   // Exam Preset 1: Geometric Series 1/2^n or (1/2)^n or r^n
   const geomMatch = anNorm.match(/^(?:1\/(\d+)\^n|\(1\/(\d+)\)\^n)$/);
   if (geomMatch) {
     const b = parseFloat(geomMatch[1] || geomMatch[2]);
+    if (b <= 1) return null;
     const rTex = `\\frac{1}{${fmtNum(b)}}`;
     const sumVal = Math.pow(1 / b, n0) / (1 - 1 / b);
     const sumTex = fmtNum(sumVal);

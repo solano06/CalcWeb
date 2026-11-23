@@ -3,7 +3,7 @@
  */
 
 import {
-  VIRTUAL_KEYBOARD_KEYS,
+  getLocalizedKeyboardKeys,
   getLocalizedCatalog,
   getLocalizedLegalPages
 } from "./catalog.js";
@@ -28,6 +28,7 @@ const state = {
   pyodideMessage: "Cargando motor simbólico...",
   worker: null,
   reqCounter: 0,
+  latestCalcRunId: 0,
   pendingRequests: new Map(),
   lastSolution: null, // { steps: [], final_latex: "", expr: "", title: "", engineUsed: "" }
   activeDirection: "direct",
@@ -900,6 +901,7 @@ function renderCalculatorView(calc) {
 
   const ui = getUI();
   const catalog = getLocalizedCatalog(state.lang);
+  const keyboardKeys = getLocalizedKeyboardKeys(state.lang);
   const homeRoute = ROUTE_MAP.home[state.lang];
 
   state.activeDirection = calc.defaultDirection || "direct";
@@ -1052,8 +1054,9 @@ function renderCalculatorView(calc) {
             </button>
           </div>
           <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
-            ${VIRTUAL_KEYBOARD_KEYS.map(
-              (k, i) => `
+            ${keyboardKeys
+              .map(
+                (k, i) => `
               <button
                 type="button"
                 data-key-idx="${i}"
@@ -1273,7 +1276,7 @@ function renderCalculatorView(calc) {
   document.querySelectorAll(".math-key").forEach((keyBtn) => {
     keyBtn.addEventListener("click", () => {
       const idx = parseInt(keyBtn.getAttribute("data-key-idx"), 10);
-      const keyDef = VIRTUAL_KEYBOARD_KEYS[idx];
+      const keyDef = keyboardKeys[idx];
       const inputEl = document.getElementById("calc-input");
       if (!keyDef || !inputEl) return;
 
@@ -1312,8 +1315,12 @@ function runHybridEngine(calcId, expr, direction, lang = "es") {
   }
 }
 
-function renderCalculationError(container, calc, errMsg) {
+function renderCalculationError(container, calc, errMsg, direction = "direct") {
   const ui = getUI();
+  const expectedFormat =
+    direction === "inverse" && calc.placeholderInverse
+      ? calc.placeholderInverse
+      : calc.placeholderDirect;
   container.innerHTML = `
     <div class="rounded-2xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-6 text-rose-900 dark:text-rose-200">
       <div class="flex items-center gap-2 font-semibold text-sm mb-1">
@@ -1325,7 +1332,7 @@ function renderCalculationError(container, calc, errMsg) {
       <p class="text-xs font-mono mb-3">${escapeHtml(errMsg)}</p>
       <p class="text-xs text-rose-700 dark:text-rose-300">
         ${escapeHtml(ui.errFormatPrefix)} <strong>${escapeHtml(calc.shortTitle)}</strong>: <code>${escapeHtml(
-    calc.placeholderDirect
+    expectedFormat
   )}</code>. ${escapeHtml(ui.errFormatSuffix)}
       </p>
     </div>
@@ -1337,9 +1344,10 @@ async function executeCalculation(calc, expr, direction) {
   if (!container) return;
 
   const ui = getUI();
+  const runId = ++state.latestCalcRunId;
 
   if (!expr || !expr.trim()) {
-    renderCalculationError(container, calc, ui.errEmpty);
+    renderCalculationError(container, calc, ui.errEmpty, direction);
     return;
   }
 
@@ -1347,7 +1355,7 @@ async function executeCalculation(calc, expr, direction) {
   const hybridRes = runHybridEngine(calc.id, expr, direction, state.lang);
   if (hybridRes && hybridRes.ok) {
     const engineTag = state.workerReady ? ui.engineVerifiedTag : ui.engineInstantTag;
-    renderSolutionSteps(calc, expr, hybridRes, engineTag);
+    renderSolutionSteps(calc, expr, hybridRes, engineTag, direction);
     return;
   }
 
@@ -1371,22 +1379,37 @@ async function executeCalculation(calc, expr, direction) {
 
   const timeoutMs = state.workerReady ? 15000 : 35000;
   const workerResp = await runWorkerCalculation(calc.id, expr, direction, timeoutMs, state.lang);
+  if (runId !== state.latestCalcRunId) return;
+
   if (workerResp?.result?.ok) {
     const localizedWorkerRes = localizeStepsResult(workerResp.result, state.lang);
-    renderSolutionSteps(calc, expr, localizedWorkerRes, workerResp.engine || "Pyodide + SymPy (WASM)");
+    renderSolutionSteps(
+      calc,
+      expr,
+      localizedWorkerRes,
+      workerResp.engine || "Pyodide + SymPy (WASM)",
+      direction
+    );
     return;
   }
 
   // 3. Only display red error message if SymPy also failed to parse or compute the expression
   const errMsg = workerResp?.result?.error || hybridRes?.error || ui.errParse;
-  renderCalculationError(container, calc, errMsg);
+  renderCalculationError(container, calc, errMsg, direction);
 }
 
-function renderSolutionSteps(calc, expr, solution, engineTag) {
+function renderSolutionSteps(calc, expr, solution, engineTag, direction = "direct") {
   const container = document.getElementById("solution-container");
   if (!container) return;
 
   const ui = getUI();
+
+  window.gtag?.("event", "calculate_math", {
+    tool: calc.id,
+    lang: state.lang,
+    direction,
+    engine: engineTag
+  });
 
   state.lastSolution = {
     title: calc.h1,
@@ -1512,8 +1535,12 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
   const copyFinalBtn = document.getElementById("copy-final-latex-btn");
   if (copyFinalBtn) {
     copyFinalBtn.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(solution.final_latex);
-      showToast(ui.toastFinalCopied);
+      try {
+        await navigator.clipboard.writeText(solution.final_latex);
+        showToast(ui.toastFinalCopied);
+      } catch (err) {
+        showToast(ui.toastCopyError, "error");
+      }
     });
   }
 
@@ -1523,8 +1550,12 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
       const idx = parseInt(btn.getAttribute("data-copy-step"), 10);
       const st = solution.steps[idx];
       if (!st) return;
-      await navigator.clipboard.writeText(st.latex);
-      showToast(ui.toastStepCopied(idx + 1));
+      try {
+        await navigator.clipboard.writeText(st.latex);
+        showToast(ui.toastStepCopied(idx + 1));
+      } catch (err) {
+        showToast(ui.toastCopyError, "error");
+      }
     });
   });
 
@@ -1548,8 +1579,12 @@ function renderSolutionSteps(calc, expr, solution, engineTag) {
   const copyJsonBtn = document.getElementById("copy-json-btn");
   if (copyJsonBtn) {
     copyJsonBtn.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(JSON.stringify(solution.steps, null, 2));
-      showToast(ui.toastJsonCopied);
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(solution.steps, null, 2));
+        showToast(ui.toastJsonCopied);
+      } catch (err) {
+        showToast(ui.toastCopyError, "error");
+      }
     });
   }
 }
