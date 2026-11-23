@@ -453,7 +453,7 @@ def solve_diagonalization(matrix_str):
             "explicacion": "La suma de las multiplicidades geométricas es menor que la dimensión de la matriz (m_g < m_a), por lo que no existe una base completa de autovectores.",
             "latex": rf"\\sum m_g = {len(all_basis_vectors)} < {n} \\implies A \\text{{ no es diagonalizable.}}"
         })
-        return {"ok": True, "steps": steps, "final_latex": r"A \text{ no es diagonalizable } (\sum m_g < n)"}
+        return {"ok": True, "steps": steps, "final_latex": r"A \\text{ no es diagonalizable } (\\sum m_g < n)"}
 
     P, D = A.diagonalize()
     P_inv = P.inv()
@@ -473,7 +473,7 @@ def solve_diagonalization(matrix_str):
     return {
         "ok": True,
         "steps": steps,
-        "final_latex": rf"P = {sp.latex(P)}, \quad D = {sp.latex(D)}, \quad A = P D P^{-1}"
+        "final_latex": rf"P = {sp.latex(P)}, \\quad D = {sp.latex(D)}, \\quad A = P D P^{-1}"
     }
 
 
@@ -1516,7 +1516,10 @@ async function initPyodideEngine() {
     });
     self.postMessage({ type: "STATUS", status: "loading", message: "Inicializando paquetes CAS (SymPy)..." });
     await pyodideInstance.loadPackage(["sympy"]);
-    await pyodideInstance.runPythonAsync('import warnings\\nwarnings.filterwarnings("ignore", category=SyntaxWarning)');
+    await pyodideInstance.runPythonAsync(`
+import warnings
+warnings.filterwarnings("ignore", category=SyntaxWarning)
+`);
     await pyodideInstance.runPythonAsync(PYTHON_SOLVER_SCRIPT);
     self.postMessage({ type: "STATUS", status: "ready", message: "Motor SymPy (WASM) activo" });
     return pyodideInstance;
