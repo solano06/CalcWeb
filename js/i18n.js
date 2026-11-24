@@ -87,6 +87,11 @@ export const ROUTE_MAP = {
     en: "/en/matrix-determinant-inverse",
     fr: "/fr/determinant-inverse-matrice"
   },
+  exam: {
+    es: "/modo-examen",
+    en: "/en/exam-mode",
+    fr: "/fr/mode-examen"
+  },
   about: {
     es: "/sobre-nosotros",
     en: "/en/about",
@@ -286,7 +291,41 @@ export const UI_STRINGS = {
     homeSeoDesc:
       "Resuelve ejercicios de Transformada de Fourier, Laplace, Transformada Z, Convolución, Series de Fourier, EDOs, Integrales, Series de Taylor, Series Numéricas, Diagonalización, Gauss-Jordan y Fasores AC paso a paso.",
     homeSeoKeywords:
-      "calculadora fourier paso a paso, transformada de laplace fracciones simples, transformada z, convolucion, series de fourier, ecuaciones diferenciales, integrales paso a paso, series de taylor, series numericas, gauss jordan, fasores"
+      "calculadora fourier paso a paso, transformada de laplace fracciones simples, transformada z, convolucion, series de fourier, ecuaciones diferenciales, integrales paso a paso, series de taylor, series numericas, gauss jordan, fasores",
+    navExamMode: "Modo Examen",
+    examSeoTitle: "Modo Examen: Generador de 10 Ejercicios Paso a Paso | CalcWeb",
+    examSeoDesc:
+      "Genera hojas de examen aleatorias con 10 ejercicios de Cálculo, Transformadas, Álgebra Lineal y Circuitos. Resuelve a mano y revela las 10 soluciones paso a paso en KaTeX o guarda el PDF.",
+    examSeoKeywords:
+      "modo examen matematicas, generador ejercicios ingenieria, examen integrales laplace fourier matrices, simulacro examen paso a paso",
+    examTitle: "Modo Examen: Generador de 10 Ejercicios Paso a Paso",
+    examSubtitle:
+      "Selecciona los temas de tu examen y genera una batería aleatoria de 10 ejercicios sin soluciones visibles. Resuélvelos a mano y revela los 10 desarrollos completos al finalizar.",
+    examSelectAll: "Seleccionar todos",
+    examClearAll: "Limpiar selección",
+    examSelectCategory: "Marcar categoría",
+    examClearCategory: "Desmarcar categoría",
+    examSelectedCount: (n) => `${n} ${n === 1 ? "tema seleccionado" : "temas seleccionados"}`,
+    examGenerateBtn: "Generar examen (10 ejercicios)",
+    examTopicsCount: (t, n) => `${t} ${t === 1 ? "tema" : "temas"} · ${n} ejercicios`,
+    examTimerStart: "Iniciar crono",
+    examTimerPause: "Pausar",
+    examTimerReset: "Reiniciar",
+    examChangeTopicsBtn: "Cambiar temas",
+    examRegenerateBtn: "Generar otros 10 ejercicios",
+    examRevealAllBtn: "Ver todas las soluciones paso a paso (10 ejercicios)",
+    examHideAllBtn: "Ocultar soluciones",
+    examExerciseLabel: (n) => `Ejercicio ${n}`,
+    examFinalResultLabel: "Resultado final",
+    examOpenInCalc: "Abrir en calculadora",
+    examSolvingWorker: "Calculando desarrollo paso a paso...",
+    examRevealedToast: "10 soluciones paso a paso reveladas",
+    examHiddenToast: "Soluciones ocultadas para repaso",
+    examRegeneratedToast: "Nuevo examen de 10 ejercicios generado",
+    examPrintTitle: "Modo Examen",
+    examPrintBlankTag: "Hoja de Enunciados",
+    examPrintSolvedTag: "Examen Resuelto Paso a Paso",
+    examPrintDateLabel: "Fecha"
   },
   en: {
     htmlLang: "en",
@@ -469,7 +508,41 @@ export const UI_STRINGS = {
     homeSeoDesc:
       "Solve Fourier Transform, Laplace Transform, Z-Transform, Convolution, Fourier Series, ODEs, Integrals, Taylor Series, Numerical Series, Matrix Diagonalization, Gauss-Jordan and AC Phasors step by step.",
     homeSeoKeywords:
-      "fourier transform calculator step by step, laplace transform partial fractions, z transform calculator, convolution calculator, fourier series calculator, differential equations solver, step by step integrals, taylor series, numerical series convergence, gauss jordan solver, phasor calculator"
+      "fourier transform calculator step by step, laplace transform partial fractions, z transform calculator, convolution calculator, fourier series calculator, differential equations solver, step by step integrals, taylor series, numerical series convergence, gauss jordan solver, phasor calculator",
+    navExamMode: "Exam Mode",
+    examSeoTitle: "Exam Mode: 10 Step-by-Step Practice Exercises Generator | CalcWeb",
+    examSeoDesc:
+      "Generate randomized 10-question exam sheets across Calculus, Transforms, Linear Algebra, and Circuits. Solve by hand, then reveal all 10 step-by-step KaTeX solutions or export to PDF.",
+    examSeoKeywords:
+      "engineering math exam generator, calculus practice test step by step, laplace fourier matrices exam mode, pdf math worksheet generator",
+    examTitle: "Exam Mode: 10 Step-by-Step Exercises Generator",
+    examSubtitle:
+      "Choose your exam topics and generate a randomized 10-exercise worksheet with hidden solutions. Solve them on paper and reveal all 10 full step-by-step solutions when ready.",
+    examSelectAll: "Select all",
+    examClearAll: "Clear selection",
+    examSelectCategory: "Select category",
+    examClearCategory: "Clear category",
+    examSelectedCount: (n) => `${n} ${n === 1 ? "topic selected" : "topics selected"}`,
+    examGenerateBtn: "Generate exam (10 exercises)",
+    examTopicsCount: (t, n) => `${t} ${t === 1 ? "topic" : "topics"} · ${n} exercises`,
+    examTimerStart: "Start timer",
+    examTimerPause: "Pause",
+    examTimerReset: "Reset",
+    examChangeTopicsBtn: "Change topics",
+    examRegenerateBtn: "Generate 10 new exercises",
+    examRevealAllBtn: "Show all step-by-step solutions (10 exercises)",
+    examHideAllBtn: "Hide solutions",
+    examExerciseLabel: (n) => `Exercise ${n}`,
+    examFinalResultLabel: "Final result",
+    examOpenInCalc: "Open in calculator",
+    examSolvingWorker: "Computing step-by-step derivation...",
+    examRevealedToast: "All 10 step-by-step solutions revealed",
+    examHiddenToast: "Solutions hidden for practice",
+    examRegeneratedToast: "New 10-exercise exam generated",
+    examPrintTitle: "Exam Mode",
+    examPrintBlankTag: "Problem Sheet",
+    examPrintSolvedTag: "Solved Exam (Step-by-Step)",
+    examPrintDateLabel: "Date"
   },
   fr: {
     htmlLang: "fr",
@@ -652,7 +725,41 @@ export const UI_STRINGS = {
     homeSeoDesc:
       "Résolvez Transformée de Fourier, Laplace, Transformée en Z, Convolution, Séries de Fourier, EDO, Intégrales, Séries de Taylor, Séries Numériques, Diagonalisation, Pivot de Gauss et Phaseurs AC étape par étape.",
     homeSeoKeywords:
-      "calculatrice transformee de fourier etape par etape, transformee de laplace elements simples, transformee en z, produit de convolution, series de fourier, equations differentielles, integrales etape par etape, series de taylor, series numeriques, pivot de gauss, calculateur phaseurs"
+      "calculatrice transformee de fourier etape par etape, transformee de laplace elements simples, transformee en z, produit de convolution, series de fourier, equations differentielles, integrales etape par etape, series de taylor, series numeriques, pivot de gauss, calculateur phaseurs",
+    navExamMode: "Mode Examen",
+    examSeoTitle: "Mode Examen : Générateur de 10 Exercices Étape par Étape | CalcWeb",
+    examSeoDesc:
+      "Générez des sujets d'examen aléatoires de 10 exercices en Calcul, Transformées, Algèbre Linéaire et Circuits. Résolvez sur papier puis affichez les 10 corrigés détaillés en KaTeX ou exportez en PDF.",
+    examSeoKeywords:
+      "mode examen mathematiques, generateur exercices ingenierie, examen integrales laplace fourier matrices, sujet examen corrige pdf",
+    examTitle: "Mode Examen : Générateur de 10 Exercices Étape par Étape",
+    examSubtitle:
+      "Sélectionnez les thèmes de votre examen et générez une feuille aléatoire de 10 exercices sans corrigé visible. Résolvez-les à la main puis révélez les 10 développements complets.",
+    examSelectAll: "Tout sélectionner",
+    examClearAll: "Tout effacer",
+    examSelectCategory: "Cocher catégorie",
+    examClearCategory: "Décocher catégorie",
+    examSelectedCount: (n) => `${n} ${n === 1 ? "thème sélectionné" : "thèmes sélectionnés"}`,
+    examGenerateBtn: "Générer l'examen (10 exercices)",
+    examTopicsCount: (t, n) => `${t} ${t === 1 ? "thème" : "thèmes"} · ${n} exercices`,
+    examTimerStart: "Démarrer chrono",
+    examTimerPause: "Pause",
+    examTimerReset: "Réinitialiser",
+    examChangeTopicsBtn: "Changer de thèmes",
+    examRegenerateBtn: "Générer 10 autres exercices",
+    examRevealAllBtn: "Voir toutes les solutions étape par étape (10 exercices)",
+    examHideAllBtn: "Masquer les solutions",
+    examExerciseLabel: (n) => `Exercice ${n}`,
+    examFinalResultLabel: "Résultat final",
+    examOpenInCalc: "Ouvrir dans la calculatrice",
+    examSolvingWorker: "Calcul du développement étape par étape...",
+    examRevealedToast: "Les 10 solutions étape par étape sont affichées",
+    examHiddenToast: "Solutions masquées pour révision",
+    examRegeneratedToast: "Nouvel examen de 10 exercices généré",
+    examPrintTitle: "Mode Examen",
+    examPrintBlankTag: "Sujet d'Examen",
+    examPrintSolvedTag: "Corrigé Détaillé Étape par Étape",
+    examPrintDateLabel: "Date"
   }
 };
 

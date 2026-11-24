@@ -146,6 +146,20 @@ function buildNavLinksHtml(activeRoute, lang = "es") {
               : "text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
           }"
         >${escapeHtml(ui.nav.home)}</a>
+        <a
+          href="${r.exam[lang]}"
+          data-route="${r.exam[lang]}"
+          class="nav-link flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold border ${
+            activeRoute === r.exam[lang]
+              ? "active bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500"
+              : "bg-blue-50/80 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-950/70"
+          }"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span>${escapeHtml(ui.navExamMode)}</span>
+        </a>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           ${groups
             .map(
@@ -206,7 +220,7 @@ function buildHreflangTags(route) {
   ].join("\n  ");
 }
 
-function buildJsonLdForPage({ title, description, canonicalUrl, calc = null, lang = "es" }) {
+function buildJsonLdForPage({ title, description, canonicalUrl, calc = null, lang = "es", breadcrumbName = null }) {
   const ui = UI_STRINGS[lang] || UI_STRINGS.es;
   const homePath = ROUTE_MAP.home[lang];
   const homeUrl = `${SITE_URL}${homePath === "/" ? "/" : homePath}`;
@@ -266,6 +280,24 @@ function buildJsonLdForPage({ title, description, canonicalUrl, calc = null, lan
         }))
       });
     }
+  } else if (breadcrumbName) {
+    graph.push({
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: ui.breadcrumbHome,
+          item: homeUrl
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: breadcrumbName,
+          item: canonicalUrl
+        }
+      ]
+    });
   }
 
   return JSON.stringify(
@@ -481,6 +513,68 @@ function buildStaticHomeMainHtml(lang = "es") {
   `;
 }
 
+function buildStaticExamMainHtml(lang = "es") {
+  const ui = UI_STRINGS[lang] || UI_STRINGS.es;
+  const homeRoute = ROUTE_MAP.home[lang];
+  const catalog = getLocalizedCatalog(lang);
+  const groups = getNavCategoryGroups(lang);
+
+  return `
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="${homeRoute}" data-route="${homeRoute}">${escapeHtml(ui.breadcrumbHome)}</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">${escapeHtml(ui.navExamMode)}</span>
+    </nav>
+    <header class="mb-7">
+      <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+        ${escapeHtml(ui.examTitle)}
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+        ${escapeHtml(ui.examSubtitle)}
+      </p>
+    </header>
+    <section class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-7 shadow-sm space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200">${escapeHtml(ui.examSelectAll)}</button>
+          <button type="button" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200">${escapeHtml(ui.examClearAll)}</button>
+        </div>
+        <span class="text-xs font-mono text-slate-500 dark:text-slate-400">${escapeHtml(ui.examSelectedCount(catalog.length))}</span>
+      </div>
+      <div class="space-y-6">
+        ${groups
+          .map((group) => {
+            const groupCalcs = group.ids.map((id) => catalog.find((c) => c.id === id)).filter(Boolean);
+            return `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <h2 class="font-serif text-lg font-bold text-slate-900 dark:text-white">${escapeHtml(group.title)}</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              ${groupCalcs
+                .map(
+                  (c) => `
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">${escapeHtml(c.shortTitle)}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">${escapeHtml(c.subtitle)}</div>
+                  </div>
+                </label>`
+                )
+                .join("")}
+            </div>
+          </div>`;
+          })
+          .join("")}
+      </div>
+      <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm">${escapeHtml(ui.examGenerateBtn)}</button>
+      </div>
+    </section>
+  `;
+}
+
 function buildFullHtmlDocument({
   title,
   description,
@@ -488,6 +582,7 @@ function buildFullHtmlDocument({
   route,
   lang = "es",
   calc = null,
+  breadcrumbName = null,
   mainInnerHtml = ""
 }) {
   const ui = UI_STRINGS[lang] || UI_STRINGS.es;
@@ -504,7 +599,8 @@ function buildFullHtmlDocument({
     description,
     canonicalUrl,
     calc,
-    lang
+    lang,
+    breadcrumbName
   });
 
   return `<!DOCTYPE html>
@@ -614,11 +710,29 @@ ${jsonLd}
         ${nav.desktop}
       </nav>
 
-      <!-- Right: Language Switcher + Global Study Mode + Compact Engine Status + Dark Mode + Mobile Hamburger -->
+      <!-- Right: Language Switcher + Exam Mode + Global Study Mode + Compact Engine Status + Dark Mode + Mobile Hamburger -->
       <div class="flex items-center gap-1 sm:gap-2 shrink-0">
         <div id="lang-switcher" class="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[10px] sm:text-[11px] font-mono font-semibold">
           ${nav.langSwitcher}
         </div>
+
+        <a
+          id="exam-mode-link"
+          href="${routes.exam[lang]}"
+          data-route="${routes.exam[lang]}"
+          title="${escapeHtml(ui.navExamMode)}"
+          aria-label="${escapeHtml(ui.navExamMode)}"
+          class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+            route === routes.exam[lang]
+              ? "active bg-blue-700 text-white border-blue-700 dark:bg-blue-600 dark:border-blue-600 shadow-xs"
+              : "bg-blue-50/90 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-950/80"
+          }"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span class="hidden md:inline">${escapeHtml(ui.navExamMode)}</span>
+        </a>
 
         <button
           id="study-mode-toggle"
@@ -673,6 +787,7 @@ ${jsonLd}
           <span>${escapeHtml(ui.footerTagline)}</span>
         </div>
         <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="${routes.exam[lang]}" data-route="${routes.exam[lang]}" class="text-blue-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 underline-offset-4 hover:underline">${escapeHtml(ui.navExamMode)}</a>
           <a href="${routes.about[lang]}" data-route="${routes.about[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerAbout)}</a>
           <a href="${routes.privacy[lang]}" data-route="${routes.privacy[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerPrivacy)}</a>
           <a href="${routes.legal[lang]}" data-route="${routes.legal[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerLegal)}</a>
@@ -804,6 +919,33 @@ for (const lang of SUPPORTED_LANGS) {
       priority: "0.3"
     });
   }
+
+  // 4. Generate Exam Mode Static Page (/modo-examen, /en/exam-mode, /fr/mode-examen)
+  const examRoute = ROUTE_MAP.exam[lang];
+  const examFolder = examRoute.replace(/^\/+/, "");
+  const examDir = path.join(ROOT_DIR, examFolder);
+  if (!fs.existsSync(examDir)) {
+    fs.mkdirSync(examDir, { recursive: true });
+  }
+  const examHtml = buildFullHtmlDocument({
+    title: ui.examSeoTitle,
+    description: ui.examSeoDesc,
+    keywords: ui.examSeoKeywords,
+    route: examRoute,
+    lang,
+    calc: null,
+    breadcrumbName: ui.navExamMode,
+    mainInnerHtml: buildStaticExamMainHtml(lang)
+  });
+  fs.writeFileSync(path.join(examDir, "index.html"), examHtml, "utf8");
+  console.log(`[SSG][${lang.toUpperCase()}] Generado Modo Examen: ${examRoute}/index.html`);
+
+  sitemapEntries.push({
+    loc: `${SITE_URL}${examRoute}`,
+    route: examRoute,
+    changefreq: "monthly",
+    priority: "0.9"
+  });
 }
 
 // 4. Generate sitemap.xml with all 48 URLs and xhtml:link hreflang alternates

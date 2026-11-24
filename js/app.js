@@ -18,6 +18,7 @@ import {
 } from "./i18n.js";
 import { solveWithHybridEngine } from "./hybrid-engine.js";
 import { renderMathPlot } from "./plotter.js";
+import { generateExamExercises, ALL_EXAM_TOPIC_IDS } from "./exam-generator.js";
 
 function loadStudyModePref() {
   try {
@@ -43,7 +44,17 @@ const state = {
   activeDirection: "direct",
   keyboardOpen: false,
   studyMode: loadStudyModePref(),
-  onStudyModeChange: null
+  onStudyModeChange: null,
+  exam: {
+    selectedTopics: [...ALL_EXAM_TOPIC_IDS],
+    viewState: "selector", // 'selector' | 'sheet'
+    exercises: [],
+    revealed: false,
+    solutions: new Map(),
+    timerSeconds: 0,
+    timerRunning: false,
+    timerIntervalId: null
+  }
 };
 
 function getUI() {
@@ -550,6 +561,24 @@ function updateShellNavigationUI(activeRoute, lang) {
   updateEngineBadgeUI(state.pyodideStatus, statusMsg);
   updateStudyModeButtonUI();
 
+  // Update Exam Mode Link in Header
+  const examLink = document.getElementById("exam-mode-link");
+  const examRoute = routes.exam[lang];
+  if (examLink) {
+    const isExamActive = activeRoute === examRoute;
+    examLink.setAttribute("href", examRoute);
+    examLink.setAttribute("data-route", examRoute);
+    examLink.setAttribute("title", ui.navExamMode);
+    examLink.setAttribute("aria-label", ui.navExamMode);
+    const spanEl = examLink.querySelector("span");
+    if (spanEl) spanEl.textContent = ui.navExamMode;
+    examLink.className = `inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+      isExamActive
+        ? "active bg-blue-700 text-white border-blue-700 dark:bg-blue-600 dark:border-blue-600 shadow-xs"
+        : "bg-blue-50/90 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-950/80"
+    }`;
+  }
+
   // Update Center Desktop 3-Category Dropdowns
   const desktopNav = document.querySelector("header nav[aria-label]");
   if (desktopNav) {
@@ -618,6 +647,20 @@ function updateShellNavigationUI(activeRoute, lang) {
               : "text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
           }"
         >${escapeHtml(ui.nav.home)}</a>
+        <a
+          href="${examRoute}"
+          data-route="${examRoute}"
+          class="nav-link flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold border ${
+            activeRoute === examRoute
+              ? "active bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500"
+              : "bg-blue-50/80 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-950/70"
+          }"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span>${escapeHtml(ui.navExamMode)}</span>
+        </a>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           ${groups
             .map(
@@ -685,6 +728,7 @@ function updateShellNavigationUI(activeRoute, lang) {
             <span>${escapeHtml(ui.footerTagline)}</span>
           </div>
           <div class="flex flex-wrap items-center gap-4 font-medium">
+            <a href="${examRoute}" data-route="${examRoute}" class="text-blue-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 underline-offset-4 hover:underline">${escapeHtml(ui.navExamMode)}</a>
             <a href="${routes.about[lang]}" data-route="${routes.about[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerAbout)}</a>
             <a href="${routes.privacy[lang]}" data-route="${routes.privacy[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerPrivacy)}</a>
             <a href="${routes.legal[lang]}" data-route="${routes.legal[lang]}" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">${escapeHtml(ui.footerLegal)}</a>
@@ -728,9 +772,21 @@ function navigateTo(route, pushState = true) {
   const calc = catalog.find((c) => c.route === normalized);
   const legal = legalPages.find((l) => l.route === normalized);
 
+  if (state.pageId !== "exam" && state.exam.timerIntervalId) {
+    clearInterval(state.exam.timerIntervalId);
+    state.exam.timerIntervalId = null;
+    state.exam.timerRunning = false;
+  }
+
   if (calc) {
     updateDocumentSEO(calc.title, calc.metaDescription, calc.route, calc, lang);
     renderCalculatorView(calc);
+  } else if (state.pageId === "exam") {
+    state.lastSolution = null;
+    state.onStudyModeChange = null;
+    const examRoute = ROUTE_MAP.exam[lang];
+    updateDocumentSEO(ui.examSeoTitle, ui.examSeoDesc, examRoute, null, lang, ui.navExamMode);
+    renderExamView();
   } else if (legal) {
     state.lastSolution = null;
     state.onStudyModeChange = null;
@@ -760,7 +816,7 @@ function getBaseSiteUrl() {
   return "https://matespasoapaso.vercel.app";
 }
 
-function updateDocumentSEO(title, description, routePath, calcObj = null, lang = "es") {
+function updateDocumentSEO(title, description, routePath, calcObj = null, lang = "es", breadcrumbName = null) {
   const ui = UI_STRINGS[lang] || UI_STRINGS.es;
   document.title = title;
   const baseOrigin = getBaseSiteUrl();
@@ -870,6 +926,24 @@ function updateDocumentSEO(title, description, routePath, calcObj = null, lang =
         }))
       });
     }
+  } else if (breadcrumbName) {
+    graph.push({
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: ui.breadcrumbHome,
+          item: homeUrl
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: breadcrumbName,
+          item: canonicalUrl
+        }
+      ]
+    });
   }
 
   ldScript.textContent = JSON.stringify({
@@ -2269,6 +2343,470 @@ function renderLegalView(legal) {
       </div>
     </article>
   `;
+}
+
+/* ==========================================================================
+   7C. VIEW 4: EXAM MODE (/modo-examen, /en/exam-mode, /fr/mode-examen)
+   ========================================================================== */
+function formatExamTimer(totalSeconds) {
+  const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const secs = String(totalSeconds % 60).padStart(2, "0");
+  return `${mins}:${secs}`;
+}
+
+function renderExamSolutionBlockHtml(ex, solution, calc, ui) {
+  const stepsHtml = (solution.steps || [])
+    .map(
+      (st, idx) => `
+      <div class="exam-step-item rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 p-4">
+        <div class="flex items-start gap-3">
+          <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
+            ${idx + 1}
+          </span>
+          <div class="min-w-0 flex-1 space-y-1.5">
+            <h4 class="font-semibold text-sm text-slate-900 dark:text-white">${escapeHtml(st.titulo_paso)}</h4>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(st.explicacion)}</p>
+            <div class="overflow-x-auto pt-1 text-slate-900 dark:text-slate-100">
+              ${renderLatexToHtml(st.latex, true)}
+            </div>
+          </div>
+        </div>
+      </div>`
+    )
+    .join("");
+
+  const calcHref = calc
+    ? `${calc.route}?expr=${encodeURIComponent(ex.expr)}&dir=${encodeURIComponent(ex.direction)}`
+    : "#";
+
+  return `
+    <div class="mt-5 pt-5 border-t border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 p-4">
+        <div class="text-[11px] font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold mb-1.5">
+          ${escapeHtml(ui.examFinalResultLabel)}
+        </div>
+        <div class="overflow-x-auto text-slate-900 dark:text-white font-medium">
+          ${renderLatexToHtml(solution.final_latex, true)}
+        </div>
+      </div>
+      <div class="space-y-3">
+        ${stepsHtml}
+      </div>
+      ${
+        calc
+          ? `<div class="print:hidden flex justify-end pt-1">
+              <a href="${calcHref}" class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline underline-offset-4">
+                <span>${escapeHtml(ui.examOpenInCalc)}</span>
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>`
+          : ""
+      }
+    </div>
+  `;
+}
+
+function renderExamView() {
+  const main = document.getElementById("app-main");
+  if (!main) return;
+
+  const ui = getUI();
+  const homeRoute = ROUTE_MAP.home[state.lang];
+  const catalog = getLocalizedCatalog(state.lang);
+  const catalogById = new Map(catalog.map((c) => [c.id, c]));
+  const groups = getNavCategoryGroups(state.lang);
+
+  if (state.exam.viewState === "selector") {
+    const selectedSet = new Set(state.exam.selectedTopics);
+
+    main.innerHTML = `
+      <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+        <a href="${homeRoute}" data-route="${homeRoute}" class="hover:text-blue-600 dark:hover:text-blue-400">${escapeHtml(ui.breadcrumbHome)}</a>
+        <span>/</span>
+        <span class="text-slate-800 dark:text-slate-200 font-medium">${escapeHtml(ui.navExamMode)}</span>
+      </nav>
+
+      <header class="mb-7">
+        <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+          ${escapeHtml(ui.examTitle)}
+        </h1>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+          ${escapeHtml(ui.examSubtitle)}
+        </p>
+      </header>
+
+      <section class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-7 shadow-sm space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="exam-select-all-btn" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors">
+              ${escapeHtml(ui.examSelectAll)}
+            </button>
+            <button type="button" id="exam-clear-all-btn" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors">
+              ${escapeHtml(ui.examClearAll)}
+            </button>
+          </div>
+          <span id="exam-selected-count" class="text-xs font-mono font-semibold text-blue-700 dark:text-blue-400">
+            ${escapeHtml(ui.examSelectedCount(selectedSet.size))}
+          </span>
+        </div>
+
+        <div class="space-y-6">
+          ${groups
+            .map((group) => {
+              const groupCalcs = group.ids.map((id) => catalogById.get(id)).filter(Boolean);
+              const allInGroupSelected = groupCalcs.every((c) => selectedSet.has(c.id));
+              return `
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <h2 class="font-serif text-lg font-bold text-slate-900 dark:text-white">${escapeHtml(group.title)}</h2>
+                <button
+                  type="button"
+                  data-exam-cat-toggle="${group.key}"
+                  class="text-xs font-semibold text-blue-700 dark:text-blue-400 hover:underline underline-offset-4"
+                >
+                  ${escapeHtml(allInGroupSelected ? ui.examClearCategory : ui.examSelectCategory)}
+                </button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                ${groupCalcs
+                  .map((c) => {
+                    const checked = selectedSet.has(c.id);
+                    return `
+                  <label
+                    data-exam-card="${c.id}"
+                    class="cursor-pointer flex items-start gap-3 p-3.5 rounded-xl border transition-all ${
+                      checked
+                        ? "border-blue-400 dark:border-blue-600 bg-blue-50/60 dark:bg-blue-950/30 shadow-2xs"
+                        : "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 hover:border-slate-300 dark:hover:border-slate-700"
+                    }"
+                  >
+                    <input
+                      type="checkbox"
+                      data-exam-topic="${c.id}"
+                      ${checked ? "checked" : ""}
+                      class="mt-1 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <div class="min-w-0">
+                      <div class="font-semibold text-sm text-slate-900 dark:text-white">${escapeHtml(c.shortTitle)}</div>
+                      <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">${escapeHtml(c.subtitle)}</div>
+                    </div>
+                  </label>`;
+                  })
+                  .join("")}
+              </div>
+            </div>`;
+            })
+            .join("")}
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <span class="text-xs text-slate-500 dark:text-slate-400">
+            ${escapeHtml(ui.examSelectedCount(selectedSet.size))}
+          </span>
+          <button
+            type="button"
+            id="exam-generate-btn"
+            ${selectedSet.size === 0 ? "disabled" : ""}
+            class="px-6 py-3.5 rounded-xl font-semibold text-sm sm:text-base shadow-sm transition-all ${
+              selectedSet.size === 0
+                ? "bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed"
+                : "bg-blue-700 hover:bg-blue-800 text-white cursor-pointer"
+            }"
+          >
+            ${escapeHtml(ui.examGenerateBtn)}
+          </button>
+        </div>
+      </section>
+    `;
+
+    document.querySelectorAll("[data-exam-topic]").forEach((cb) => {
+      cb.addEventListener("change", () => {
+        const id = cb.getAttribute("data-exam-topic");
+        const set = new Set(state.exam.selectedTopics);
+        if (cb.checked) set.add(id);
+        else set.delete(id);
+        state.exam.selectedTopics = [...set];
+        renderExamView();
+      });
+    });
+
+    document.querySelectorAll("[data-exam-cat-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-exam-cat-toggle");
+        const grp = groups.find((g) => g.key === key);
+        if (!grp) return;
+        const set = new Set(state.exam.selectedTopics);
+        const allSelected = grp.ids.every((id) => set.has(id));
+        grp.ids.forEach((id) => {
+          if (allSelected) set.delete(id);
+          else set.add(id);
+        });
+        state.exam.selectedTopics = [...set];
+        renderExamView();
+      });
+    });
+
+    document.getElementById("exam-select-all-btn")?.addEventListener("click", () => {
+      state.exam.selectedTopics = [...ALL_EXAM_TOPIC_IDS];
+      renderExamView();
+    });
+
+    document.getElementById("exam-clear-all-btn")?.addEventListener("click", () => {
+      state.exam.selectedTopics = [];
+      renderExamView();
+    });
+
+    document.getElementById("exam-generate-btn")?.addEventListener("click", () => {
+      if (state.exam.selectedTopics.length === 0) return;
+      state.exam.exercises = generateExamExercises(state.exam.selectedTopics, 10, state.lang);
+      state.exam.revealed = false;
+      state.exam.solutions = new Map();
+      state.exam.viewState = "sheet";
+      state.exam.timerSeconds = 0;
+      state.exam.timerRunning = false;
+      if (state.exam.timerIntervalId) {
+        clearInterval(state.exam.timerIntervalId);
+        state.exam.timerIntervalId = null;
+      }
+      renderExamView();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    return;
+  }
+
+  // State B: Exam Sheet
+  if (state.exam.exercises.length === 0) {
+    state.exam.exercises = generateExamExercises(state.exam.selectedTopics, 10, state.lang);
+  }
+
+  const printDate = new Date().toLocaleDateString(ui.locale || "es-ES");
+  const isRevealed = state.exam.revealed;
+
+  main.innerHTML = `
+    <div id="exam-sheet-view" class="space-y-6">
+      <!-- Print-only Clean Exam Header -->
+      <div class="hidden print:block pb-4 mb-4 border-b-2 border-slate-800 text-slate-900">
+        <div class="flex items-center justify-between gap-4">
+          <div class="font-serif font-bold text-xl">CalcWeb &Sigma; &middot; ${escapeHtml(ui.examPrintTitle)}</div>
+          <div class="text-xs font-mono text-slate-600">${escapeHtml(ui.examPrintDateLabel)}: ${escapeHtml(printDate)}</div>
+        </div>
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-600 mt-1">
+          ${escapeHtml(isRevealed ? ui.examPrintSolvedTag : ui.examPrintBlankTag)} &middot; ${escapeHtml(
+    ui.examTopicsCount(state.exam.selectedTopics.length, state.exam.exercises.length)
+  )}
+        </div>
+      </div>
+
+      <!-- Top Control Bar -->
+      <div class="print:hidden rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+            ${escapeHtml(ui.examTopicsCount(state.exam.selectedTopics.length, state.exam.exercises.length))}
+          </span>
+
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 text-xs">
+            <span id="exam-timer-display" class="font-mono font-semibold text-slate-800 dark:text-slate-200">
+              ${formatExamTimer(state.exam.timerSeconds)}
+            </span>
+            <button type="button" id="exam-timer-toggle" class="font-semibold text-blue-700 dark:text-blue-400 hover:underline">
+              ${escapeHtml(state.exam.timerRunning ? ui.examTimerPause : ui.examTimerStart)}
+            </button>
+            <button type="button" id="exam-timer-reset" class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+              ${escapeHtml(ui.examTimerReset)}
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" id="exam-change-topics-btn" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors">
+            ${escapeHtml(ui.examChangeTopicsBtn)}
+          </button>
+          <button type="button" id="exam-regenerate-btn" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors">
+            ${escapeHtml(ui.examRegenerateBtn)}
+          </button>
+          <button type="button" id="exam-pdf-btn" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition-colors">
+            <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <span>${escapeHtml(ui.savePdfBtn)}</span>
+          </button>
+          <button
+            type="button"
+            id="exam-top-reveal-btn"
+            class="px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors ${
+              isRevealed
+                ? "border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 hover:bg-amber-100"
+                : "bg-blue-700 hover:bg-blue-800 text-white"
+            }"
+          >
+            ${escapeHtml(isRevealed ? ui.examHideAllBtn : ui.examRevealAllBtn)}
+          </button>
+        </div>
+      </div>
+
+      <!-- 10 Exercises List -->
+      <div id="exam-exercises-list" class="space-y-5">
+        ${state.exam.exercises
+          .map((ex) => {
+            const sol = isRevealed ? state.exam.solutions.get(ex.number) : null;
+            const calc = catalogById.get(ex.calcId);
+            return `
+          <article id="exam-exercise-${ex.number}" class="exam-exercise-card rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-1 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-mono font-bold">
+                  ${escapeHtml(ui.examExerciseLabel(ex.number))}
+                </span>
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${ex.categoryBadge}">
+                  ${escapeHtml(ex.topicTitle)}
+                </span>
+              </div>
+            </div>
+
+            <p class="text-sm text-slate-700 dark:text-slate-300 mb-3">
+              ${escapeHtml(ex.promptText)}
+            </p>
+
+            <div class="rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 px-4 py-3 overflow-x-auto text-slate-900 dark:text-white">
+              ${renderLatexToHtml(ex.statementLatex, true)}
+            </div>
+
+            <div id="exam-solution-${ex.number}">
+              ${sol ? renderExamSolutionBlockHtml(ex, sol, calc, ui) : ""}
+            </div>
+          </article>`;
+          })
+          .join("")}
+      </div>
+
+      <!-- Bottom Primary Reveal / Hide Button -->
+      <div class="print:hidden flex justify-center pt-2 pb-6">
+        ${
+          isRevealed
+            ? `<button type="button" id="hide-all-exam-solutions-btn" class="px-6 py-3.5 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-amber-900 dark:text-amber-200 font-semibold text-sm sm:text-base shadow-sm transition-all">
+                ${escapeHtml(ui.examHideAllBtn)}
+              </button>`
+            : `<button type="button" id="reveal-all-exam-solutions-btn" class="px-7 py-4 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-semibold text-sm sm:text-base shadow-md transition-all">
+                ${escapeHtml(ui.examRevealAllBtn)}
+              </button>`
+        }
+      </div>
+    </div>
+  `;
+
+  // Wire up timer
+  const timerDisplay = document.getElementById("exam-timer-display");
+  const timerToggle = document.getElementById("exam-timer-toggle");
+  const timerReset = document.getElementById("exam-timer-reset");
+
+  if (timerToggle) {
+    timerToggle.addEventListener("click", () => {
+      if (state.exam.timerRunning) {
+        state.exam.timerRunning = false;
+        if (state.exam.timerIntervalId) {
+          clearInterval(state.exam.timerIntervalId);
+          state.exam.timerIntervalId = null;
+        }
+        timerToggle.textContent = ui.examTimerStart;
+      } else {
+        state.exam.timerRunning = true;
+        timerToggle.textContent = ui.examTimerPause;
+        state.exam.timerIntervalId = setInterval(() => {
+          state.exam.timerSeconds += 1;
+          const disp = document.getElementById("exam-timer-display");
+          if (disp) disp.textContent = formatExamTimer(state.exam.timerSeconds);
+        }, 1000);
+      }
+    });
+  }
+
+  if (timerReset) {
+    timerReset.addEventListener("click", () => {
+      state.exam.timerSeconds = 0;
+      if (timerDisplay) timerDisplay.textContent = "00:00";
+    });
+  }
+
+  // Wire up Change Topics
+  document.getElementById("exam-change-topics-btn")?.addEventListener("click", () => {
+    state.exam.viewState = "selector";
+    renderExamView();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // Wire up Regenerate 10 exercises
+  document.getElementById("exam-regenerate-btn")?.addEventListener("click", () => {
+    state.exam.exercises = generateExamExercises(state.exam.selectedTopics, 10, state.lang);
+    state.exam.revealed = false;
+    state.exam.solutions = new Map();
+    renderExamView();
+    showToast(ui.examRegeneratedToast);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // Wire up Save PDF
+  document.getElementById("exam-pdf-btn")?.addEventListener("click", () => {
+    printSolutionAsPdf();
+  });
+
+  async function revealAllExamSolutions() {
+    state.exam.revealed = true;
+    const workerPromises = [];
+
+    for (const ex of state.exam.exercises) {
+      if (state.exam.solutions.has(ex.number)) continue;
+
+      const hybridRes = runHybridEngine(ex.calcId, ex.expr, ex.direction, state.lang);
+      if (hybridRes && hybridRes.ok) {
+        state.exam.solutions.set(ex.number, hybridRes);
+      } else {
+        // Fallback to Pyodide worker with per-card spinner
+        const slot = document.getElementById(`exam-solution-${ex.number}`);
+        if (slot) {
+          slot.innerHTML = `
+            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+              <span class="w-4 h-4 rounded-full border-2 border-blue-600 border-t-transparent animate-spin"></span>
+              <span>${escapeHtml(ui.examSolvingWorker)}</span>
+            </div>
+          `;
+        }
+        workerPromises.push(
+          runWorkerCalculation(ex.calcId, ex.expr, ex.direction, 25000, state.lang).then((resp) => {
+            if (resp?.result?.ok) {
+              const localized = localizeStepsResult(resp.result, state.lang);
+              state.exam.solutions.set(ex.number, localized);
+            }
+          })
+        );
+      }
+    }
+
+    if (workerPromises.length > 0) {
+      await Promise.all(workerPromises);
+    }
+
+    renderExamView();
+    showToast(ui.examRevealedToast);
+    const firstEx = document.getElementById("exam-exercise-1");
+    if (firstEx) {
+      firstEx.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function hideAllExamSolutions() {
+    state.exam.revealed = false;
+    renderExamView();
+    showToast(ui.examHiddenToast);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.getElementById("reveal-all-exam-solutions-btn")?.addEventListener("click", revealAllExamSolutions);
+  document.getElementById("hide-all-exam-solutions-btn")?.addEventListener("click", hideAllExamSolutions);
+  document.getElementById("exam-top-reveal-btn")?.addEventListener("click", () => {
+    if (state.exam.revealed) hideAllExamSolutions();
+    else revealAllExamSolutions();
+  });
 }
 
 /* ==========================================================================

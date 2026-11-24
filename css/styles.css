@@ -169,4 +169,20 @@ body {
     overflow: visible !important;
     max-width: 100% !important;
   }
+
+  /* Exam Mode Print Styles */
+  #exam-sheet-view .exam-exercise-card {
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #exam-sheet-view .exam-step-item {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }

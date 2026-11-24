@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="build-version" content="mwulrspp">
+  <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
+  <title>Mode Examen : Générateur de 10 Exercices Étape par Étape | CalcWeb</title>
+  <meta name="description" content="Générez des sujets d'examen aléatoires de 10 exercices en Calcul, Transformées, Algèbre Linéaire et Circuits. Résolvez sur papier puis affichez les 10 corrigés détaillés en KaTeX ou exportez en PDF.">
+  <meta name="keywords" content="mode examen mathematiques, generateur exercices ingenierie, examen integrales laplace fourier matrices, sujet examen corrige pdf">
+  <link rel="canonical" href="https://matespasoapaso.vercel.app/fr/mode-examen">
+  <link rel="alternate" hreflang="es" href="https://matespasoapaso.vercel.app/modo-examen">
+  <link rel="alternate" hreflang="en" href="https://matespasoapaso.vercel.app/en/exam-mode">
+  <link rel="alternate" hreflang="fr" href="https://matespasoapaso.vercel.app/fr/mode-examen">
+  <link rel="alternate" hreflang="x-default" href="https://matespasoapaso.vercel.app/modo-examen">
+
+  <!-- Prevent Dark Mode FOUC before CSS paints -->
+  <script>try{if(localStorage.getItem('calcweb_theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
+
+  <!-- Favicon & Mobile PWA Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1d4ed8">
+
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="CalcWeb">
+  <meta property="og:title" content="Mode Examen : Générateur de 10 Exercices Étape par Étape | CalcWeb">
+  <meta property="og:description" content="Générez des sujets d'examen aléatoires de 10 exercices en Calcul, Transformées, Algèbre Linéaire et Circuits. Résolvez sur papier puis affichez les 10 corrigés détaillés en KaTeX ou exportez en PDF.">
+  <meta property="og:url" content="https://matespasoapaso.vercel.app/fr/mode-examen">
+  <meta property="og:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CalcWeb — Step-by-Step Symbolic Math & Engineering Calculators">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mode Examen : Générateur de 10 Exercices Étape par Étape | CalcWeb">
+  <meta name="twitter:description" content="Générez des sujets d'examen aléatoires de 10 exercices en Calcul, Transformées, Algèbre Linéaire et Circuits. Résolvez sur papier puis affichez les 10 corrigés détaillés en KaTeX ou exportez en PDF.">
+  <meta name="twitter:image" content="https://matespasoapaso.vercel.app/og-cover.png">
+
+  <!-- Resource Hints for Core Web Vitals (LCP & INP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js?v=mwulrspp">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwulrspp">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwulrspp">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwulrspp">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwulrspp">
+
+  <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
+  <script id="json-ld-seo" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebApplication",
+        "SoftwareApplication"
+      ],
+      "name": "Mode Examen : Générateur de 10 Exercices Étape par Étape | CalcWeb",
+      "url": "https://matespasoapaso.vercel.app/fr/mode-examen",
+      "description": "Générez des sujets d'examen aléatoires de 10 exercices en Calcul, Transformées, Algèbre Linéaire et Circuits. Résolvez sur papier puis affichez les 10 corrigés détaillés en KaTeX ou exportez en PDF.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All (100% Client-Side WebAssembly)",
+      "inLanguage": "fr-FR",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Accueil",
+          "item": "https://matespasoapaso.vercel.app/fr"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Mode Examen",
+          "item": "https://matespasoapaso.vercel.app/fr/mode-examen"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX Math Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Compiled Static Tailwind CSS & Custom Styles -->
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwulrspp">
+  <link rel="stylesheet" href="/css/styles.css?v=mwulrspp">
+
+  <!-- Vercel Web Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-1.5 sm:gap-3">
+      <!-- Left: Logo + Home Link -->
+      <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+        <a href="/fr" data-route="/fr" class="flex items-center gap-2 sm:gap-2.5 group focus:outline-none min-w-0">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white flex items-center justify-center font-serif font-bold text-lg sm:text-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all shrink-0">&Sigma;</div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white truncate">CalcWeb</span>
+              <span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">CAS v2.4</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block lg:block truncate">Moteur Symbolique Universitaire &bull; 100% Client-Side</p>
+          </div>
+        </a>
+        <a id="nav-home-link" href="/fr" data-route="/fr" class="nav-link hidden md:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0">Accueil</a>
+      </div>
+
+      <!-- Center: 3-Category Dropdowns -->
+      <nav aria-label="Main Navigation" class="hidden lg:flex items-center gap-1.5 relative">
+        
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="calculus">
+        <button
+          type="button"
+          data-cat-toggle="calculus"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Calcul &amp; Séries</span>
+          <svg data-cat-chevron="calculus" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="calculus"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/fr/integrales-etape-par-etape"
+                  data-route="/fr/integrales-etape-par-etape"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Intégrales</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/limites-lhopital"
+                  data-route="/fr/limites-lhopital"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Limites</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/equations-differentielles"
+                  data-route="/fr/equations-differentielles"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >EDO</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-de-taylor"
+                  data-route="/fr/series-de-taylor"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Taylor</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-de-fourier"
+                  data-route="/fr/series-de-fourier"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >S. Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/series-numeriques"
+                  data-route="/fr/series-numeriques"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Séries Num.</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="transforms">
+        <button
+          type="button"
+          data-cat-toggle="transforms"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Transformées &amp; Signaux</span>
+          <svg data-cat-chevron="transforms" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="transforms"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/fr/transformee-de-laplace"
+                  data-route="/fr/transformee-de-laplace"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Laplace</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/transformee-de-fourier"
+                  data-route="/fr/transformee-de-fourier"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Fourier</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/transformee-en-z"
+                  data-route="/fr/transformee-en-z"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Transf. Z</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/convolution"
+                  data-route="/fr/convolution"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Convolution</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/diagramme-de-bode"
+                  data-route="/fr/diagramme-de-bode"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Bode</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative nav-cat-dropdown" data-cat-wrapper="algebra">
+        <button
+          type="button"
+          data-cat-toggle="algebra"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <span>Algèbre &amp; Circuits</span>
+          <svg data-cat-chevron="algebra" class="w-3.5 h-3.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div
+          data-cat-menu="algebra"
+          class="hidden absolute left-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 z-50"
+        >
+          <ul class="space-y-0.5">
+            
+              <li>
+                <a
+                  href="/fr/diagonalisation-matrices"
+                  data-route="/fr/diagonalisation-matrices"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Matrices</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/determinant-inverse-matrice"
+                  data-route="/fr/determinant-inverse-matrice"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Dét. &amp; Inverse</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/pivot-de-gauss"
+                  data-route="/fr/pivot-de-gauss"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Pivot Gauss</a>
+              </li>
+              <li>
+                <a
+                  href="/fr/calculateur-phaseurs"
+                  data-route="/fr/calculateur-phaseurs"
+                  class="nav-link block px-3 py-2 rounded-xl text-xs font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >Phaseurs AC</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      </nav>
+
+      <!-- Right: Language Switcher + Exam Mode + Global Study Mode + Compact Engine Status + Dark Mode + Mobile Hamburger -->
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <div id="lang-switcher" class="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[10px] sm:text-[11px] font-mono font-semibold">
+          <a href="/modo-examen" data-lang-switch="es" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">ES</a><a href="/en/exam-mode" data-lang-switch="en" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">EN</a><a href="/fr/mode-examen" data-lang-switch="fr" class="px-2 py-0.5 rounded transition-colors bg-blue-700 text-white shadow-2xs">FR</a>
+        </div>
+
+        <a
+          id="exam-mode-link"
+          href="/fr/mode-examen"
+          data-route="/fr/mode-examen"
+          title="Mode Examen"
+          aria-label="Mode Examen"
+          class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors active bg-blue-700 text-white border-blue-700 dark:bg-blue-600 dark:border-blue-600 shadow-xs"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span class="hidden md:inline">Mode Examen</span>
+        </a>
+
+        <button
+          id="study-mode-toggle"
+          type="button"
+          aria-pressed="false"
+          title="Mode Étude"
+          aria-label="Mode Étude"
+          class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <span id="study-mode-text" class="hidden md:inline">Mode Étude</span>
+        </button>
+
+        <button id="engine-status-btn" type="button" title="Chargement du moteur symbolique..." aria-label="Chargement du moteur symbolique..." class="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-2 rounded-lg text-xs font-medium border transition-all bg-amber-50/90 border-amber-200 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800/80 dark:text-amber-300">
+          <span id="engine-status-dot" class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="engine-status-text" class="sr-only">Chargement du moteur symbolique...</span>
+        </button>
+
+        <button id="theme-toggle" type="button" aria-label="Basculer le thème clair/sombre" class="p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="theme-icon-sun" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-moon" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-label="Ouvrir le menu de navigation" class="lg:hidden p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Hamburger Drawer -->
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-white dark:bg-slate-900 shadow-lg">
+      
+      <div class="space-y-4">
+        <a
+          href="/fr"
+          data-route="/fr"
+          class="nav-link block px-3 py-2 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >Accueil</a>
+        <a
+          href="/fr/mode-examen"
+          data-route="/fr/mode-examen"
+          class="nav-link flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold border active bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span>Mode Examen</span>
+        </a>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Calcul &amp; Séries
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/fr/integrales-etape-par-etape"
+                    data-route="/fr/integrales-etape-par-etape"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Intégrales</a>
+                  <a
+                    href="/fr/limites-lhopital"
+                    data-route="/fr/limites-lhopital"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Limites</a>
+                  <a
+                    href="/fr/equations-differentielles"
+                    data-route="/fr/equations-differentielles"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >EDO</a>
+                  <a
+                    href="/fr/series-de-taylor"
+                    data-route="/fr/series-de-taylor"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Taylor</a>
+                  <a
+                    href="/fr/series-de-fourier"
+                    data-route="/fr/series-de-fourier"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >S. Fourier</a>
+                  <a
+                    href="/fr/series-numeriques"
+                    data-route="/fr/series-numeriques"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Séries Num.</a>
+              </div>
+            </div>
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Transformées &amp; Signaux
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/fr/transformee-de-laplace"
+                    data-route="/fr/transformee-de-laplace"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Laplace</a>
+                  <a
+                    href="/fr/transformee-de-fourier"
+                    data-route="/fr/transformee-de-fourier"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Fourier</a>
+                  <a
+                    href="/fr/transformee-en-z"
+                    data-route="/fr/transformee-en-z"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Transf. Z</a>
+                  <a
+                    href="/fr/convolution"
+                    data-route="/fr/convolution"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Convolution</a>
+                  <a
+                    href="/fr/diagramme-de-bode"
+                    data-route="/fr/diagramme-de-bode"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Bode</a>
+              </div>
+            </div>
+            <div>
+              <div class="text-[11px] font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1.5 px-2">
+                Algèbre &amp; Circuits
+              </div>
+              <div class="space-y-1">
+                
+                  <a
+                    href="/fr/diagonalisation-matrices"
+                    data-route="/fr/diagonalisation-matrices"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Matrices</a>
+                  <a
+                    href="/fr/determinant-inverse-matrice"
+                    data-route="/fr/determinant-inverse-matrice"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Dét. &amp; Inverse</a>
+                  <a
+                    href="/fr/pivot-de-gauss"
+                    data-route="/fr/pivot-de-gauss"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Pivot Gauss</a>
+                  <a
+                    href="/fr/calculateur-phaseurs"
+                    data-route="/fr/calculateur-phaseurs"
+                    class="nav-link block px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >Phaseurs AC</a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app-main" class="flex-1 max-w-7xl w-full min-w-0 max-w-full overflow-x-clip mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+    
+    <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <a href="/fr" data-route="/fr">Accueil</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-medium">Mode Examen</span>
+    </nav>
+    <header class="mb-7">
+      <h1 class="font-serif text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+        Mode Examen : Générateur de 10 Exercices Étape par Étape
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+        Sélectionnez les thèmes de votre examen et générez une feuille aléatoire de 10 exercices sans corrigé visible. Résolvez-les à la main puis révélez les 10 développements complets.
+      </p>
+    </header>
+    <section class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-7 shadow-sm space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200">Tout sélectionner</button>
+          <button type="button" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200">Tout effacer</button>
+        </div>
+        <span class="text-xs font-mono text-slate-500 dark:text-slate-400">15 thèmes sélectionnés</span>
+      </div>
+      <div class="space-y-6">
+        
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <h2 class="font-serif text-lg font-bold text-slate-900 dark:text-white">Calcul &amp; Séries</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Intégrales Étape par Étape</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Détail pédagogique de l'arbre d'intégration symbolique : intégration par parties (choix de u et dv), changement de variable u = g(x), éléments simples et calcul intégral défini.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Limites et L'Hôpital</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Évaluation symbolique des limites finies et à l'infini avec détection des formes indéterminées (0/0, ∞/∞, 1^∞), dérivation itérative de L'Hôpital et asymptotes.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Équations Différentielles (EDO)</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Résolution analytique étape par étape des EDO à variables séparables, linéaires du 1er ordre par facteur intégrant μ(x) et linéaires du 2nd ordre avec conditions initiales.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Séries de Taylor et Maclaurin</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Calcul systématique des dérivées successives f⁽ᵏ⁾(x), évaluation au point de développement x₀ et assemblage terme à terme du polynôme de Taylor Pₙ(x).</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Séries de Fourier</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Décomposition harmonique des signaux périodiques sur [-L, L] avec analyse préalable de la parité paire/impaire, calcul explicite des intégrales et somme partielle d'ordre N.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Séries Numériques</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Étude rigoureuse de la convergence étape par étape : condition nécessaire lim aₙ = 0, séries géométriques, séries de Riemann (p-séries), règle de D'Alembert, Cauchy, Leibniz et somme exacte.</div>
+                  </div>
+                </label>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <h2 class="font-serif text-lg font-bold text-slate-900 dark:text-white">Transformées &amp; Signaux</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Transformée de Laplace</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Résolution symbolique dans le plan complexe s avec factorisation explicite du dénominateur, calcul des pôles et décomposition en éléments simples.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Transformée de Fourier</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Analyse spectrale continue en pulsation ω avec détail de l'intégrale impropre, identités d'Euler et propriétés des tables.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Transformée en Z</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Analyse des signaux et systèmes à temps discret avec division explicite X(z)/z, décomposition en éléments simples et application des tables causales.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Convolution Continue et Discrète</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Calcul analytique de la réponse des systèmes LTI par intégrale ou somme de convolution, détaillant retournement temporel, décalage et bornes actives par échelons.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Diagramme de Bode H(s)</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Factorisation de H(s), pôles, zéros et stabilité, forme normalisée de Bode, gain en dB et tracé logarithmique du module et de la phase.</div>
+                  </div>
+                </label>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <h2 class="font-serif text-lg font-bold text-slate-900 dark:text-white">Algèbre &amp; Circuits</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Diagonalisation de Matrices</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Calcul détaillé de l'équation caractéristique |A - λI| = 0, spectre des valeurs propres, sous-espaces propres, matrice de passage P et matrice diagonale D.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Déterminant, Inverse &amp; Rang</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Calcul exact du déterminant (formule 2×2, Sarrus/cofacteurs 3×3), rang rg(A), comatrice C, adjointe adj(A) = Cᵀ et inverse A⁻¹ en fractions exactes.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Systèmes Linéaires (Gauss-Jordan)</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Élimination de Gauss étape par étape affichant chaque opération élémentaire sur les lignes (Fᵢ ← Fᵢ + αFⱼ) de la matrice augmentée (A|b), calcul du rang et théorème de Rouché-Fontené.</div>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20">
+                  <input type="checkbox" checked class="mt-1 rounded border-slate-300 text-blue-600" />
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 dark:text-white">Phaseurs et Circuits AC</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">Opérations mixtes sous forme algébrique (a + bj) et polaire (M∠θ°), conversion détaillée module/argument avec ajustement du quadrant et systèmes de mailles/nœuds AC 2×2 et 3×3.</div>
+                  </div>
+                </label>
+            </div>
+          </div>
+      </div>
+      <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+        <button type="button" class="px-6 py-3.5 rounded-xl bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm">Générer l'examen (10 exercices)</button>
+      </div>
+    </section>
+  
+  </main>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-serif font-bold text-sm text-slate-800 dark:text-slate-200">CalcWeb &Sigma;</span>
+          <span>&bull;</span>
+          <span>Architecture 0€ Serveur (Pyodide WebAssembly + SymPy + Moteur Hybride Instantané)</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/fr/mode-examen" data-route="/fr/mode-examen" class="text-blue-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 underline-offset-4 hover:underline">Mode Examen</a>
+          <a href="/fr/a-propos" data-route="/fr/a-propos" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">À Propos</a>
+          <a href="/fr/confidentialite" data-route="/fr/confidentialite" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Confidentialité et Cookies (RGPD)</a>
+          <a href="/fr/mentions-legales" data-route="/fr/mentions-legales" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Mentions Légales</a>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200/70 dark:border-slate-800/70 pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <a href="/fr/transformee-de-fourier" data-route="/fr/transformee-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée de Fourier</a>
+        <a href="/fr/transformee-en-z" data-route="/fr/transformee-en-z" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée en Z</a>
+        <a href="/fr/convolution" data-route="/fr/convolution" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Convolution Continue et Discrète</a>
+        <a href="/fr/series-de-fourier" data-route="/fr/series-de-fourier" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries de Fourier</a>
+        <a href="/fr/transformee-de-laplace" data-route="/fr/transformee-de-laplace" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Transformée de Laplace</a>
+        <a href="/fr/equations-differentielles" data-route="/fr/equations-differentielles" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Équations Différentielles (EDO)</a>
+        <a href="/fr/integrales-etape-par-etape" data-route="/fr/integrales-etape-par-etape" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Intégrales Étape par Étape</a>
+        <a href="/fr/series-de-taylor" data-route="/fr/series-de-taylor" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries de Taylor et Maclaurin</a>
+        <a href="/fr/series-numeriques" data-route="/fr/series-numeriques" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Séries Numériques</a>
+        <a href="/fr/diagonalisation-matrices" data-route="/fr/diagonalisation-matrices" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagonalisation de Matrices</a>
+        <a href="/fr/pivot-de-gauss" data-route="/fr/pivot-de-gauss" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Systèmes Linéaires (Gauss-Jordan)</a>
+        <a href="/fr/calculateur-phaseurs" data-route="/fr/calculateur-phaseurs" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Phaseurs et Circuits AC</a>
+        <a href="/fr/limites-lhopital" data-route="/fr/limites-lhopital" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Limites et L'Hôpital</a>
+        <a href="/fr/diagramme-de-bode" data-route="/fr/diagramme-de-bode" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Diagramme de Bode H(s)</a>
+        <a href="/fr/determinant-inverse-matrice" data-route="/fr/determinant-inverse-matrice" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Déterminant, Inverse &amp; Rang</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js?v=mwulrspp"></script>
+</body>
+</html>

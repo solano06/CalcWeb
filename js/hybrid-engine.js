@@ -1645,7 +1645,7 @@ export function solveOdeHybrid(rawExpr) {
 
   // Pattern 3: 2nd Order Constant-Coefficient Linear ODE: y'' + b*y' + c*y = g(x)
   // Example 3: y'' - 3*y' + 2*y = 4*exp(3*x)
-  const ode2ExpMatch = odeNorm.match(/^y''([+-]\d+)\*?y'([+-]\d+)\*?y=(\d+)\*?(?:exp\((\d+)\*?x\)|e\^\((\d+)\*?x\))$/);
+  const ode2ExpMatch = odeNorm.match(/^y''([+-]\d+)\*?y'([+-]\d+)\*?y=(\d+)\*?(?:exp\(([+-]?\d+)\*?x\)|e\^\(([+-]?\d+)\*?x\))$/);
   if (ode2ExpMatch) {
     const b = parseFloat(ode2ExpMatch[1]);
     const c = parseFloat(ode2ExpMatch[2]);
@@ -3170,8 +3170,8 @@ export function solveLimitsHybrid(rawExpr) {
   const isNegInf = x0Raw === "-oo" || x0Raw === "-inf";
   const x0Num = isPosInf || isNegInf ? null : parseFloat(x0Raw);
 
-  // Pattern 1: sin(a*x)/(b*x) ; 0
-  const sinXMatch = fnNorm.match(/^sin\((?:(\d+(?:\.\d+)?)\*?)?x\)\/(?:(\d+(?:\.\d+)?)\*?)?x$/);
+  // Pattern 1: sin(a*x)/(b*x) or sin(a*x)/b*x ; 0
+  const sinXMatch = fnNorm.match(/^sin\((?:(\d+(?:\.\d+)?)\*?)?x\)\/\(?(?:(\d+(?:\.\d+)?)\*?)?x\)?$/);
   if (sinXMatch && x0Num === 0) {
     const a = sinXMatch[1] ? parseFloat(sinXMatch[1]) : 1;
     const b = sinXMatch[2] ? parseFloat(sinXMatch[2]) : 1;

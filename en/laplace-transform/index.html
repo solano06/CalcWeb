@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="build-version" content="mwtug223">
+  <meta name="build-version" content="mwulrspp">
   <meta name="google-site-verification" content="2jAlBSAJVHJ24YMj4Xmazba7KTn0T3KmbLh-hcY8hYA" />
   <title>Step-by-Step Laplace Transform &amp; Partial Fractions Calculator | CalcWeb</title>
   <meta name="description" content="Step-by-step Direct and Inverse Laplace Transform calculator. Factors the denominator, finds poles, and performs partial fraction decomposition (Heaviside residues) with theoretical explanation.">
@@ -42,11 +42,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="modulepreload" href="/js/app.js?v=mwtug223">
-  <link rel="modulepreload" href="/js/i18n.js?v=mwtug223">
-  <link rel="modulepreload" href="/js/catalog.js?v=mwtug223">
-  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwtug223">
-  <link rel="modulepreload" href="/js/plotter.js?v=mwtug223">
+  <link rel="modulepreload" href="/js/app.js?v=mwulrspp">
+  <link rel="modulepreload" href="/js/i18n.js?v=mwulrspp">
+  <link rel="modulepreload" href="/js/catalog.js?v=mwulrspp">
+  <link rel="modulepreload" href="/js/hybrid-engine.js?v=mwulrspp">
+  <link rel="modulepreload" href="/js/plotter.js?v=mwulrspp">
 
   <!-- Structured Data JSON-LD (WebApplication + BreadcrumbList + FAQPage) -->
   <script id="json-ld-seo" type="application/ld+json">
@@ -142,8 +142,8 @@
   <script id="katex-js" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
   <!-- Compiled Static Tailwind CSS & Custom Styles -->
-  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwtug223">
-  <link rel="stylesheet" href="/css/styles.css?v=mwtug223">
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=mwulrspp">
+  <link rel="stylesheet" href="/css/styles.css?v=mwulrspp">
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
@@ -346,11 +346,25 @@
       </div>
       </nav>
 
-      <!-- Right: Language Switcher + Global Study Mode + Compact Engine Status + Dark Mode + Mobile Hamburger -->
+      <!-- Right: Language Switcher + Exam Mode + Global Study Mode + Compact Engine Status + Dark Mode + Mobile Hamburger -->
       <div class="flex items-center gap-1 sm:gap-2 shrink-0">
         <div id="lang-switcher" class="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 text-[10px] sm:text-[11px] font-mono font-semibold">
           <a href="/transformada-laplace" data-lang-switch="es" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">ES</a><a href="/en/laplace-transform" data-lang-switch="en" class="px-2 py-0.5 rounded transition-colors bg-blue-700 text-white shadow-2xs">EN</a><a href="/fr/transformee-de-laplace" data-lang-switch="fr" class="px-2 py-0.5 rounded transition-colors text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400">FR</a>
         </div>
+
+        <a
+          id="exam-mode-link"
+          href="/en/exam-mode"
+          data-route="/en/exam-mode"
+          title="Exam Mode"
+          aria-label="Exam Mode"
+          class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors bg-blue-50/90 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-950/80"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span class="hidden md:inline">Exam Mode</span>
+        </a>
 
         <button
           id="study-mode-toggle"
@@ -393,6 +407,16 @@
           data-route="/en"
           class="nav-link block px-3 py-2 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
         >Home</a>
+        <a
+          href="/en/exam-mode"
+          data-route="/en/exam-mode"
+          class="nav-link flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold border bg-blue-50/80 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-950/70"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span>Exam Mode</span>
+        </a>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           
             <div>
@@ -682,6 +706,7 @@
           <span>$0 Server Architecture (Pyodide WebAssembly + SymPy + Instant Hybrid Engine)</span>
         </div>
         <div class="flex flex-wrap items-center gap-4 font-medium">
+          <a href="/en/exam-mode" data-route="/en/exam-mode" class="text-blue-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 underline-offset-4 hover:underline">Exam Mode</a>
           <a href="/en/about" data-route="/en/about" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">About Us</a>
           <a href="/en/privacy" data-route="/en/privacy" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Privacy &amp; Cookies (GDPR)</a>
           <a href="/en/legal" data-route="/en/legal" class="hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline">Legal Notice</a>
@@ -708,6 +733,6 @@
     </div>
   </footer>
 
-  <script type="module" src="/js/app.js?v=mwtug223"></script>
+  <script type="module" src="/js/app.js?v=mwulrspp"></script>
 </body>
 </html>
